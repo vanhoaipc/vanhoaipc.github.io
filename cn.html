@@ -139,12 +139,18 @@
       font-weight: bold;
       font-family: 'Electrolize', monospace;
       color: var(--neon-blue);
+      /* Reduced text-shadow */
       text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-                   0 0 7px var(--neon-blue),
-                   0 0 10px var(--neon-blue),
-                   0 0 21px var(--neon-blue),
-                   0 0 42px rgba(0, 240, 255, 0.6),
-                   0 0 82px rgba(0, 240, 255, 0.4);
+                   0 0 2px var(--neon-blue),
+                   0 0 4px var(--neon-blue),
+                   0 0 8px var(--neon-blue),
+                   0 0 16px rgba(0, 240, 255, 0.4),
+                   0 0 32px rgba(0, 240, 255, 0.2);
+      /* New border/frame */
+      border: 2px solid var(--neon-blue); /* Add a border */
+      padding: 5px 10px; /* Add padding inside the border */
+      border-radius: 8px; /* Rounded corners for the frame */
+      box-shadow: 0 0 5px var(--neon-blue); /* Subtle outer glow for the frame */
     }
     .score-group {
       display: flex;
