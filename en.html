@@ -1,0 +1,1886 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Học từ vựng tiếng Anh</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    :root {
+      --text-color: #333;
+      --bg-color: #f4f4f4;
+      --card-bg-color: #fff;
+      --border-color: #ddd;
+      --selected-border-color: #007bff;
+      --correct-bg-color: #d4edda;
+      --correct-border-color: #28a745;
+      --incorrect-bg-color: #f8d7da;
+      --incorrect-border-color: #dc3545;
+      --hint-glow-color: #ffc107;
+      --modal-bg-color: rgba(0, 0, 0, 0.5);
+      --button-bg-color: #007bff;
+      --button-text-color: #fff;
+      --button-hover-bg-color: #0056b3;
+      --badge-bg-color: #dc3545;
+      --badge-text-color: #fff;
+      --progress-bar-bg: #28a745;
+      --progress-bar-track: #e9ecef;
+      --score-correct-color: #28a745;
+      --score-incorrect-color: #dc3545;
+      --dark-mode-text-color: #f4f4f4; /* Default text color for dark mode */
+      --autoplay-group-border: #FF8C00; /* Dark orange border for autoplay settings group */
+      --autoplay-group-legend-color: #FF8C00; /* Dark orange text for autoplay settings group legend */
+      --general-group-border: #007bff; /* Blue border for general settings group */
+      --general-group-legend-color: #007bff; /* Blue text for general settings group legend */
+    }
+    body.dark-mode {
+      --text-color: var(--dark-mode-text-color); /* Use new variable for dark mode text color */
+      --bg-color: #333;
+      --card-bg-color: #555;
+      --border-color: #666;
+      --selected-border-color: #66b3ff;
+      --correct-bg-color: #4CAF50;
+      --correct-border-color: #388E3C;
+      --incorrect-bg-color: #D32F2F;
+      --incorrect-border-color: #B71C1C;
+      --hint-glow-color: #ffeb3b;
+      --modal-bg-color: rgba(255, 255, 255, 0.2);
+      --button-bg-color: #66b3ff;
+      --button-text-color: #333;
+      --button-hover-bg-color: #4da6ff;
+      --badge-bg-color: #ef5350;
+      --progress-bar-bg: #4CAF50;
+      --progress-bar-track: #6c757d;
+      --score-correct-color: #4CAF50;
+      --score-incorrect-color: #D32F2F;
+      --autoplay-group-border: #FFD700; /* Gold border for dark mode autoplay group */
+      --autoplay-group-legend-color: #FFD700; /* Gold text for dark mode autoplay group legend */
+      --general-group-border: #66b3ff; /* Light blue border for dark mode general group */
+      --general-group-legend-color: #66b3ff; /* Light blue text for dark mode general group legend */
+    }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 10px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px; /* Reduced gap */
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      background-color: var(--card-bg-color);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    /* Controls & modal */
+    #controls {
+      display: flex;
+      flex-direction: column;
+      gap: 5px; /* Reduced gap */
+      margin-bottom: 2px; /* Reduced margin */
+      width: 100%;
+    }
+    #control-row-top { /* Row for buttons and scores */
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      width: 100%;
+      justify-content: space-between; /* Buttons left, scores right */
+    }
+    #control-row-bottom { /* Row for phonetic toggle, autoplay button and timer */
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 8px; /* Adjusted gap for better spacing */
+      overflow-x: auto;
+      padding-bottom: 5px;
+      width: 100%;
+      justify-content: space-between; /* Distribute items evenly */
+    }
+    .left-buttons { /* Class for grouping buttons */
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    }
+    .pinyin-toggle { /* Only phonetic toggle remains */
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .timer-display {
+      text-align: center;
+      white-space: nowrap;
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      border-radius: 5px;
+      background-color: var(--bg-color);
+      box-sizing: border-box; /* Include padding and border in width */
+      font-size: 1em;
+      font-weight: bold;
+      /* Removed margin-left: auto; as space-between will handle positioning */
+    }
+    /* Changed color for timer - always bright orange */
+    #timer {
+      color: #FFA500; /* Bright Orange */
+    }
+    .score-group {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .score-display {
+      /* Added styling for score display */
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      border-radius: 5px;
+      background-color: var(--bg-color);
+      font-size: 1em;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    #btn-settings {
+      background-color: transparent;
+      color: var(--text-color);
+      border: none;
+      padding: 5px;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    #btn-settings:hover {
+      color: var(--button-hover-bg-color);
+    }
+    .score-display.correct {
+      color: var(--score-correct-color);
+    }
+    .score-display.incorrect {
+      color: var(--score-incorrect-color);
+    }
+    @keyframes score-flash-correct {
+      0% { transform: scale(1); color: var(--score-correct-color); }
+      50% { transform: scale(1.1); color: #00ff00; }
+      100% { transform: scale(1); color: var(--score-correct-color); }
+    }
+    @keyframes score-flash-incorrect {
+      0% { transform: scale(1); color: var(--score-incorrect-color); }
+      50% { transform: scale(1.1); color: #ff0000; }
+      100% { transform: scale(1); color: var(--score-incorrect-color); }
+    }
+    .score-display.flash-correct {
+      animation: score-flash-correct 0.3s ease-out;
+    }
+    .score-display.flash-incorrect {
+      animation: score-flash-incorrect 0.3s ease-in-out;
+    }
+    #game-area {
+      display: flex;
+      justify-content: space-around;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      flex-grow: 1;
+      min-height: 400px;
+    }
+    .column {
+      flex: 1;
+      min-width: 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--bg-color);
+      min-height: 400px;
+      overflow-y: hidden;
+    }
+    .word-card {
+      min-height: 50px;
+      max-height: 50px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: var(--card-bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      padding: 4px 6px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 1.4em;
+      font-weight: bold;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease-in-out;
+      position: relative;
+    }
+    .word-card:hover:not(.selected):not(.hidden) {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .word-card.selected {
+      border-color: var(--selected-border-color);
+      box-shadow: 0 0 10px var(--selected-border-color);
+      transform: scale(1.01);
+    }
+    .word-card.hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    }
+    .word-card .phonetic {
+      font-size: 0.65em;
+      color: #888;
+      margin-top: 3px;
+      display: none;
+    }
+    .word-card.show-phonetic .phonetic {
+      display: block;
+    }
+    @keyframes correct-fade-out {
+      0% { background-color: var(--correct-bg-color); border-color: var(--correct-border-color); transform: scale(1.03); opacity: 1; }
+      50% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.9); visibility: hidden; }
+    }
+    .word-card.correct-animation {
+      animation: correct-fade-out 0.7s forwards;
+      background-color: var(--correct-bg-color);
+      border-color: var(--correct-border-color);
+    }
+    @keyframes incorrect-shake {
+      0% { background-color: var(--incorrect-bg-color); border-color: var(--incorrect-border-color); transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      50% { transform: translateX(3px); }
+      75% { transform: translateX(-3px); }
+      100% { background-color: var(--incorrect-bg-color); border-color: var(--incorrect-border-color); transform: translateX(0); }
+    }
+    .word-card.incorrect-animation {
+      animation: incorrect-shake 0.5s ease-in-out;
+      background-color: var(--incorrect-bg-color);
+      border-color: var(--incorrect-border-color);
+    }
+    @keyframes hint-glow {
+      0% { box-shadow: 0 0 3px var(--hint-glow-color); }
+      50% { box-shadow: 0 0 12px var(--hint-glow-color); }
+      100% { box-shadow: 0 0 3px var(--hint-glow-color); }
+    }
+    .word-card.hint-glow-green {
+      animation: hint-glow 1.2s infinite alternate;
+    }
+    /* Re-enabled .mistake-badge CSS */
+    .mistake-badge {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      background-color: var(--badge-bg-color);
+      color: var(--badge-text-color);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7em;
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .mastered .mastered-check {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      color: var(--correct-border-color);
+      font-size: 1em;
+    }
+    #progress-bar-container {
+      width: 100%;
+      background-color: var(--progress-bar-track);
+      border-radius: 4px;
+      margin-top: 0px;
+      height: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--progress-bar-bg);
+      border-radius: 4px;
+      transition: width 0.3s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.8em;
+    }
+    #progress-details {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85em;
+      color: #000;
+      text-shadow: none;
+    }
+    body.dark-mode #progress-details {
+      color: #FFA500; /* Orange text for dark mode for better readability */
+    }
+    .btn {
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background-color 0.2s;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      background-color: var(--button-hover-bg-color);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--modal-bg-color);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: var(--card-bg-color);
+      margin: auto;
+      padding: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      width: 85%;
+      max-width: 450px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      position: relative;
+      text-align: center;
+      color: var(--text-color);
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--text-color);
+      font-size: 1.3em;
+    }
+    .modal-content .btn {
+      margin: 4px;
+      padding: 8px 12px;
+      font-size: 0.9em;
+    }
+    #level-list,
+    #mode-list,
+    #settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    #settings-form label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 0.9em;
+    }
+    /* Unified width for all selects and inputs */
+    #settings-form input[type="number"],
+    #settings-form input[type="color"],
+    #settings-form select {
+      padding: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      width: 140px; /* Unified width for all selects and inputs */
+      font-size: 0.9em;
+    }
+
+    /* NEW CSS for autoplay settings group */
+    .autoplay-settings-group, .general-settings-group {
+      border: 2px solid var(--autoplay-group-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      position: relative;
+      text-align: left;
+    }
+
+    .general-settings-group {
+      border: 2px solid var(--general-group-border);
+    }
+
+    .autoplay-settings-group legend, .general-settings-group legend {
+      font-weight: bold;
+      color: var(--autoplay-group-legend-color);
+      padding: 0 5px;
+      margin-left: 10px;
+      font-size: 1.1em;
+    }
+
+    .general-settings-group legend {
+      color: var(--general-group-legend-color);
+    }
+
+    #settings-form .delay-setting-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 768px) {
+      #game-container {
+        padding: 10px;
+        max-height: 85vh;
+        gap: 5px; /* Reduced gap */
+      }
+      #controls {
+        gap: 5px; /* Reduced gap */
+        margin-bottom: 2px; /* Reduced margin */
+      }
+      #control-row-top,
+      #control-row-bottom {
+        gap: 6px;
+      }
+      .btn {
+        padding: 6px 10px;
+        font-size: 0.85em;
+      }
+      .column {
+        min-width: 130px;
+        padding: 6px;
+        gap: 5px;
+        min-height: 350px;
+      }
+      .word-card {
+        min-height: 45px;
+        max-height: 45px;
+        font-size: 1.3em;
+        padding: 3px 5px;
+      }
+      /* Re-enabled .mistake-badge CSS for smaller screens */
+      .mistake-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65em;
+      }
+      .mastered .mastered-check {
+        font-size: 0.9em;
+      }
+      .modal-content {
+        width: 90%;
+        padding: 12px;
+      }
+      /* Đã thay đổi khoảng cách giữa 2 cột cho màn hình nhỏ hơn */
+      #game-area {
+        gap: 6px; /* Adjusted for smaller screens */
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      #game-container {
+        padding: 8px;
+        max-height: 95vh;
+        gap: 5px; /* Reduced gap */
+      }
+      #controls {
+        gap: 4px; /* Reduced gap */
+        margin-bottom: 1px; /* Reduced margin */
+      }
+      #control-row-top,
+      #control-row-bottom {
+        gap: 4px;
+        flex-wrap: wrap; /* Allow wrapping on very small screens */
+      }
+      .left-buttons, .phonetic-sound-toggles {
+        flex-grow: 1; /* Allow them to take available space */
+        justify-content: center; /* Center items if they wrap */
+      }
+      .btn {
+        padding: 5px 8px;
+        font-size: 0.8em;
+      }
+      #btn-settings {
+        font-size: 1.3em;
+      }
+      .score-group {
+        gap: 8px;
+      }
+      .score-display,
+      .timer-display {
+        font-size: 0.9em;
+      }
+      .column {
+        min-width: 110px;
+        min-height: 320px;
+      }
+      .word-card {
+        min-height: 42px;
+        max-height: 42px;
+        font-size: 1.1em;
+        padding: 2px 4px;
+      }
+      .word-card .phonetic {
+        font-size: 0.8em;
+        margin-top: 2px;
+      }
+      #progress-bar-container {
+        height: 16px;
+      }
+      #progress-details {
+        font-size: 0.8em;
+      }
+      .modal-content {
+        width: 95%;
+        padding: 10px;
+      }
+      #settings-form label {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+      }
+    #settings-form input[type="number"],
+    #settings-form input[type="color"],
+    #settings-form select {
+        width: 100%; /* Make select full width on small screens */
+      }
+    }
+
+    /* CSS to position the Play/Pause button */
+    #control-row-bottom {
+      justify-content: space-between; /* Keep elements at both ends */
+    }
+
+    #btn-autoplay-toggle {
+      margin-left: -50px; /* Adjusted to move left by 50px */
+      font-size: 1.2em; /* Smaller icon */
+      padding: 6px 10px; /* Smaller padding */
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="controls">
+      <div id="control-row-top">
+        <div class="left-buttons">
+          <button id="btn-settings" class="btn" title="Cài đặt">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button id="btn-level" class="btn">Chọn Chủ đề</button>
+          <button id="btn-mode" class="btn">Bắt Đầu Lại</button>
+        </div>
+        <div class="score-group">
+          <span class="score-display correct">Đúng: <span id="score-correct">0</span></span>
+          <span class="score-display incorrect">Sai: <span id="score-incorrect">0</span></span>
+        </div>
+      </div>
+      <div id="control-row-bottom">
+        <div class="pinyin-toggle">
+          <input type="checkbox" id="toggle-phonetic" checked />
+          <label for="toggle-phonetic">Phiên Âm</label>
+        </div>
+        <button id="btn-autoplay-toggle" class="btn">
+          <i class="fas fa-play"></i>
+        </button>
+        <span class="timer-display"><span id="timer">00:00</span></span>
+      </div>
+    </div>
+
+    <div id="progress-area">
+      <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+        <div id="progress-details"></div>
+      </div>
+    </div>
+
+    <div id="game-area">
+      <div id="english-column" class="column"></div>
+      <div id="vietnamese-column" class="column"></div>
+    </div>
+  </div>
+
+  <div id="level-modal" class="modal">
+    <div class="modal-content">
+      <h2>Chọn Chủ đề</h2>
+      <div id="level-list"></div>
+    </div>
+  </div>
+
+  <div id="mode-modal" class="modal">
+    <div class="modal-content">
+      <h2>Chọn Chế độ học</h2>
+      <div id="mode-list">
+        <button id="btn-card-matching" class="btn">Ghép thẻ theo chủ đề</button>
+        <button id="btn-word-selection" class="btn" disabled>Chọn từ ghép thẻ (sắp ra mắt)</button>
+        <button id="btn-flashcards" class="btn" disabled>Flash card (sắp ra mắt)</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <h2>Cài đặt</h2>
+      <form id="settings-form">
+        <fieldset class="general-settings-group">
+          <legend>Cài đặt chung:</legend>
+          <label>
+            Chế độ tối (Dark Mode):
+            <input type="checkbox" id="setting-dark-mode" />
+          </label>
+          <label>
+            Đọc từ khi ghép đúng:
+            <input type="checkbox" id="setting-speak-on-correct-match" />
+          </label>
+          <label>
+            Màu chữ:
+            <input type="color" id="setting-text-color" />
+          </label>
+          <label>
+            Số từ mỗi vòng:
+            <select id="setting-words-per-round">
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="autoplay-settings-group">
+          <legend>Cài đặt tự động phát:</legend>
+          <label class="delay-setting-label">
+            Độ trễ giữa hai giọng đọc (giây):
+            <select id="setting-delay-between-voices">
+              <option value="1000">1</option>
+              <option value="2000">2</option>
+              <option value="3000">3</option>
+              <option value="4000">4</option>
+              <option value="5000">5</option>
+              <option value="6000">6</option>
+              <option value="7000">7</option>
+              <option value="8000">8</option>
+              <option value="9000">9</option>
+              <option value="10000">10</option>
+            </select>
+          </label>
+          <label class="delay-setting-label">
+            Độ trễ trước cặp từ mới (giây):
+            <select id="setting-delay-next-round">
+              <option value="1000">1</option>
+              <option value="2000">2</option>
+              <option value="3000">3</option>
+              <option value="4000">4</option>
+              <option value="5000">5</option>
+              <option value="6000">6</option>
+              <option value="7000">7</option>
+              <option value="8000">8</option>
+              <option value="9000">9</option>
+              <option value="10000">10</option>
+            </select>
+          </label>
+
+          <label>
+            Thứ tự giọng đọc :
+            <select id="setting-voice-order">
+              <option value="english-vietnamese">Tiếng Anh - Tiếng Việt</option>
+              <option value="vietnamese-english">Tiếng Việt - Tiếng Anh</option>
+            </select>
+          </label>
+          <label>
+            Số lần lặp lại tiếng Anh:
+            <select id="setting-english-repetitions">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+          <label>
+            Số lần lặp lại tiếng Việt:
+            <select id="setting-vietnamese-repetitions">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <button type="button" id="btn-save-settings" class="btn">Lưu Cài đặt</button>
+        </form>
+    </div>
+  </div>
+
+  <script>
+    // Constants for default text colors
+    const LIGHT_MODE_DEFAULT_TEXT_COLOR = '#333333';
+    const DARK_MODE_DEFAULT_TEXT_COLOR = '#f4f4f4';
+
+    // Game state and global variables
+    const gameState = {
+      currentLevel: 'Lớp 1', // Changed default level to Vietnamese
+      correct: 0,
+      incorrect: 0,
+      selectedCh: null, // Kept as selectedCh for internal consistency, but refers to English column
+      selectedVn: null,
+      activePairs: [],
+      weakWords: new Map(), // Stores words with mistakes and their count
+      masteredWords: new Set(), // Stores words mastered (0 mistakes)
+      totalWordsInLevel: 0,
+      currentMastered: 0,
+      timerInterval: null,
+      startTime: null,
+      speechSynthesisReady: false,
+      availableVoices: { 'en-US': [], 'vi-VN': [] }, // Updated available voices
+      timeoutIncreaseInterval: null, // Interval for increasing mistake count if an English word is selected for too long
+      currentEnglishTimeoutWord: null, // The English word currently selected for timeout
+      timeoutBaseDelay: 10000, // Changed to 10 seconds for hint/mistake
+      idleTimer: null, // Timer for showing hint if no interaction
+      hintDelay: 20000, // Delay before hint is shown (20 seconds)
+      hintTimeout: null, // Timeout after hint before autoplay starts
+      currentHintPair: null, // The current pair being hinted
+      autoPlayTimer: null, // Timer for autoplay
+      isAutoplayActive: false, // Flag to indicate if autoplay is active
+      settings: {
+        darkMode: true, // Default to dark mode
+        textColor: DARK_MODE_DEFAULT_TEXT_COLOR, // Default to dark mode text color
+        wordsPerRound: 6,
+        delayBetweenVoices: 2000, // Default to 2 seconds (2000ms) for autoplay
+        delayNextRound: 4000, // Default to 4 seconds (4000ms) for autoplay, was 3000
+        manualInteractionDelay: 0, // Changed default to 0 for immediate speech
+        enableSound: true, // Sound is always enabled now
+        voiceOrder: 'english-vietnamese', // Default voice order
+        englishRepetitions: 1, // Default English repetitions
+        vietnameseRepetitions: 1, // Default Vietnamese repetitions
+        repetitionDelay: 600, // 0.6 seconds delay between repetitions
+        speakOnCorrectMatch: false, // Changed default to false
+      },
+    };
+
+    // DOM elements
+    const elements = {
+      englishColumn: document.getElementById('english-column'), // Renamed for logical consistency
+      vietnameseColumn: document.getElementById('vietnamese-column'),
+      scoreCorrect: document.getElementById('score-correct'),
+      scoreIncorrect: document.getElementById('score-incorrect'),
+      timer: document.getElementById('timer'),
+      levelModal: document.getElementById('level-modal'),
+      levelList: document.getElementById('level-list'),
+      modeModal: document.getElementById('mode-modal'),
+      togglePhonetic: document.getElementById('toggle-phonetic'),
+      btnAutoplayToggle: document.getElementById('btn-autoplay-toggle'),
+      progressBar: document.getElementById('progress-bar'),
+      progressDetails: document.getElementById('progress-details'),
+      settingsModal: document.getElementById('settings-modal'),
+      settingDarkMode: document.getElementById('setting-dark-mode'),
+      settingTextColor: document.getElementById('setting-text-color'),
+      settingWordsPerRound: document.getElementById('setting-words-per-round'),
+      settingDelayBetweenVoices: document.getElementById('setting-delay-between-voices'),
+      settingDelayNextRound: document.getElementById('setting-delay-next-round'),
+      settingSpeakOnCorrectMatch: document.getElementById('setting-speak-on-correct-match'),
+      settingVoiceOrder: document.getElementById('setting-voice-order'),
+      settingEnglishRepetitions: document.getElementById('setting-english-repetitions'),
+      settingVietnameseRepetitions: document.getElementById('setting-vietnamese-repetitions'),
+    };
+
+    // Vocabulary Data (English) - Bổ sung từ vựng tiếng Anh đầy đủ hơn
+    const vocabulary = {
+      'Lớp 1': [
+        { en: "hello", phonetic: "həˈloʊ", vn: "xin chào" },
+        { en: "apple", phonetic: "ˈæpəl", vn: "quả táo" },
+        { en: "cat", phonetic: "kæt", vn: "con mèo" },
+        { en: "dog", phonetic: "dɔːɡ", vn: "con chó" },
+        { en: "book", phonetic: "bʊk", vn: "quyển sách" },
+        { en: "pen", phonetic: "pen", vn: "cây bút" },
+        { en: "house", phonetic: "haʊs", vn: "ngôi nhà" },
+        { en: "car", phonetic: "kɑːr", vn: "xe hơi" },
+        { en: "tree", phonetic: "triː", vn: "cái cây" },
+        { en: "water", phonetic: "ˈwɔːtər", vn: "nước" },
+        { en: "sun", phonetic: "sʌn", vn: "mặt trời" },
+        { en: "moon", phonetic: "muːn", vn: "mặt trăng" },
+        { en: "star", phonetic: "stɑːr", vn: "ngôi sao" },
+        { en: "flower", phonetic: "ˈflaʊər", vn: "bông hoa" },
+        { en: "bird", phonetic: "bɜːrd", vn: "con chim" },
+        { en: "fish", phonetic: "fɪʃ", vn: "con cá" },
+        { en: "boy", phonetic: "bɔɪ", vn: "bé trai" },
+        { en: "girl", phonetic: "ɡɜːrl", vn: "bé gái" },
+        { en: "man", phonetic: "mæn", vn: "người đàn ông" },
+        { en: "woman", phonetic: "ˈwʊmən", vn: "người phụ nữ" },
+        { en: "run", phonetic: "rʌn", vn: "chạy" },
+        { en: "jump", phonetic: "dʒʌmp", vn: "nhảy" },
+        { en: "eat", phonetic: "iːt", vn: "ăn" },
+        { en: "drink", phonetic: "drɪŋk", vn: "uống" },
+        { en: "sleep", phonetic: "sliːp", vn: "ngủ" },
+        { en: "play", phonetic: "pleɪ", vn: "chơi" },
+        { en: "happy", phonetic: "ˈhæpi", vn: "vui vẻ" },
+        { en: "sad", phonetic: "sæd", vn: "buồn bã" },
+        { en: "big", phonetic: "bɪɡ", vn: "to lớn" },
+        { en: "small", phonetic: "smɔːl", vn: "nhỏ bé" },
+      ],
+      'Lớp 2': [
+        { en: "school", phonetic: "skuːl", vn: "trường học" },
+        { en: "friend", phonetic: "frend", vn: "người bạn" },
+        { en: "teacher", phonetic: "ˈtiːtʃər", vn: "giáo viên" },
+        { en: "student", phonetic: "ˈstuːdnt", vn: "học sinh" },
+        { en: "classroom", phonetic: "ˈklæs.ruːm", vn: "lớp học" },
+        { en: "desk", phonetic: "desk", vn: "bàn học" },
+        { en: "chair", phonetic: "tʃer", vn: "ghế" },
+        { en: "pencil", phonetic: "ˈpen.səl", vn: "bút chì" },
+        { en: "eraser", phonetic: "ɪˈreɪ.sər", vn: "cục tẩy" },
+        { en: "bag", phonetic: "bæɡ", vn: "cặp sách" },
+        { en: "read", phonetic: "riːd", vn: "đọc" },
+        { en: "write", phonetic: "raɪt", vn: "viết" },
+        { en: "draw", phonetic: "drɔː", vn: "vẽ" },
+        { en: "sing", phonetic: "sɪŋ", vn: "hát" },
+        { en: "dance", phonetic: "dæns", vn: "nhảy múa" },
+        { en: "listen", phonetic: "ˈlɪs.ən", vn: "nghe" },
+        { en: "speak", phonetic: "spiːk", vn: "nói" },
+        { en: "morning", phonetic: "ˈmɔːrnɪŋ", vn: "buổi sáng" },
+        { en: "afternoon", phonetic: "ˌæftərˈnuːn", vn: "buổi chiều" },
+        { en: "evening", phonetic: "ˈiːvnɪŋ", vn: "buổi tối" },
+        { en: "night", phonetic: "naɪt", vn: "buổi đêm" },
+        { en: "family", phonetic: "ˈfæməli", vn: "gia đình" },
+        { en: "mother", phonetic: "ˈmʌðər", vn: "mẹ" },
+        { en: "father", phonetic: "ˈfɑːðər", vn: "bố" },
+        { en: "brother", phonetic: "ˈbrʌðər", vn: "anh/em trai" },
+        { en: "sister", phonetic: "ˈsɪstər", vn: "chị/em gái" },
+        { en: "grandma", phonetic: "ˈɡræn.mɑː", vn: "bà" },
+        { en: "grandpa", phonetic: "ˈɡræn.pɑː", vn: "ông" },
+        { en: "home", phonetic: "hoʊm", vn: "nhà" },
+        { en: "kitchen", phonetic: "ˈkɪtʃɪn", vn: "nhà bếp" },
+      ],
+      'Lớp 3': [
+        { en: "beautiful", phonetic: "ˈbjuːtɪfl", vn: "đẹp" },
+        { en: "difficult", phonetic: "ˈdɪfɪkəlt", vn: "khó khăn" },
+        { en: "easy", phonetic: "ˈiːzi", vn: "dễ dàng" },
+        { en: "important", phonetic: "ɪmˈpɔːrtnt", vn: "quan trọng" },
+        { en: "clever", phonetic: "ˈklevər", vn: "thông minh" },
+        { en: "kind", phonetic: "kaɪnd", vn: "tốt bụng" },
+        { en: "brave", phonetic: "breɪv", vn: "dũng cảm" },
+        { en: "shy", phonetic: "ʃaɪ", vn: "ngại ngùng" },
+        { en: "angry", phonetic: "ˈæŋɡri", vn: "tức giận" },
+        { en: "excited", phonetic: "ɪkˈsaɪtɪd", vn: "hào hứng" },
+        { en: "hungry", phonetic: "ˈhʌŋɡri", vn: "đói" },
+        { en: "thirsty", phonetic: "ˈθɜːrsti", vn: "khát" },
+        { en: "cold", phonetic: "koʊld", vn: "lạnh" },
+        { en: "hot", phonetic: "hɑːt", vn: "nóng" },
+        { en: "tall", phonetic: "tɔːl", vn: "cao" },
+        { en: "short", phonetic: "ʃɔːrt", vn: "thấp" },
+        { en: "fat", phonetic: "fæt", vn: "béo" },
+        { en: "thin", phonetic: "θɪn", vn: "gầy" },
+        { en: "young", phonetic: "jʌŋ", vn: "trẻ" },
+        { en: "old", phonetic: "oʊld", vn: "già" },
+        { en: "doctor", phonetic: "ˈdɑːktər", vn: "bác sĩ" },
+        { en: "nurse", phonetic: "nɜːrs", vn: "y tá" },
+        { en: "engineer", phonetic: "ˌendʒɪˈnɪr", vn: "kỹ sư" },
+        { en: "farmer", phonetic: "ˈfɑːrmər", vn: "nông dân" },
+        { en: "police", phonetic: "pəˈliːs", vn: "cảnh sát" },
+        { en: "firefighter", phonetic: "ˈfaɪərˌfaɪtər", vn: "lính cứu hỏa" },
+        { en: "cook", phonetic: "kʊk", vn: "đầu bếp" },
+        { en: "singer", phonetic: "ˈsɪŋər", vn: "ca sĩ" },
+        { en: "dancer", phonetic: "ˈdænsər", vn: "vũ công" },
+        { en: "artist", phonetic: "ˈɑːrtɪst", vn: "họa sĩ" },
+      ],
+      'Lớp 4': [
+        { en: "adventure", phonetic: "ədˈventʃər", vn: "cuộc phiêu lưu" },
+        { en: "explore", phonetic: "ɪkˈsplɔːr", vn: "khám phá" },
+        { en: "mystery", phonetic: "ˈmɪstəri", vn: "bí ẩn" },
+        { en: "courage", phonetic: "ˈkɜːrɪdʒ", vn: "lòng dũng cảm" },
+        { en: "knowledge", phonetic: "ˈnɑːlɪdʒ", vn: "kiến thức" },
+        { en: "science", phonetic: "ˈsaɪəns", vn: "khoa học" },
+        { en: "history", phonetic: "ˈhɪstəri", vn: "lịch sử" },
+        { en: "geography", phonetic: "dʒiˈɑːɡrəfi", vn: "địa lý" },
+        { en: "technology", phonetic: "tekˈnɑːlədʒi", vn: "công nghệ" },
+        { en: "environment", phonetic: "ɪnˈvaɪrənmənt", vn: "môi trường" },
+        { en: "planet", phonetic: "ˈplænɪt", vn: "hành tinh" },
+        { en: "galaxy", phonetic: "ˈɡæləksi", vn: "thiên hà" },
+        { en: "universe", phonetic: "ˈjuːnɪvɜːrs", vn: "vũ trụ" },
+        { en: "research", phonetic: "rɪˈsɜːrtʃ", vn: "nghiên cứu" },
+        { en: "experiment", phonetic: "ɪkˈsperɪmənt", vn: "thí nghiệm" },
+        { en: "discover", phonetic: "dɪˈskʌvər", vn: "khám phá" },
+        { en: "invent", phonetic: "ɪnˈvent", vn: "phát minh" },
+        { en: "protect", phonetic: "prəˈtekt", vn: "bảo vệ" },
+        { en: "recycle", phonetic: "riːˈsaɪkl", vn: "tái chế" },
+        { en: "pollution", phonetic: "pəˈluːʃn", vn: "ô nhiễm" },
+        { en: "energy", phonetic: "ˈenərdʒi", vn: "năng lượng" },
+        { en: "climate", phonetic: "ˈklaɪmət", vn: "khí hậu" },
+        { en: "weather", phonetic: "ˈweðər", vn: "thời tiết" },
+        { en: "season", phonetic: "ˈsiːzn", vn: "mùa" },
+        { en: "ocean", phonetic: "ˈoʊʃn", vn: "đại dương" },
+        { en: "river", phonetic: "ˈrɪvər", vn: "sông" },
+        { en: "mountain", phonetic: "ˈmaʊntən", vn: "núi" },
+        { en: "forest", phonetic: "ˈfɔːrɪst", vn: "rừng" },
+        { en: "desert", phonetic: "ˈdezərt", vn: "sa mạc" },
+        { en: "island", phonetic: "ˈaɪlənd", vn: "hòn đảo" },
+      ],
+      'Lớp 5': [
+        { en: "communicate", phonetic: "kəˈmjuːnɪkeɪt", vn: "giao tiếp" },
+        { en: "cooperate", phonetic: "koʊˈɑːpəreɪt", vn: "hợp tác" },
+        { en: "challenge", phonetic: "ˈtʃælɪndʒ", vn: "thử thách" },
+        { en: "solution", phonetic: "səˈluːʃn", vn: "giải pháp" },
+        { en: "creativity", phonetic: "ˌkriːeɪˈtɪvəti", vn: "sáng tạo" },
+        { en: "innovation", phonetic: "ˌɪnəˈveɪʃn", vn: "đổi mới" },
+        { en: "global", phonetic: "ˈɡloʊbl", vn: "toàn cầu" },
+        { en: "culture", phonetic: "ˈkʌltʃər", vn: "văn hóa" },
+        { en: "diversity", phonetic: "daɪˈvɜːrsəti", vn: "đa dạng" },
+        { en: "community", phonetic: "kəˈmjuːnəti", vn: "cộng đồng" },
+        { en: "responsibility", phonetic: "rɪˌspɑːnsəˈbɪləti", vn: "trách nhiệm" },
+        { en: "opportunity", phonetic: "ˌɑːpərˈtuːnəti", vn: "cơ hội" },
+        { en: "experience", phonetic: "ɪkˈspɪriəns", vn: "kinh nghiệm" },
+        { en: "knowledge", phonetic: "ˈnɑːlɪdʒ", vn: "kiến thức" },
+        { en: "education", phonetic: "ˌedʒuˈkeɪʃn", vn: "giáo dục" },
+        { en: "development", phonetic: "dɪˈveləpmənt", vn: "phát triển" },
+        { en: "progress", phonetic: "ˈprɑːɡres", vn: "tiến bộ" },
+        { en: "achievement", phonetic: "əˈtʃiːvmənt", vn: "thành tựu" },
+        { en: "influence", phonetic: "ˈɪnfluəns", vn: "ảnh hưởng" },
+        { en: "contribute", phonetic: "kənˈtrɪbjuːt", vn: "đóng góp" },
+        { en: "sustainability", phonetic: "səˌsteɪnəˈbɪləti", vn: "bền vững" },
+        { en: "economy", phonetic: "ɪˈkɑːnəmi", vn: "kinh tế" },
+        { en: "government", phonetic: "ˈɡʌvərnmənt", vn: "chính phủ" },
+        { en: "citizen", phonetic: "ˈsɪtɪzn", vn: "công dân" },
+        { en: "justice", phonetic: "ˈdʒʌstɪs", vn: "công lý" },
+        { en: "equality", phonetic: "ɪˈkwɑːləti", vn: "bình đẳng" },
+        { en: "freedom", phonetic: "ˈfriːdəm", vn: "tự do" },
+        { en: "peace", phonetic: "piːs", vn: "hòa bình" },
+        { en: "conflict", phonetic: "ˈkɑːnflɪkt", vn: "xung đột" },
+        { en: "resolution", phonetic: "ˌrezəˈluːʃn", vn: "giải quyết" },
+      ],
+    };
+
+    // Load/Save Settings
+    function loadSettings() {
+      const savedSettings = localStorage.getItem("gameSettings");
+      if (savedSettings) {
+        // Load existing settings
+        gameState.settings = { ...gameState.settings, ...JSON.parse(savedSettings) };
+      }
+
+      // Apply default text color based on initial dark mode state if no custom color was set
+      if (gameState.settings.darkMode && gameState.settings.textColor === LIGHT_MODE_DEFAULT_TEXT_COLOR) {
+          gameState.settings.textColor = DARK_MODE_DEFAULT_TEXT_COLOR;
+      } else if (!gameState.settings.darkMode && gameState.settings.textColor === DARK_MODE_DEFAULT_TEXT_COLOR) {
+          gameState.settings.textColor = LIGHT_MODE_DEFAULT_TEXT_COLOR;
+      }
+
+      // Ensure new settings are initialized if not present in saved settings
+      gameState.settings.enableSound = true;
+      if (typeof gameState.settings.voiceOrder === 'undefined') {
+          gameState.settings.voiceOrder = 'english-vietnamese'; // Default voice order
+      }
+      if (typeof gameState.settings.englishRepetitions === 'undefined') {
+          gameState.settings.englishRepetitions = 1; // Default English repetitions
+      }
+      if (typeof gameState.settings.vietnameseRepetitions === 'undefined') {
+          gameState.settings.vietnameseRepetitions = 1; // Default Vietnamese repetitions
+      }
+      if (typeof gameState.settings.repetitionDelay === 'undefined') {
+          gameState.settings.repetitionDelay = 600; // Default repetition delay
+      }
+
+      const allowedDelayValues = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
+      if (!allowedDelayValues.includes(gameState.settings.delayBetweenVoices)) {
+          gameState.settings.delayBetweenVoices = 2000;
+      }
+      if (!allowedDelayValues.includes(gameState.settings.delayNextRound)) {
+          gameState.settings.delayNextRound = 4000;
+      }
+
+      gameState.settings.manualInteractionDelay = 0;
+      if (typeof gameState.settings.speakOnCorrectMatch === 'undefined') {
+          gameState.settings.speakOnCorrectMatch = false;
+      }
+
+      applySettings();
+    }
+
+    function saveSettings() {
+      gameState.settings.wordsPerRound = parseInt(elements.settingWordsPerRound.value, 10);
+      gameState.settings.voiceOrder = elements.settingVoiceOrder.value;
+      gameState.settings.englishRepetitions = parseInt(elements.settingEnglishRepetitions.value, 10);
+      gameState.settings.vietnameseRepetitions = parseInt(elements.settingVietnameseRepetitions.value, 10);
+      gameState.settings.delayBetweenVoices = parseInt(elements.settingDelayBetweenVoices.value, 10);
+      gameState.settings.delayNextRound = parseInt(elements.settingDelayNextRound.value, 10);
+      gameState.settings.speakOnCorrectMatch = elements.settingSpeakOnCorrectMatch.checked;
+
+      localStorage.setItem("gameSettings", JSON.stringify(gameState.settings));
+      applySettings();
+      showCustomAlert("Cài đặt đã được lưu!"); // Translated
+      elements.settingsModal.style.display = "none";
+      toggleMistakeBadges(true);
+
+      if (gameState.isAutoplayActive) {
+        scheduleNextAutoplayAction();
+      } else {
+        startIdleTimer();
+      }
+    }
+
+    function applySettings() {
+      document.body.classList.toggle("dark-mode", gameState.settings.darkMode);
+      if (!gameState.settings.darkMode) {
+        document.documentElement.style.setProperty("--text-color", gameState.settings.textColor);
+      } else {
+        document.documentElement.style.setProperty("--dark-mode-text-color", gameState.settings.textColor);
+      }
+      elements.settingDarkMode.checked = gameState.settings.darkMode;
+      elements.settingTextColor.value = gameState.settings.textColor;
+      elements.settingWordsPerRound.value = gameState.settings.wordsPerRound;
+      elements.settingDelayBetweenVoices.value = gameState.settings.delayBetweenVoices;
+      elements.settingDelayNextRound.value = gameState.settings.delayNextRound;
+      elements.settingSpeakOnCorrectMatch.checked = gameState.settings.speakOnCorrectMatch;
+      const autoplayIcon = elements.btnAutoplayToggle.querySelector('i');
+      if (autoplayIcon) {
+          autoplayIcon.classList.toggle('fa-pause', gameState.isAutoplayActive);
+          autoplayIcon.classList.toggle('fa-play', !gameState.isAutoplayActive);
+      }
+
+      elements.settingVoiceOrder.value = gameState.settings.voiceOrder;
+      elements.settingEnglishRepetitions.value = gameState.settings.englishRepetitions;
+      elements.settingVietnameseRepetitions.value = gameState.settings.vietnameseRepetitions;
+    }
+
+    // Initialize game
+    function initGame(level) {
+      gameState.currentLevel = level;
+      gameState.correct = 0;
+      gameState.incorrect = 0;
+      resetSelection();
+      gameState.activePairs = [];
+
+      clearInterval(gameState.timerInterval);
+      gameState.startTime = new Date();
+      gameState.timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
+      updateScores();
+
+      gameState.totalWordsInLevel = vocabulary[gameState.currentLevel].length;
+      gameState.currentMastered = 0;
+
+      resetTimeoutMechanismForSelectedEnglishWord();
+      clearHint();
+      stopAutoplay();
+      clearIdleTimer();
+
+      prepareWords(false);
+      renderColumns();
+      updatePhoneticDisplay();
+      updateProgress();
+      adjustTimerWidth();
+
+      startIdleTimer();
+    }
+
+    function prepareWords(isAutoplayMode = false) {
+      const allWordsInLevel = vocabulary[gameState.currentLevel];
+      let candidateWords = [];
+
+      const unmasteredAndWeakWords = allWordsInLevel.filter(pair => {
+          const mistakes = gameState.weakWords.get(pair.en) || 0;
+          return !gameState.masteredWords.has(pair.en) || mistakes > 0;
+      });
+
+      const wordsWithMistakes = unmasteredAndWeakWords.filter(pair => (gameState.weakWords.get(pair.en) || 0) > 0);
+      const neverSeenOrZeroMistakeWords = unmasteredAndWeakWords.filter(pair => (gameState.weakWords.get(pair.en) || 0) === 0);
+
+      wordsWithMistakes.sort((a, b) => {
+          const mA = gameState.weakWords.get(a.en) || 0;
+          const mB = gameState.weakWords.get(b.en) || 0;
+          return mB - mA;
+      });
+
+      candidateWords = [...wordsWithMistakes, ...shuffleArray(neverSeenOrZeroMistakeWords)];
+
+      gameState.activePairs = candidateWords.slice(0, gameState.settings.wordsPerRound);
+    }
+
+    function renderColumns() {
+      elements.englishColumn.innerHTML = "";
+      elements.vietnameseColumn.innerHTML = "";
+
+      const englishWords = shuffleArray([...gameState.activePairs]);
+      const vietnameseWords = shuffleArray([...gameState.activePairs]);
+
+      englishWords.forEach((pair, index) => {
+        const card = document.createElement("div");
+        card.className = "word-card";
+        card.dataset.word = pair.en;
+        card.dataset.index = index;
+        card.innerHTML = `<span>${pair.en}</span><span class="phonetic">${pair.phonetic}</span>`;
+        if (gameState.masteredWords.has(pair.en) && (gameState.weakWords.get(pair.en) || 0) === 0) {
+          card.classList.add("mastered");
+          const checkmark = document.createElement("span");
+          checkmark.className = "mastered-check";
+          checkmark.innerHTML = "&#10003;";
+          card.appendChild(checkmark);
+        }
+        updateMistakeBadge(pair.en, card);
+        card.addEventListener("click", () => {
+          speakWord(pair.en, "en-US");
+          selectCard(card, "en", index);
+        });
+        elements.englishColumn.appendChild(card);
+      });
+
+      vietnameseWords.forEach((pair, index) => {
+        const card = document.createElement("div");
+        card.className = "word-card";
+        card.dataset.word = pair.vn;
+        card.dataset.originalEn = pair.en; // Link Vietnamese card to its English counterpart
+        card.dataset.index = index;
+        card.textContent = pair.vn;
+        if (gameState.masteredWords.has(pair.en) && (gameState.weakWords.get(pair.en) || 0) === 0) {
+          card.classList.add("mastered");
+        }
+        card.addEventListener("click", () => selectCard(card, "vn", index));
+        elements.vietnameseColumn.appendChild(card);
+      });
+      updatePhoneticDisplay();
+    }
+
+    function selectCard(card, type, index) {
+      clearHint();
+      clearIdleTimer();
+      if (
+        card.classList.contains("hidden") ||
+        card.classList.contains("correct-animation") ||
+        card.classList.contains("incorrect-animation")
+      ) {
+        return;
+      }
+      if (type === "en") {
+        if (gameState.selectedCh === index) { // Still using selectedCh internally
+          card.classList.remove("selected");
+          resetSelection();
+          resetTimeoutMechanismForSelectedEnglishWord();
+          startIdleTimer();
+        } else {
+          if (gameState.selectedCh !== null) {
+            elements.englishColumn.children[gameState.selectedCh].classList.remove("selected");
+          }
+          gameState.selectedCh = index;
+          card.classList.add("selected");
+          startTimeoutMechanismForSelectedEnglishWord(card.dataset.word);
+        }
+      } else { // type === "vn"
+        if (gameState.selectedVn !== null) {
+          elements.vietnameseColumn.children[gameState.selectedVn].classList.remove("selected");
+        }
+        gameState.selectedVn = index;
+        card.classList.add("selected");
+      }
+      if (gameState.selectedCh !== null && gameState.selectedVn !== null) {
+        checkPair();
+      }
+    }
+
+    // Starts a mechanism to add a single mistake and show hint if an English word is selected for too long
+    function startTimeoutMechanismForSelectedEnglishWord(englishWord) {
+      resetTimeoutMechanismForSelectedEnglishWord();
+      gameState.currentEnglishTimeoutWord = englishWord;
+      gameState.timeoutIncreaseInterval = setTimeout(() => {
+        if (gameState.currentEnglishTimeoutWord === englishWord) {
+            const currentMistakes = gameState.weakWords.get(englishWord) || 0;
+            gameState.weakWords.set(englishWord, currentMistakes + 1);
+            updateMistakeBadge(englishWord);
+            if (gameState.masteredWords.has(englishWord)) {
+                gameState.masteredWords.delete(englishWord);
+                gameState.currentMastered--;
+                updateProgress();
+            }
+            showHint();
+        }
+        resetTimeoutMechanismForSelectedEnglishWord();
+      }, gameState.timeoutBaseDelay);
+    }
+
+    // Resets the timeout mechanism for selected English word
+    function resetTimeoutMechanismForSelectedEnglishWord() {
+      if (gameState.timeoutIncreaseInterval) {
+        clearTimeout(gameState.timeoutIncreaseInterval);
+        gameState.timeoutIncreaseInterval = null;
+      }
+      gameState.currentEnglishTimeoutWord = null;
+    }
+
+    function startIdleTimer() {
+      if (gameState.selectedCh === null && !gameState.isAutoplayActive) {
+        clearIdleTimer();
+        gameState.idleTimer = setTimeout(() => {
+          showHint();
+        }, gameState.hintDelay);
+      }
+    }
+
+    function clearIdleTimer() {
+      if (gameState.idleTimer) {
+        clearTimeout(gameState.idleTimer);
+        gameState.idleTimer = null;
+      }
+      if (gameState.hintTimeout) {
+        clearTimeout(gameState.hintTimeout);
+        gameState.hintTimeout = null;
+      }
+    }
+
+    function showHint() {
+      clearHint();
+      const availablePairs = gameState.activePairs.filter(pair => {
+        const enCard = elements.englishColumn.querySelector(`[data-word="${pair.en}"]`);
+        return enCard && !enCard.classList.contains('hidden') && !enCard.classList.contains('mastered');
+      });
+
+      if (availablePairs.length > 0) {
+        const hintPair = shuffleArray(availablePairs)[0];
+        const enCard = elements.englishColumn.querySelector(`[data-word="${hintPair.en}"]`);
+        const vnCard = elements.vietnameseColumn.querySelector(`[data-original-en="${hintPair.en}"]`);
+
+        if (enCard && vnCard) {
+          enCard.classList.add('hint-glow-green');
+          vnCard.classList.add('hint-glow-green');
+          gameState.currentHintPair = hintPair;
+        }
+      }
+    }
+
+    function clearHint() {
+      if (gameState.currentHintPair) {
+        const enCard = elements.englishColumn.querySelector(`[data-word="${gameState.currentHintPair.en}"]`);
+        const vnCard = elements.vietnameseColumn.querySelector(`[data-original-en="${gameState.currentHintPair.en}"]`);
+        if (enCard) {
+          enCard.classList.remove('hint-glow-green');
+        }
+        if (vnCard) {
+          vnCard.classList.remove('hint-glow-green');
+        }
+        gameState.currentHintPair = null;
+      }
+    }
+
+    function scheduleNextAutoplayAction() {
+        clearTimeout(gameState.autoPlayTimer);
+        if (gameState.isAutoplayActive) {
+            gameState.autoPlayTimer = setTimeout(autoPlayNextPair, gameState.settings.delayNextRound);
+        }
+    }
+
+    async function autoPlayNextPair() {
+      if (!gameState.isAutoplayActive) return;
+
+      const availableCards = [...elements.englishColumn.children].filter(
+        (card) => !card.classList.contains("hidden") && !card.classList.contains("mastered")
+      );
+
+      if (availableCards.length === 0) {
+        checkRoundCompletionForAutoplay();
+        return;
+      }
+
+      const randomEnCard = shuffleArray(availableCards)[0];
+      const englishWord = randomEnCard.dataset.word;
+      const pairToPlay = vocabulary[gameState.currentLevel].find(p => p.en === englishWord);
+      const vnCard = elements.vietnameseColumn.querySelector(`[data-original-en="${pairToPlay.en}"]`);
+
+      if (randomEnCard && vnCard) {
+        randomEnCard.classList.add("selected");
+        vnCard.classList.add("selected");
+        document.querySelectorAll(".word-card").forEach(
+          (card) => (card.style.pointerEvents = "none")
+        );
+
+        await playWordPairAudio(pairToPlay.en, pairToPlay.vn, true);
+
+        randomEnCard.classList.add("correct-animation");
+        vnCard.classList.add("correct-animation");
+
+        setTimeout(() => {
+            randomEnCard.classList.add("hidden");
+            vnCard.classList.add("hidden");
+            randomEnCard.classList.remove("selected", "correct-animation");
+            vnCard.classList.remove("selected", "correct-animation");
+            resetSelection();
+            document.querySelectorAll(".word-card").forEach(
+                (card) => (card.style.pointerEvents = "auto")
+            );
+            scheduleNextAutoplayAction();
+        }, 700);
+      } else {
+          scheduleNextAutoplayAction();
+      }
+    }
+
+    function checkRoundCompletionForAutoplay() {
+      const remainingCards = [...elements.englishColumn.children].filter(
+        (card) => !card.classList.contains("hidden")
+      );
+      if (remainingCards.length === 0) {
+        const allWordsInLevel = vocabulary[gameState.currentLevel];
+        const allMastered = allWordsInLevel.every(
+          (word) =>
+            gameState.masteredWords.has(word.en) &&
+            (gameState.weakWords.get(word.en) || 0) === 0
+        );
+        if (allMastered) {
+          completeLevel();
+        } else {
+          setTimeout(() => {
+            prepareWords(true);
+            renderColumns();
+            scheduleNextAutoplayAction();
+          }, gameState.settings.delayNextRound);
+        }
+      } else {
+        scheduleNextAutoplayAction();
+      }
+    }
+
+    function startAutoplay() {
+        clearIdleTimer();
+        gameState.isAutoplayActive = true;
+        applySettings();
+        prepareWords(true);
+        renderColumns();
+        scheduleNextAutoplayAction();
+    }
+
+    function stopAutoplay() {
+        clearTimeout(gameState.autoPlayTimer);
+        gameState.autoPlayTimer = null;
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        gameState.isAutoplayActive = false;
+        applySettings();
+        startIdleTimer();
+    }
+
+    function checkPair() {
+      const enCard = elements.englishColumn.children[gameState.selectedCh]; // Still using selectedCh internally
+      const vnCard = elements.vietnameseColumn.children[gameState.selectedVn];
+      const enWord = enCard.dataset.word;
+      const vnWord = vnCard.dataset.word;
+      const matchedPair = vocabulary[gameState.currentLevel].find(
+        (p) => p.en === enWord && p.vn === vnWord
+      );
+      document.querySelectorAll(".word-card").forEach(
+        (card) => (card.style.pointerEvents = "none")
+      );
+      clearHint();
+      stopAutoplay();
+      if (matchedPair) {
+        handleCorrectMatch(enCard, vnCard, matchedPair.en, matchedPair.vn);
+      } else {
+        handleIncorrectMatch(enCard, vnCard, enWord);
+      }
+    }
+
+    async function handleCorrectMatch(enCard, vnCard, englishWord, vietnameseWord) {
+      gameState.correct++;
+      updateScores('correct');
+      if (gameState.weakWords.has(englishWord)) {
+        let currentMistakes = gameState.weakWords.get(englishWord);
+        if (currentMistakes > 0) {
+          gameState.weakWords.set(englishWord, currentMistakes - 1);
+        } else {
+          gameState.weakWords.delete(englishWord);
+        }
+      }
+      if (!gameState.weakWords.has(englishWord) && !gameState.masteredWords.has(englishWord)) {
+        gameState.masteredWords.add(englishWord);
+        gameState.currentMastered++;
+      }
+      updateMistakeBadge(englishWord);
+
+      if (gameState.settings.speakOnCorrectMatch) {
+        await playWordPairAudio(englishWord, vietnameseWord, false);
+      }
+
+      enCard.classList.add("correct-animation");
+      vnCard.classList.add("correct-animation");
+
+      setTimeout(() => {
+          enCard.classList.add("hidden");
+          vnCard.classList.add("hidden");
+          enCard.classList.remove("selected", "correct-animation");
+          vnCard.classList.remove("selected", "correct-animation");
+          resetSelection();
+          checkRoundCompletion();
+          document.querySelectorAll(".word-card").forEach(
+              (card) => (card.style.pointerEvents = "auto")
+          );
+          startIdleTimer();
+      }, 700);
+    }
+
+    async function handleIncorrectMatch(enCard, vnCard, englishWord) {
+      gameState.incorrect++;
+      updateScores('incorrect');
+      const currentMistakes = gameState.weakWords.get(englishWord) || 0;
+      gameState.weakWords.set(englishWord, currentMistakes + 1);
+      if (gameState.masteredWords.has(englishWord)) {
+        gameState.masteredWords.delete(englishWord);
+        gameState.currentMastered--;
+      }
+      enCard.classList.add("incorrect-animation");
+      vnCard.classList.add("incorrect-animation");
+      updateMistakeBadge(englishWord);
+
+      setTimeout(() => {
+          enCard.classList.remove("selected", "incorrect-animation");
+          vnCard.classList.remove("selected", "incorrect-animation");
+          resetSelection();
+          document.querySelectorAll(".word-card").forEach(
+            (card) => (card.style.pointerEvents = "auto")
+          );
+          startIdleTimer();
+      }, 500);
+    }
+
+    function updateMistakeBadge(englishWord, cardElement) {
+      let card = cardElement;
+      if (!card) {
+        card = elements.englishColumn.querySelector(`[data-word="${englishWord}"]`);
+      }
+      if (card) {
+        const mistakeCount = gameState.weakWords.get(englishWord) || 0;
+        let badge = card.querySelector(".mistake-badge");
+        if (mistakeCount > 0) {
+          if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "mistake-badge";
+            card.appendChild(badge);
+          }
+          badge.textContent = mistakeCount;
+        } else {
+          if (badge) {
+            badge.remove();
+          }
+        }
+        updateProgress();
+      }
+    }
+
+    function checkRoundCompletion() {
+      const remainingCards = [...elements.englishColumn.children].filter(
+        (card) => !card.classList.contains("hidden")
+      );
+      if (remainingCards.length === 0) {
+        const allWordsInLevel = vocabulary[gameState.currentLevel];
+        const allMastered = allWordsInLevel.every(
+          (word) =>
+            gameState.masteredWords.has(word.en) &&
+            (gameState.weakWords.get(word.en) || 0) === 0
+        );
+        if (allMastered) {
+          completeLevel();
+        } else {
+          if (gameState.isAutoplayActive) {
+            setTimeout(() => {
+              prepareWords(true);
+              renderColumns();
+              scheduleNextAutoplayAction();
+            }, gameState.settings.delayNextRound);
+          } else {
+            prepareWords(false);
+            renderColumns();
+            startIdleTimer();
+          }
+        }
+      }
+    }
+
+    function completeLevel() {
+      clearInterval(gameState.timerInterval);
+      resetTimeoutMechanismForSelectedEnglishWord();
+      clearHint();
+      stopAutoplay();
+      const endTime = new Date();
+      const diff = Math.floor((endTime - gameState.startTime) / 1000);
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      setTimeout(() => {
+        showCustomAlert(`Chúc mừng! Bạn đã hoàn thành cấp độ ${gameState.currentLevel}!\nThời gian: ${timeString}\nĐúng: ${gameState.correct}\nSai: ${gameState.incorrect}\nTổng số từ: ${gameState.totalWordsInLevel}\nTừ đã thuộc: ${gameState.currentMastered}`);
+        gameState.masteredWords.clear();
+        gameState.weakWords.clear();
+        initGame(gameState.currentLevel);
+      }, 500);
+    }
+
+    function updateProgress() {
+      let masteredCount = 0;
+      vocabulary[gameState.currentLevel].forEach((word) => {
+        if (
+          gameState.masteredWords.has(word.en) &&
+          (gameState.weakWords.get(word.en) || 0) === 0
+        ) {
+          masteredCount++;
+        }
+      });
+      gameState.currentMastered = masteredCount;
+      const progress = (gameState.currentMastered / gameState.totalWordsInLevel) * 100;
+      elements.progressBar.style.width = `${progress}%`;
+      let wordsWithMistakes = 0;
+      gameState.weakWords.forEach((mistakes) => {
+        if (mistakes > 0) wordsWithMistakes++;
+      });
+      elements.progressDetails.textContent = `Đã thuộc: ${gameState.currentMastered}/${gameState.totalWordsInLevel} (Từ lỗi: ${wordsWithMistakes})`;
+    }
+
+    function resetSelection() {
+      if (gameState.selectedCh !== null) { // Still using selectedCh internally
+        elements.englishColumn.children[gameState.selectedCh].classList.remove("selected");
+      }
+      if (gameState.selectedVn !== null) {
+        elements.vietnameseColumn.children[gameState.selectedVn].classList.remove("selected");
+      }
+      gameState.selectedCh = null;
+      gameState.selectedVn = null;
+    }
+
+    function updateScores(type = null) {
+      elements.scoreCorrect.textContent = gameState.correct;
+      elements.scoreIncorrect.textContent = gameState.incorrect;
+
+      if (type === 'correct') {
+        elements.scoreCorrect.classList.remove('flash-correct');
+        void elements.scoreCorrect.offsetWidth;
+        elements.scoreCorrect.classList.add('flash-correct');
+      } else if (type === 'incorrect') {
+        elements.scoreIncorrect.classList.remove('flash-incorrect');
+        void elements.scoreIncorrect.offsetWidth;
+        elements.scoreIncorrect.classList.add('flash-incorrect');
+      }
+
+      adjustTimerWidth();
+    }
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = Math.floor((now - gameState.startTime) / 1000);
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      elements.timer.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    }
+
+    function updatePhoneticDisplay() {
+      const show = elements.togglePhonetic.checked;
+      document.querySelectorAll(".word-card").forEach((card) => {
+        card.classList.toggle("show-phonetic", show);
+      });
+    }
+
+    // Speaks a given word using Text-to-Speech
+    function speakWord(word, lang) {
+      console.log(`Attempting to speak: "${word}" in language: "${lang}"`);
+      if (!window.speechSynthesis) {
+        console.warn("Tính năng đọc văn bản không được hỗ trợ trên trình duyệt này."); // Translated
+        return Promise.resolve();
+      }
+      if (!gameState.settings.enableSound) {
+        console.warn("Cài đặt âm thanh đã tắt."); // Translated
+        return Promise.resolve();
+      }
+
+      return new Promise((resolve) => {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = lang;
+
+        const voices = speechSynthesis.getVoices();
+        const selectedVoice = voices.find(voice => voice.lang === lang);
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+            console.log(`Using voice: ${selectedVoice.name} for ${lang}`);
+        } else {
+            console.warn(`Không tìm thấy giọng đọc phù hợp cho ${lang}. Sử dụng mặc định.`); // Translated
+        }
+
+        let timerId;
+
+        const onEndHandler = () => {
+          console.log(`Speech finished for: "${word}"`);
+          clearTimeout(timerId);
+          resolve();
+        };
+
+        utterance.onend = onEndHandler;
+        utterance.onerror = (event) => {
+          if (event.error === 'interrupted') {
+            console.info(`Thông tin TTS cho "${word}" (${lang}): Giọng đọc bị gián đoạn.`); // Translated
+          } else {
+            console.error(`Lỗi TTS cho "${word}" (${lang}):`, event.error); // Translated
+          }
+          clearTimeout(timerId);
+          resolve();
+        };
+
+        speechSynthesis.cancel();
+        speechSynthesis.speak(utterance);
+        console.log(`Speaking: "${word}"`);
+
+        timerId = setTimeout(() => {
+          console.warn(`TTS onend/onerror cho "${word}" (${lang}) không kích hoạt trong thời gian chờ. Đang giải quyết bằng phương án dự phòng.`); // Translated
+          resolve();
+        }, 5000);
+      });
+    }
+
+    async function playSingleWordWithRepetitions(word, lang, repetitions, delay) {
+      for (let i = 0; i < repetitions; i++) {
+        await speakWord(word, lang);
+        if (i < repetitions - 1) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    async function playWordPairAudio(englishWord, vietnameseWord, isAutoplay = false) {
+      if (isAutoplay) {
+        const { voiceOrder, englishRepetitions, vietnameseRepetitions, repetitionDelay } = gameState.settings;
+
+        if (voiceOrder === 'english-vietnamese') {
+          await playSingleWordWithRepetitions(englishWord, "en-US", englishRepetitions, repetitionDelay);
+          await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices));
+          await playSingleWordWithRepetitions(vietnameseWord, "vi-VN", vietnameseRepetitions, repetitionDelay);
+        } else { // vietnamese-english
+          await playSingleWordWithRepetitions(vietnameseWord, "vi-VN", vietnameseRepetitions, repetitionDelay);
+          await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices));
+          await playSingleWordWithRepetitions(englishWord, "en-US", englishRepetitions, repetitionDelay);
+        }
+      } else {
+        await speakWord(englishWord, "en-US");
+        await new Promise(resolve => setTimeout(resolve, gameState.settings.manualInteractionDelay));
+        await speakWord(vietnameseWord, "vi-VN");
+      }
+    }
+
+    function loadVoices() {
+      applySettings();
+      gameState.speechSynthesisReady = true;
+      const voices = speechSynthesis.getVoices();
+      console.log("Các giọng đọc có sẵn:"); // Translated
+      voices.forEach(voice => {
+        console.log(`- Tên: ${voice.name}, Ngôn ngữ: ${voice.lang}, Mặc định: ${voice.default}`); // Translated
+      });
+    }
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function initLevelSelection() {
+      elements.levelList.innerHTML = "";
+      Object.keys(vocabulary).forEach((level) => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = `Chủ đề ${level}`; // Updated text
+        btn.onclick = () => {
+          elements.levelModal.style.display = "none";
+          toggleMistakeBadges(true);
+          initGame(level);
+        };
+        elements.levelList.appendChild(btn);
+      });
+    }
+
+    function showCustomAlert(message) {
+      toggleMistakeBadges(false);
+      const alertModal = document.createElement('div');
+      alertModal.className = 'modal';
+      alertModal.style.display = 'flex';
+      alertModal.innerHTML = `
+        <div class="modal-content">
+          <h2>Thông báo</h2> <p>${message.replace(/\n/g, '<br>')}</p>
+          <button id="alert-ok-btn" class="btn">OK</button>
+        </div>
+      `;
+      document.body.appendChild(alertModal);
+
+      document.getElementById('alert-ok-btn').addEventListener('click', () => {
+        document.body.removeChild(alertModal);
+        toggleMistakeBadges(true);
+      });
+
+      alertModal.addEventListener('click', (e) => {
+        if (e.target === alertModal) {
+          document.body.removeChild(alertModal);
+          toggleMistakeBadges(true);
+        }
+      });
+    }
+
+    function toggleMistakeBadges(show) {
+      const badges = document.querySelectorAll('.mistake-badge');
+      badges.forEach(badge => {
+        badge.style.display = show ? 'flex' : 'none';
+      });
+    }
+
+    function adjustTimerWidth() {
+      const scoreGroup = document.querySelector('.score-group');
+      if (scoreGroup && elements.timer) {
+        const scoreGroupWidth = scoreGroup.offsetWidth;
+        elements.timer.style.width = `${scoreGroupWidth}px`;
+      }
+    }
+
+    // Event Listeners
+    elements.togglePhonetic.addEventListener("change", updatePhoneticDisplay);
+
+    elements.btnAutoplayToggle.addEventListener("click", () => {
+        if (gameState.isAutoplayActive) {
+            stopAutoplay();
+        } else {
+            startAutoplay();
+        }
+    });
+
+    document.getElementById("btn-mode").addEventListener("click", () => {
+      stopAutoplay();
+      toggleMistakeBadges(false);
+      elements.modeModal.style.display = "flex";
+    });
+    document.getElementById("btn-card-matching").addEventListener("click", () => {
+      elements.modeModal.style.display = "none";
+      toggleMistakeBadges(true);
+      gameState.isAutoplayActive = false;
+      applySettings();
+      initGame(gameState.currentLevel);
+    });
+    document.getElementById("btn-level").addEventListener("click", () => {
+      stopAutoplay();
+      toggleMistakeBadges(false);
+      elements.levelModal.style.display = "flex";
+    });
+    elements.levelModal.addEventListener("click", (e) => {
+      if (e.target === elements.levelModal) {
+        elements.levelModal.style.display = "none";
+        toggleMistakeBadges(true);
+        startIdleTimer();
+      }
+    });
+    elements.modeModal.addEventListener("click", (e) => {
+      if (e.target === elements.modeModal) {
+        elements.modeModal.style.display = "none";
+        toggleMistakeBadges(true);
+        startIdleTimer();
+      }
+    });
+    document.getElementById("btn-settings").addEventListener("click", () => {
+      stopAutoplay();
+      toggleMistakeBadges(false);
+      elements.settingsModal.style.display = "flex";
+    });
+    document.getElementById("btn-save-settings").addEventListener("click", saveSettings);
+    elements.settingsModal.addEventListener("click", (e) => {
+      if (e.target === elements.settingsModal) {
+        elements.settingsModal.style.display = "none";
+        toggleMistakeBadges(true);
+        startIdleTimer();
+      }
+    });
+    elements.settingDarkMode.addEventListener("change", (e) => {
+      const newDarkModeState = e.target.checked;
+      const currentTextColor = gameState.settings.textColor;
+
+      if (newDarkModeState) {
+        if (currentTextColor === LIGHT_MODE_DEFAULT_TEXT_COLOR) {
+          gameState.settings.textColor = DARK_MODE_DEFAULT_TEXT_COLOR;
+        }
+      } else {
+        if (currentTextColor === DARK_MODE_DEFAULT_TEXT_COLOR) {
+          gameState.settings.textColor = LIGHT_MODE_DEFAULT_TEXT_COLOR;
+        }
+      }
+
+      gameState.settings.darkMode = newDarkModeState;
+      applySettings();
+    });
+    elements.settingTextColor.addEventListener("change", (e) => {
+      gameState.settings.textColor = e.target.value;
+      applySettings();
+    });
+    elements.settingWordsPerRound.addEventListener("change", (e) => {
+      const newValue = parseInt(e.target.value);
+      if (!isNaN(newValue)) {
+        gameState.settings.wordsPerRound = newValue;
+        initGame(gameState.currentLevel);
+      }
+    });
+    elements.settingDelayBetweenVoices.addEventListener("change", (e) => {
+      gameState.settings.delayBetweenVoices = parseInt(e.target.value, 10);
+    });
+    elements.settingDelayNextRound.addEventListener("change", (e) => {
+      gameState.settings.delayNextRound = parseInt(e.target.value, 10);
+    });
+
+    elements.settingSpeakOnCorrectMatch.addEventListener("change", (e) => {
+      gameState.settings.speakOnCorrectMatch = e.target.checked;
+      applySettings();
+    });
+    elements.settingVoiceOrder.addEventListener("change", (e) => {
+      gameState.settings.voiceOrder = e.target.value;
+      applySettings();
+    });
+    elements.settingEnglishRepetitions.addEventListener("change", (e) => {
+      gameState.settings.englishRepetitions = parseInt(e.target.value, 10);
+      applySettings();
+    });
+    elements.settingVietnameseRepetitions.addEventListener("change", (e) => {
+      gameState.settings.vietnameseRepetitions = parseInt(e.target.value, 10);
+      applySettings();
+    });
+
+    // Initial application setup
+    loadSettings();
+    initLevelSelection();
+    if (speechSynthesis.getVoices().length > 0) {
+      loadVoices();
+    }
+    initGame(gameState.currentLevel);
+
+    window.addEventListener('resize', adjustTimerWidth);
+  </script>
+</body>
+</html>
