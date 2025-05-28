@@ -112,9 +112,9 @@
       overflow-x: auto;
       padding-bottom: 5px;
       width: 100%;
-      justify-content: space-between; /* Buttons left, score right */
+      justify-content: space-between; /* Buttons left, timer right */
     }
-    #control-row-bottom { /* Row for pinyin toggle, autoplay button and timer */
+    #control-row-bottom { /* Row for pinyin toggle, autoplay button and score */
       display: flex;
       align-items: center;
       flex-wrap: nowrap;
@@ -122,7 +122,7 @@
       overflow-x: auto;
       padding-bottom: 5px;
       width: 100%;
-      justify-content: space-between; /* Pinyin left, timer right, autoplay in middle */
+      justify-content: space-between; /* Pinyin left, autoplay in middle, score right */
     }
     .left-buttons { /* Class for grouping buttons */
       display: flex;
@@ -857,20 +857,20 @@
           <button id="btn-mode" class="btn">Chế Độ</button>
           <button id="btn-level" class="btn">Chủ đề</button>
         </div>
-        <div class="score-group">
-          <span class="score-display correct"> Đúng:  <span id="score-correct">0</span></span>
-          <span class="score-display incorrect"> Sai:  <span id="score-incorrect">0</span></span>
-        </div>
+        <span class="timer-display"><span id="timer">00:00</span></span>
       </div>
       <div id="control-row-bottom">
         <div class="pinyin-toggle">
           <input type="checkbox" id="toggle-phonetic" checked />
-          <label for="toggle-phonetic">Pinyin</label>
+          <label for="toggle-phonetic">Hiển Thị Pinyin</label>
         </div>
         <button id="btn-autoplay-toggle" class="btn">
           <i class="fas fa-play"></i>
         </button>
-        <span class="timer-display"><span id="timer">00:00</span></span>
+        <div class="score-group">
+          <span class="score-display correct"> Đúng:  <span id="score-correct">0</span></span>
+          <span class="score-display incorrect"> Sai:  <span id="score-incorrect">0</span></span>
+        </div>
       </div>
     </div>
 
@@ -908,7 +908,7 @@
         <button id="btn-card-matching" class="btn">Ghép thẻ theo chủ đề</button>
         <button id="btn-flashcards" class="btn">Flash card</button>
         <button id="btn-word-selection" class="btn" disabled>Chọn từ ghép thẻ (sắp ra mắt)</button>
-        <a href="en.html" class="btn">Học Tiếng Anh</a>
+        <a href="eng.html" class="btn">Học Tiếng Anh</a>
       </div>
     </div>
   </div>
