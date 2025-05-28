@@ -914,7 +914,7 @@
         <button id="btn-card-matching" class="btn">Ghép thẻ theo chủ đề</button>
         <button id="btn-flashcards" class="btn">Flash card</button>
         <button id="btn-word-selection" class="btn" disabled>Chọn từ ghép thẻ (sắp ra mắt)</button>
-        <a href="index.html" class="btn">Home - Info</a>
+        <a href="eng.html" class="btn">Học Tiếng Anh</a>
       </div>
     </div>
   </div>
@@ -1023,6 +1023,8 @@
     const gameState = {
       currentLevel: 'HSK1', // Default to the first level
       currentWordCount: 'Tất cả', // Stores the selected number of words to learn
+      previousLevel: null, // Stores the level from the previous session
+      previousWordCount: null, // Stores the word count from the previous session
       correct: 0,
       incorrect: 0,
       selectedCh: null,
@@ -1360,13 +1362,22 @@
 
     // Initialize game
     function initGame(level, wordCount = 'Tất cả') { // Add wordCount parameter
+      // Check if the level or word count has changed from the previous session
+      const levelChanged = gameState.previousLevel !== level;
+      const wordCountChanged = gameState.previousWordCount !== wordCount;
+
       gameState.currentLevel = level;
       gameState.currentWordCount = wordCount;
       gameState.correct = 0;
       gameState.incorrect = 0;
       resetSelection();
-      // Do NOT reset weakWords and masteredWords here if we want persistent learning
-      // Instead, we will initialize/update them based on the sessionWordsPool below.
+
+      // ONLY reset weakWords and masteredWords if the topic or word count has changed
+      if (levelChanged || wordCountChanged) {
+          gameState.weakWords.clear();
+          gameState.masteredWords.clear();
+          console.log("Resetting learned words due to topic/word count change.");
+      }
 
       // Determine the sessionWordsPool based on selected wordCount
       let fullLevelWords = vocabulary[gameState.currentLevel];
@@ -1423,6 +1434,10 @@
       updateProgress(); // This will now use totalWordsInLevel (session pool size)
 
       startIdleTimer();
+
+      // Update previous level and word count for the next comparison
+      gameState.previousLevel = level;
+      gameState.previousWordCount = wordCount;
     }
 
     // MODIFIED: Function to start a completely new phase of words (not just retrying incorrect)
@@ -1832,7 +1847,7 @@
               gameState.roundIncorrectWords.clear();
 
               // If not all session words are mastered, start a new major round
-              setTimeout(startNewRound, 1000);
+              setTimeout(startNewRound, 1000); // <-- This is the key line
           } else {
               console.log("Finished initial set of words.");
               if (gameState.roundIncorrectWords.size > 0) {
@@ -1846,7 +1861,7 @@
               } else {
                   console.log("No incorrect words in this phase. Starting new major round.");
                   // If not all session words are mastered, start a new major round
-                  setTimeout(startNewRound, 1000);
+                  setTimeout(startNewRound, 1000); // <-- This is also a key line
               }
           }
       }
@@ -2021,7 +2036,7 @@
               randomChCard.classList.add("hidden");
               vnCard.classList.add("hidden");
               randomChCard.classList.remove("selected", "correct-animation");
-              vnCard.classList.remove("selected", "correct-animation");
+              vnCard.classList.remove("selected", "incorrect-animation"); // Ensure incorrect is removed too
               resetSelection();
               document.querySelectorAll(".word-card").forEach(
                   (card) => (card.style.pointerEvents = "auto")
@@ -2033,21 +2048,9 @@
         }
       } else if (gameState.currentMode === 'flashcards') {
         const flashcards = [...elements.gameArea.querySelectorAll('.flashcard-container')];
-        const unhiddenFlashcards = flashcards.filter(card => !card.classList.contains("hidden"));
 
-        if (unhiddenFlashcards.length === 0) {
-            // All flashcards currently displayed are hidden (mastered).
-            // This means the current `activePairs` set is done.
-            checkRoundCompletion(); // This will trigger a new round if needed
-            return;
-        }
-
-        let currentCardContainer = unhiddenFlashcards[0]; // Always start from the first unhidden for autoplay sequence
-
-        // If current flashcard index is out of bounds or hidden, find the next available.
-        // This is simplified to just take the first unhidden if we're constantly re-rendering.
-        // For actual sequence, we'd need to store the index better.
-        // For now, let's just use the current index from the full list, skipping hidden ones.
+        // Find the next unhidden card based on gameState.flashcardIndex
+        let currentCardContainer = null;
         let nextIndexToPlay = gameState.flashcardIndex;
         let foundCard = false;
         for (let i = 0; i < flashcards.length; i++) {
@@ -2065,30 +2068,39 @@
             return;
         }
 
-
         const chineseWord = currentCardContainer.dataset.ch;
         const pairToPlay = gameState.sessionWordsPool.find(p => p.ch === chineseWord); // Find from session pool
 
         if (!pairToPlay) {
           console.error("Flashcard data mismatch for autoplay:", chineseWord);
-          gameState.flashcardIndex = (gameState.flashcardIndex + 1) % flashcards.length;
+          gameState.flashcardIndex = (gameState.flashcardIndex + 1) % flashcards.length; // Move to next to avoid infinite loop on error
           scheduleNextAutoplayAction();
           return;
         }
 
-        currentCardContainer.classList.remove('flashcard-seen');
-
-        // Scroll the card into view before flipping and playing audio
+        // 1. "sáng thẻ" (highlight card) - scroll into view and ensure front is visible
         currentCardContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        currentCardContainer.classList.remove('flipped'); // Ensure front is showing
+        currentCardContainer.classList.remove('flashcard-seen'); // Remove 'seen' for new display cycle
 
-        currentCardContainer.classList.remove('flipped');
+        // 2. "phát âm" (pronounce Chinese)
         await playSingleWordWithRepetitions(pairToPlay.ch, "zh-CN", gameState.settings.chineseRepetitions, gameState.settings.repetitionDelay);
 
-        await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices));
+        // Add a small delay before flipping to allow audio to finish/register
+        await new Promise(resolve => setTimeout(resolve, 300)); // Small pause
+
+        // 3. "lật thẻ" (flip card to back)
+        currentCardContainer.classList.add('flipped');
+
+        // 4. "phát âm" (pronounce Vietnamese) after flip
+        await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices)); // Delay before Vietnamese voice
         await playSingleWordWithRepetitions(pairToPlay.vn, "vi-VN", gameState.settings.vietnameseRepetitions, gameState.settings.repetitionDelay);
 
+        // 5. "rồi lật lại" (then flip back to front) after Vietnamese audio
         await new Promise(resolve => setTimeout(resolve, gameState.settings.flashcardFlipBackDelay));
         currentCardContainer.classList.remove('flipped');
+
+        // 6. "sáng thẻ để ghi nhận là đã lật" (highlight card to acknowledge it's seen)
         currentCardContainer.classList.add('flashcard-seen');
 
         // Update weakWords and mastery for flashcards during autoplay
@@ -2099,7 +2111,7 @@
             currentCardContainer.classList.add("hidden"); // Hide mastered flashcards in autoplay
         } else {
             gameState.masteredWords.delete(chineseWord);
-            currentCardContainer.classList.remove("hidden");
+            currentCardContainer.classList.remove("hidden"); // Ensure it's not hidden if not mastered
         }
         updateProgress();
 
@@ -2121,12 +2133,16 @@
       const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
       setTimeout(() => {
         showCustomAlert(`Chúc mừng! Bạn đã hoàn thành ${gameState.currentWordCount === 'Tất cả' ? 'cấp độ' : 'bộ từ'} ${gameState.currentLevel} (${gameState.currentWordCount !== 'Tất cả' ? gameState.currentWordCount + ' từ' : 'tất cả'})!\nThời gian: ${timeString}\nĐúng: ${gameState.correct}\nSai: ${gameState.incorrect}\nTổng số từ đã học trong phiên: ${gameState.totalWordsInLevel}\nTừ đã thuộc: ${gameState.currentMastered}`);
-        // Reset only the mistake count for words in the current session pool back to 0
+
+        // Reset mistake count for all words in the current session pool back to 0
         gameState.sessionWordsPool.forEach(pair => {
             gameState.weakWords.set(pair.ch, 0); // Reset mistake count to 0
         });
         gameState.masteredWords.clear(); // Clear mastered status for the session
-        initGame(gameState.currentLevel, gameState.currentWordCount); // Restart game for the same level and word count
+
+        // Re-initialize game to restart the cycle with fresh mastery for the same level and word count
+        // This will now pick up all words again as their mistake counts are reset to 0.
+        initGame(gameState.currentLevel, gameState.currentWordCount);
       }, 500);
     }
 
