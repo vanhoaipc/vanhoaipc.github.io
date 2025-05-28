@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
             background-color: #1a1a1a; /* Default dark background */
             color: #f0f0f0; /* Light text color */
             min-height: 100vh; /* Minimum height equals viewport height */
-            background-image: url('background.jpg'); /* Background image, replace with your background.jpg */
+            background-image: url('https://placehold.co/1920x1080/1a1a1a/f0f0f0?text=Background+Image'); /* Background image, replace with your background.jpg */
             background-size: cover; /* Ensure background image covers the entire area */
             background-position: center; /* Center the background image */
             background-repeat: no-repeat; /* Do not repeat the background image */
@@ -58,7 +58,7 @@
 
         /* H1 title */
         h1 {
-            font-size: 2.2em; /* Large font size */
+            font-size: 2.0em; /* Adjusted font size for "Đoàn Văn Hoài" */
             margin: 0;
             color: #ffffff; /* White text color */
             text-transform: uppercase; /* Uppercase text */
@@ -94,10 +94,10 @@
             border-radius: 10px; /* Rounded button corners */
             font-size: 1.1em; /* Button font size */
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions for properties */
-            /* Default light blue neon glow */
+            /* Default light blue neon glow (increased by 100% from previous state) */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
-                        0 0 10px rgba(0, 255, 255, 0.7), /* Light blue neon glow */
-                        0 0 20px rgba(0, 255, 255, 0.5);
+                        0 0 6px rgba(0, 255, 255, 0.45), /* Increased blur and alpha */
+                        0 0 12px rgba(0, 255, 255, 0.33); /* Increased blur and alpha */
             box-sizing: border-box; /* Include padding and border in size calculation */
         }
 
@@ -105,20 +105,20 @@
         .btn:hover {
             background-color: #555; /* Change background color on hover */
             transform: translateY(-2px); /* Slight upward shift on hover */
-            /* Orange neon glow on hover */
+            /* Orange neon glow on hover (increased by 100% from previous state) */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
-                        0 0 15px rgba(255, 165, 0, 0.8), /* Orange neon glow */
-                        0 0 30px rgba(255, 165, 0, 0.6);
+                        0 0 15px rgba(255, 165, 0, 0.51), /* Increased blur and alpha */
+                        0 0 30px rgba(255, 165, 0, 0.39); /* Increased blur and alpha */
         }
 
         /* Active (click) effect for buttons */
         .btn:active {
             background-color: #666; /* Change background color when active */
             transform: translateY(0); /* Ensure button doesn't shift */
-            /* Orange neon glow when clicked (same as hover for consistency if desired, or can be unique) */
+            /* Orange neon glow when clicked (increased by 100% from previous state) */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
-                        0 0 15px rgba(255, 165, 0, 0.8), /* Orange neon glow */
-                        0 0 30px rgba(255, 165, 0, 0.6);
+                        0 0 15px rgba(255, 165, 0, 0.51), /* Increased blur and alpha */
+                        0 0 30px rgba(255, 165, 0, 0.39); /* Increased blur and alpha */
         }
 
         /* Social media buttons group (Toptop, Phở Bò) */
@@ -147,6 +147,11 @@
             .container {
                 padding: 15px; /* Reduce overall container padding */
                 width: 85%; /* Reduce container width on mobile devices */
+            }
+
+            /* Adjust font size for H1 on mobile */
+            h1 {
+                font-size: 1.8em; /* Smaller font size for H1 on mobile */
             }
 
             .btn {
