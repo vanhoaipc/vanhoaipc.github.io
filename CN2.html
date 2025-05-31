@@ -1,0 +1,3955 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Học từ vựng Hán Việt</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    :root {
+      --text-color: #333;
+      --bg-color: #f4f4f4;
+      --card-bg-color: #fff;
+      --border-color: #ddd;
+      --selected-border-color: #007bff;
+      --correct-bg-color: #d4edda;
+      --correct-border-color: #28a745;
+      --incorrect-bg-color: #f8d7da;
+      --incorrect-border-color: #dc3545;
+      --hint-glow-color: #ffc107;
+      --modal-bg-color: rgba(0, 0, 0, 0.5);
+      --button-bg-color: #007bff;
+      --button-text-color: #fff;
+      --button-hover-bg-color: #0056b3;
+      --badge-bg-color: #dc3545;
+      --badge-text-color: #fff;
+      --progress-bar-bg: #28a745;
+      --progress-bar-track: #e9ecef;
+      --score-correct-color: #28a745;
+      --score-incorrect-color: #dc3545;
+      --dark-mode-text-color: #f4f4f4; /* Default text color for dark mode */
+      --autoplay-group-border: #FF8C00; /* Dark orange border for autoplay settings group */
+      --autoplay-group-legend-color: #FF8C00; /* Dark orange text for autoplay settings group legend */
+      --general-group-border: #007bff; /* Blue border for general settings group */
+      --general-group-legend-color: #007bff; /* Blue text for general settings group legend */
+      --neon-blue: #00f0ff; /* Define neon blue color */
+      --neon-orange: #FFA500; /* NEW: Define neon orange color */
+      --flashcard-back-bg-color-light: #6fa8dc; /* Sky blue for flashcard back in light mode */
+      --flashcard-back-vietnamese-text-color-light: #333; /* Dark text for light mode */
+      --flashcard-seen-glow-color: transparent; /* No glow for border in light mode */
+      --flashcard-seen-text-glow-color: transparent; /* No glow for text in light mode */
+      --flashcard-front-seen-text-color-light: #00008B; /* Dark blue for seen text in light mode */
+    }
+    body.dark-mode {
+      --text-color: var(--dark-mode-text-color); /* Use new variable for dark mode text color */
+      --bg-color: #333;
+      --card-bg-color: #555;
+      --border-color: #666;
+      --selected-border-color: #66b3ff;
+      --correct-bg-color: #4CAF50;
+      --correct-border-color: #388E3C;
+      --incorrect-bg-color: #D32F2F;
+      --incorrect-border-color: #B71C1C;
+      --hint-glow-color: #ffeb3b;
+      --modal-bg-color: rgba(255, 255, 255, 0.2);
+      --button-bg-color: #66b3ff;
+      --button-text-color: #333;
+      --button-hover-bg-color: #4da6ff;
+      --badge-bg-color: #ef5350;
+      --progress-bar-bg: #4CAF50;
+      --progress-bar-track: #6c757d;
+      --score-correct-color: #4CAF50;
+      --score-incorrect-color: #D32F2F;
+      --autoplay-group-border: #FFD700; /* Gold border for dark mode autoplay group */
+      --autoplay-group-legend-color: #FFD700; /* Gold text for dark mode autoplay group legend */
+      --general-group-border: #66b3ff; /* Light blue border for dark mode general group */
+      --general-group-legend-color: #66b3ff; /* Light blue text for dark mode general group legend */
+      --neon-blue: #00f0ff; /* Ensure neon blue is defined for dark mode too */
+      --neon-orange: #FFD700; /* NEW: Define neon orange for dark mode */
+      --flashcard-back-bg-color-dark: var(--progress-bar-bg); /* Use progress bar background for flashcard back in dark mode */
+      --flashcard-seen-text-glow-color: #00f0ff; /* Text glow color for front in dark mode */
+    }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 10px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px; /* Reduced gap */
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      background-color: var(--card-bg-color);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    /* Controls & modal */
+    #controls {
+      display: flex;
+      flex-direction: column;
+      gap: 5px; /* Reduced gap */
+      margin-bottom: 2px; /* Reduced margin */
+      width: 100%;
+    }
+    #control-row-top { /* Row for buttons and timer/score */
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      width: 100%;
+      justify-content: space-between; /* Buttons left, timer right */
+    }
+    #control-row-bottom { /* Row for pinyin toggle, autoplay button and score */
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      width: 100%;
+      justify-content: space-between; /* Pinyin left, autoplay in middle, score right */
+    }
+    .left-buttons { /* Class for grouping buttons */
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    /* Adjustments for timer and score positioning */
+    .timer-display {
+      text-align: center;
+      white-space: nowrap;
+      font-size: 1.5em;
+      font-weight: bold;
+      font-family: 'Electrolize', monospace;
+      color: var(--neon-blue);
+      /* Reduced text-shadow */
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+                   0 0 2px var(--neon-blue),
+                   0 0 4px var(--neon-blue),
+                   0 0 8px var(--neon-blue),
+                   0 0 16px rgba(0, 240, 255, 0.4),
+                   0 0 32px rgba(0, 240, 255, 0.2);
+      /* New border/frame */
+      border: 2px solid var(--neon-blue); /* Add a border */
+      padding: 5px 10px; /* Add padding inside the border */
+      border-radius: 8px; /* Rounded corners for the frame */
+      box-shadow: 0 0 5px var(--neon-blue); /* Subtle outer glow for the frame */
+    }
+    .score-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: var(--text-color);
+      flex-wrap: wrap;
+      justify-content: flex-end; /* Align content to the right */
+    }
+    .score-display {
+      white-space: nowrap;
+    }
+    .score-display.correct span {
+      color: var(--neon-blue);
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+                   0 0 3px var(--neon-blue),
+                   0 0 5px var(--neon-blue),
+                   0 0 10px rgba(0, 240, 255, 0.4);
+      font-family: 'Electrolize', monospace;
+      font-size: 1.1em;
+    }
+    .score-display.incorrect {
+      border-left: 2px solid var(--neon-orange);
+      padding-left: 8px;
+      margin-left: 3px;
+    }
+    .score-display.incorrect span {
+      color: var(--neon-orange);
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+                   0 0 3px var(--neon-orange),
+                   0 0 5px var(--neon-orange),
+                   0 0 10px rgba(255, 165, 0, 0.4);
+      font-family: 'Electrolize', monospace;
+      font-size: 1.1em;
+    }
+
+    /* Adjustments for control-row-bottom buttons */
+    .pinyin-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    #btn-autoplay-toggle {
+      font-size: 1.0em;
+      padding: 6px 10px;
+      flex-shrink: 0;
+      margin-left: auto; /* Push to center */
+      margin-right: auto; /* Push to center */
+    }
+    #btn-settings {
+      background-color: transparent;
+      color: var(--text-color);
+      border: 1px solid var(--text-color); /* Added border */
+      padding: 5px;
+      border-radius: 5px; /* Added border-radius for square look */
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s; /* Transition for border-color */
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center the icon */
+      width: 38px; /* Fixed width for square button */
+      height: 38px; /* Fixed height for square button */
+    }
+    #btn-settings span {
+      display: none; /* Hidden text */
+    }
+    #btn-settings i {
+      font-size: 1.5em;
+    }
+
+    #btn-settings:hover {
+      color: var(--button-hover-bg-color);
+      border-color: var(--button-hover-bg-color); /* Hover effect for border */
+    }
+
+    @keyframes score-flash-correct {
+      0% { transform: scale(1); color: var(--neon-blue); }
+      50% { transform: scale(1.1); color: #00ff00; }
+      100% { transform: scale(1); color: var(--neon-blue); }
+    }
+    @keyframes score-flash-incorrect {
+      0% { transform: scale(1); color: var(--neon-orange); }
+      50% { transform: scale(1.1); color #ff0000; }
+      100% { transform: scale(1); color: var(--neon-orange); }
+    }
+    .score-display.flash-correct span {
+      animation: score-flash-correct 0.3s ease-out;
+    }
+    .score-display.flash-incorrect span {
+      animation: score-flash-incorrect 0.3s ease-in-out;
+    }
+    #game-area {
+      display: flex;
+      justify-content: space-around;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      flex-grow: 1;
+      min-height: 400px;
+    }
+    .column {
+      flex: 1;
+      min-width: 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--bg-color);
+      min-height: 400px;
+      overflow-y: hidden;
+    }
+    /* NEW: Styles for 3-column layout */
+    body.advanced-card-matching #game-area {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        flex-grow: 1;
+        min-height: 400px;
+    }
+    /* Updated column widths for larger screens */
+    body.advanced-card-matching #chinese-column {
+        flex: 0 0 25%; /* 25% width */
+        min-width: unset; /* Override min-width */
+    }
+    body.advanced-card-matching #pinyin-column { /* New Pinyin column */
+        display: flex; /* Ensure it's shown */
+        flex: 0 0 25%; /* 25% width */
+        min-width: unset; /* Override min-width */
+    }
+    body.advanced-card-matching #vietnamese-column {
+        flex: 0 0 40%; /* 50% width */
+        min-width: unset; /* Override min-width */
+    }
+
+    .word-card {
+      min-height: 50px;
+      max-height: 50px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: var(--card-bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      padding: 4px 6px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 1.4em;
+      font-weight: bold;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease-in-out;
+      position: relative;
+    }
+    .word-card:hover:not(.selected):not(.hidden) {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .word-card.selected {
+      border-color: var(--selected-border-color);
+      box-shadow: 0 0 10px var(--selected-border-color);
+      transform: scale(1.01);
+    }
+    .word-card.hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    }
+    .word-card .phonetic {
+      font-size: 0.65em;
+      color: #888;
+      margin-top: 3px;
+      display: none;
+    }
+    .word-card.show-phonetic .phonetic {
+      display: block;
+    }
+    /* In advanced mode, pinyin is its own column, so hide phonetic span in Chinese cards */
+    body.advanced-card-matching .word-card .phonetic {
+        display: none !important;
+    }
+
+    @keyframes correct-fade-out {
+      0% { background-color: var(--correct-bg-color); border-color: var(--correct-border-color); transform: scale(1.03); opacity: 1; }
+      50% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.9); visibility: hidden; }
+    }
+    .word-card.correct-animation {
+      animation: correct-fade-out 0.7s forwards;
+      background-color: var(--correct-bg-color);
+      border-color: var(--correct-border-color);
+    }
+    @keyframes incorrect-shake {
+      0% { background-color: var(--incorrect-bg-color); border-color: var(--incorrect-border-color); transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      50% { transform: translateX(3px); }
+      75% { transform: translateX(-3px); }
+      100% { background-color: var(--incorrect-bg-color); border-color: var(--incorrect-border-color); transform: translateX(0); }
+    }
+    .word-card.incorrect-animation {
+      animation: incorrect-shake 0.5s ease-in-out;
+      background-color: var(--incorrect-bg-color);
+      border-color: var(--incorrect-border-color);
+    }
+    @keyframes hint-glow {
+      0% { box-shadow: 0 0 3px var(--hint-glow-color); }
+      50% { box-shadow: 0 0 12px var(--hint-glow-color); }
+      100% { box-shadow: 0 0 3px var(--hint-glow-color); }
+    }
+    .word-card.hint-glow-green {
+      animation: hint-glow 1.2s infinite alternate;
+    }
+    .mistake-badge {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      background-color: var(--badge-bg-color);
+      color: var(--badge-text-color);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7em;
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .mastered .mastered-check {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      color: var(--correct-border-color);
+      font-size: 1em;
+    }
+    #progress-bar-container {
+      width: 100%;
+      background-color: var(--progress-bar-track);
+      border-radius: 4px;
+      margin-top: 0px;
+      height: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--progress-bar-bg);
+      border-radius: 4px;
+      transition: width 0.3s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.8em;
+    }
+    #progress-details {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85em;
+      color: #000;
+      text-shadow: none;
+    }
+    body.dark-mode #progress-details {
+      color: #FFA500; /* Orange text for dark mode for better readability */
+    }
+    .btn {
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background-color 0.2s;
+      white-space: nowrap;
+      text-decoration: none; /* Ensure no underline for links */
+      display: inline-flex; /* Use flex to center content if needed */
+      align-items: center;
+      justify: center;
+    }
+    .btn:hover {
+      background-color: var(--button-hover-bg-color);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--modal-bg-color);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: var(--card-bg-color);
+      margin: auto;
+      padding: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      width: 85%;
+      max-width: 450px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      position: relative;
+      text-align: center;
+      color: var(--text-color);
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--text-color);
+      font-size: 1.3em;
+    }
+    .modal-content .btn {
+      margin: 4px;
+      padding: 8px 12px;
+      font-size: 0.9em;
+    }
+    #level-list,
+    #mode-list,
+    #words-to-learn-list, /* NEW */
+    #settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    /* Default for larger screens */
+    #settings-form label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 0.9em;
+    }
+    #settings-form input[type="number"],
+    #settings-form input[type="color"],
+    #settings-form select {
+      padding: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      width: 140px; /* Default width for larger screens */
+      font-size: 0.9em;
+      box-sizing: border-box; /* Include padding and border in the element's total width */
+    }
+
+    /* NEW: Adjustments for screens up to 768px (tablets and phones) */
+    @media (max-width: 768px) {
+        #settings-form label {
+            /* Removed flex-direction: column and align-items: flex-start */
+            flex-wrap: nowrap; /* Prevent wrapping of label content */
+            justify-content: space-between; /* Keep content spaced out */
+            align-items: center; /* Vertically align items */
+            gap: 5px; /* Slightly more gap for better separation */
+        }
+        #settings-form input[type="number"],
+        #settings-form input[type="color"],
+        #settings-form select {
+            width: 120px; /* Fixed width to prevent wrapping */
+            /* Ensure box-sizing: border-box is already applied globally or here */
+        }
+        /* Ensure modal content itself is not too wide */
+        .modal-content {
+            width: 90%; /* Keep it at 90% or similar for smaller screens */
+            max-width: 450px; /* Retain max-width for larger screens */
+            padding: 15px; /* Ensure sufficient padding */
+        }
+    }
+
+    /* Further adjustments for very small screens (phones) */
+    @media (max-width: 480px) {
+      .modal-content {
+        width: 95%;
+        padding: 10px;
+      }
+    }
+
+    /* NEW CSS for autoplay settings group */
+    .autoplay-settings-group, .general-settings-group {
+      border: 2px solid var(--autoplay-group-border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      position: relative;
+      text-align: left;
+    }
+
+    .general-settings-group {
+      border: 2px solid var(--general-group-border);
+    }
+
+    .autoplay-settings-group legend, .general-settings-group legend {
+      font-weight: bold;
+      color: var(--autoplay-group-legend-color);
+      padding: 0 5px;
+      margin-left: 10px;
+      font-size: 1.1em;
+    }
+
+    .general-settings-group legend {
+      color: var(--general-group-legend-color);
+    }
+
+    #settings-form .delay-setting-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    /* Flashcard specific styles */
+    body.flashcard-mode #game-area {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      flex-grow: 1;
+      min-height: 400px;
+      padding: 15px;
+      overflow-y: auto;
+      align-items: start;
+      justify-content: center;
+    }
+
+    body.flashcard-mode #chinese-column,
+    body.flashcard-mode #vietnamese-column,
+    body.flashcard-mode #pinyin-column { /* Hide pinyin column in flashcard mode */
+      display: none;
+    }
+
+    .flashcard-container {
+      width: 100%;
+      height: 150px;
+      perspective: 1000px;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      border: 2px solid var(--border-color);
+      transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .flashcard-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      border-radius: 8px;
+    }
+
+    .flashcard-container.flipped .flashcard-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      font-weight: bold;
+      color: var(--text-color);
+      overflow: hidden;
+    }
+
+    .flashcard-front {
+      background-color: var(--card-bg-color);
+      font-size: 1.8em;
+      border: 2px solid var(--border-color); /* Default border for front */
+    }
+
+    .flashcard-back {
+      background-color: var(--flashcard-back-bg-color-light);
+      transform: rotateY(180deg);
+      font-size: 1.2em;
+      line-height: 1.2;
+      color: var(--text-color); /* Default text color for the back */
+      border: 2px solid var(--border-color); /* Default border for back */
+    }
+    body.dark-mode .flashcard-back {
+        background-color: var(--flashcard-back-bg-color-dark);
+        /* Text color for the back is now handled by specific spans */
+    }
+
+    /* When flashcard is seen (front face) */
+    body.dark-mode .flashcard-container.flashcard-seen .flashcard-front {
+        border-color: var(--neon-blue); /* Neon blue for front face border */
+        box-shadow: 0 0 8px 2px var(--neon-blue);
+        background-color: var(--card-bg-color); /* Ensure background matches card-bg-color */
+    }
+
+    /* When flashcard is flipped and seen (back face) */
+    body.dark-mode .flashcard-container.flashcard-seen.flipped .flashcard-back {
+        background-color: var(--card-bg-color); /* Match front face background when seen and flipped */
+        border-color: var(--neon-orange); /* Neon orange for back face border */
+        box-shadow: 0 0 8px 2px var(--neon-orange);
+    }
+
+    .flashcard-back .vietnamese-text {
+      color: var(--flashcard-back-vietnamese-text-color-light);
+      font-size: 1.4em;
+    }
+    body.dark-mode .flashcard-back .vietnamese-text {
+      color: var(--dark-mode-text-color); /* Set to default text color for dark mode */
+      text-shadow: none; /* Remove neon glow */
+    }
+
+    .flashcard-back .pinyin-text {
+      font-size: 0.7em;
+      color: #888; /* Default for light mode */
+      margin-top: 5px;
+      word-break: break-word;
+    }
+    body.dark-mode .flashcard-back .pinyin-text {
+      color: var(--dark-mode-text-color); /* Set to default text color for dark mode */
+      text-shadow: none; /* Remove neon glow */
+    }
+
+    /* Glowing text for seen flashcards */
+    .flashcard-container.flashcard-seen .flashcard-front span {
+        color: var(--flashcard-front-seen-text-color-light);
+        text-shadow: 0 0 3px var(--flashcard-seen-text-glow-color), 0 0 6px var(--flashcard-seen-text-glow-color);
+    }
+    /* Override for dark mode */
+    body.dark-mode .flashcard-container.flashcard-seen .flashcard-front span {
+        color: var(--flashcard-seen-text-glow-color);
+    }
+
+
+    @media (max-width: 768px) {
+      #game-container {
+        padding: 10px;
+        max-height: 85vh;
+        gap: 5px;
+      }
+      #controls {
+        gap: 5px;
+        margin-bottom: 2px;
+      }
+      #control-row-top,
+      #control-row-bottom {
+        gap: 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+      }
+      .btn {
+        padding: 6px 10px;
+        font-size: 0.85em;
+      }
+      .column {
+        min-width: 130px;
+        padding: 6px;
+        gap: 5px;
+        min-height: 350px;
+      }
+      /* Responsive adjustments for 3-column layout */
+      body.advanced-card-matching #chinese-column,
+      body.advanced-card-matching #pinyin-column,
+      body.advanced-card-matching #vietnamese-column {
+          flex: 1; /* Allow columns to grow equally */
+          min-width: 90px; /* Smaller min-width for smaller screens */
+      }
+      .word-card {
+        min-height: 45px;
+        max-height: 45px;
+        font-size: 1.3em;
+        padding: 3px 5px;
+      }
+      .mistake-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65em;
+      }
+      .mastered .mastered-check {
+        font-size: 0.9em;
+      }
+      .modal-content {
+        width: 90%;
+        padding: 12px;
+      }
+      #game-area {
+        gap: 6px;
+      }
+      .timer-display {
+        /* margin: 0 auto; */ /* Removed */
+        /* flex-grow: 1; */ /* Removed */
+      }
+      .score-group {
+        /* margin-left: auto; */ /* Removed */
+      }
+      #control-row-top {
+        justify-content: space-between;
+      }
+      #btn-autoplay-toggle {
+      }
+      .pinyin-toggle {
+      }
+      #btn-settings {
+      }
+      .flashcard-mode #game-area {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 8px;
+        padding: 10px;
+      }
+      .flashcard-container {
+        height: 100px;
+      }
+      .flashcard-front {
+        font-size: 1.8em;
+      }
+      .flashcard-back {
+        font-size: 1em;
+      }
+      .flashcard-back .pinyin-text {
+        font-size: 0.8em;
+      }
+      .flashcard-back .vietnamese-text {
+        font-size: 1.2em;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      #game-container {
+        padding: 8px;
+        max-height: 95vh;
+        gap: 5px;
+      }
+      #controls {
+        gap: 4px;
+        margin-bottom: 1px;
+      }
+      #control-row-top,
+      #control-row-bottom {
+        gap: 4px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
+      #control-row-top {
+        justify-content: space-between;
+      }
+      .left-buttons {
+        flex-grow: 1;
+        justify-content: center;
+      }
+      .btn {
+        padding: 5px 8px;
+        font-size: 0.8em;
+      }
+      #btn-settings span {
+        font-size: 0.7em;
+      }
+      #btn-settings i {
+        font-size: 1.3em;
+      }
+      .score-group {
+        gap: 8px;
+      }
+      .timer-display {
+        font-size: 1.2em;
+      }
+      .score-group {
+        font-size: 1em;
+      }
+      .score-display span {
+        font-size: 1em;
+      }
+      .column {
+        min-width: 110px;
+        min-height: 320px;
+      }
+      /* Responsive adjustments for 3-column layout on very small screens */
+      body.advanced-card-matching #chinese-column,
+      body.advanced-card-matching #pinyin-column,
+      body.advanced-card-matching #vietnamese-column {
+          flex: 1;
+          min-width: 70px; /* Even smaller min-width */
+      }
+      .word-card .phonetic {
+        font-size: 0.8em;
+        margin-top: 2px;
+      }
+      #progress-bar-container {
+        height: 16px;
+      }
+      #progress-details {
+        font-size: 0.8em;
+      }
+      .timer-and-score-group {
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        justify-content: flex-end;
+      }
+      #control-row-bottom {
+      }
+      .pinyin-toggle {
+        margin-right: 0;
+        width: auto;
+        text-align: left;
+      }
+    }
+
+    #btn-autoplay-toggle {
+      font-size: 1.2em;
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="controls">
+      <div id="control-row-top">
+        <div class="left-buttons">
+          <button id="btn-settings" class="btn" title="Cài đặt">
+              <i class="fas fa-cog"></i>
+          </button>
+          <button id="btn-mode" class="btn">Chế Độ</button>
+          <button id="btn-level" class="btn">Chủ đề</button>
+        </div>
+        <span class="timer-display"><span id="timer">00:00</span></span>
+      </div>
+      <div id="control-row-bottom">
+        <div class="pinyin-toggle">
+          <input type="checkbox" id="toggle-phonetic" checked />
+          <label for="toggle-phonetic">Hiển Thị Pinyin</label>
+        </div>
+        <button id="btn-autoplay-toggle" class="btn">
+          <i class="fas fa-play"></i>
+        </button>
+        <div class="score-group">
+          <span class="score-display correct"> Đúng:  <span id="score-correct">0</span></span>
+          <span class="score-display incorrect"> Sai:  <span id="score-incorrect">0</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="progress-area">
+      <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+        <div id="progress-details"></div>
+      </div>
+    </div>
+
+    <div id="game-area">
+      <div id="chinese-column" class="column"></div>
+      <div id="pinyin-column" class="column" style="display: none;"></div> <div id="vietnamese-column" class="column"></div>
+    </div>
+  </div>
+
+  <div id="level-modal" class="modal">
+    <div class="modal-content">
+      <h2>Chọn Chủ đề</h2>
+      <div id="level-list"></div>
+    </div>
+  </div>
+
+  <div id="words-to-learn-modal" class="modal">
+    <div class="modal-content">
+      <h2>Chọn số từ cần học</h2>
+      <div id="words-to-learn-list"></div>
+    </div>
+  </div>
+
+  <div id="mode-modal" class="modal">
+    <div class="modal-content">
+      <h2>Chọn Chế độ học</h2>
+      <div id="mode-list">
+        <button id="btn-card-matching" class="btn">Ghép thẻ theo chủ đề</button>
+        <button id="btn-advanced-card-matching" class="btn">Ghép thẻ theo chủ đề (nâng cao)</button> <button id="btn-flashcards" class="btn">Flash card</button>
+        <button id="btn-word-selection" class="btn" disabled>Chọn từ ghép thẻ (sắp ra mắt)</button>
+        <a href="index.html" class="btn">Về Home - Info</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <h2>Cài đặt</h2>
+      <form id="settings-form">
+        <fieldset class="general-settings-group">
+          <legend>Cài đặt chung:</legend>
+          <label>
+            Chế độ tối (Dark Mode):
+            <input type="checkbox" id="setting-dark-mode" />
+          </label>
+          <label>
+            Đọc từ khi ghép đúng:
+            <input type="checkbox" id="setting-speak-on-correct-match" />
+          </label>
+          <label>
+            Màu chữ:
+            <input type="color" id="setting-text-color" />
+          </label>
+          <label>
+            Số từ mỗi vòng:
+            <select id="setting-words-per-round">
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="autoplay-settings-group">
+          <legend>Cài đặt tự động phát:</legend>
+          <label class="delay-setting-label">
+            Độ trễ giữa hai giọng đọc:
+            <select id="setting-delay-between-voices">
+              <option value="1000">1</option>
+              <option value="2000">2</option>
+              <option value="3000">3</option>
+              <option value="4000">4</option>
+              <option value="5000">5</option>
+              <option value="6000">6</option>
+              <option value="7000">7</option>
+              <option value="8000">8</option>
+              <option value="9000">9</option>
+              <option value="10000">10</option>
+            </select>
+          </label>
+          <label class="delay-setting-label">
+            Độ trễ trước cặp từ mới:
+            <select id="setting-delay-next-round">
+              <option value="1000">1</option>
+              <option value="2000">2</option>
+              <option value="3000">3</option>
+              <option value="4000">4</option>
+              <option value="5000">5</option>
+              <option value="6000">6</option>
+              <option value="7000">7</option>
+              <option value="8000">8</option>
+              <option value="9000">9</option>
+              <option value="10000">10</option>
+            </select>
+          </label>
+          <label>
+            Thứ tự giọng đọc :
+            <select id="setting-voice-order">
+              <option value="chinese-vietnamese">Trung - Việt</option>
+              <option value="vietnamese-chinese">Việt - Trung</option>
+            </select>
+          </label>
+          <label>
+            Số lần lặp lại tiếng Trung:
+            <select id="setting-chinese-repetitions">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+          <label>
+            Số lần lặp lại tiếng Việt:
+            <select id="setting-vietnamese-repetitions">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <button type="button" id="btn-save-settings" class="btn">Lưu Cài đặt</button>
+        </form>
+    </div>
+  </div>
+
+  <script>
+    // Constants for default text colors
+    const LIGHT_MODE_DEFAULT_TEXT_COLOR = '#333333';
+    const DARK_MODE_DEFAULT_TEXT_COLOR = '#f4f4f4';
+
+    // Global flag for TTS readiness, used by speakWord
+    let ttsReady = false;
+
+    // Game state and global variables
+    const gameState = {
+      currentLevel: 'HSK1', // Default to the first level
+      currentWordCount: 'Tất cả', // Stores the selected number of words to learn
+      previousLevel: null, // Stores the level from the previous session
+      previousWordCount: null, // Stores the word count from the previous session
+      correct: 0,
+      incorrect: 0,
+      selectedCh: null,
+      selectedPinyin: null, // NEW: For advanced mode
+      selectedVn: null,
+      sessionWordsPool: [], // The pool of words for the current learning session (either full level or selected subset)
+      activePairs: [], // Words currently displayed on the board for the current round
+      weakWords: new Map(), // Stores words with mistakes and their count (ch -> count)
+      masteredWords: new Set(), // Stores words mastered (ch)
+      totalWordsInLevel: 0, // This will now always be the total words in the *current session's word pool*
+      currentMastered: 0,
+      timerInterval: null,
+      startTime: null,
+      speechSynthesisReady: false,
+      availableVoices: { 'zh-CN': [], 'vi-VN': [] },
+      timeoutIncreaseInterval: null,
+      currentChineseTimeoutWord: null,
+      timeoutBaseDelay: 10000,
+      idleTimer: null,
+      hintDelay: 20000,
+      hintTimeout: null,
+      currentHintPair: null,
+      autoPlayTimer: null,
+      isAutoplayActive: false,
+      currentMode: 'card-matching', // Default mode
+      flashcardIndex: 0,
+      settings: {
+        darkMode: true, // Default to dark mode
+        textColor: DARK_MODE_DEFAULT_TEXT_COLOR, // Default to dark mode text color
+        wordsPerRound: 6,
+        delayBetweenVoices: 2000, // Default to 2 seconds (2000ms) for autoplay
+        delayNextRound: 4000, // Default to 4 seconds (4000ms) for autoplay, was 3000
+        flashcardFlipBackDelay: 500, // Default to 0.5 seconds for flashcard flip back
+        manualInteractionDelay: 0, // Changed default to 0 for immediate speech
+        enableSound: true, // Sound is always enabled now
+        voiceOrder: 'chinese-vietnamese', // Default voice order
+        chineseRepetitions: 1, // Default Chinese repetitions
+        vietnameseRepetitions: 1, // Default Vietnamese repetitions
+        repetitionDelay: 600, // 0.6 seconds delay between repetitions
+        speakOnCorrectMatch: false, // Changed default to false
+      },
+      // State for managing round phases
+      roundIncorrectWords: new Set(), // Words that were answered incorrectly in the current phase
+      isRetryingIncorrectWords: false, // True if we are currently displaying only incorrect words from the previous phase
+      currentInitialRoundPairs: [], // The initial set of words for the current major round
+    };
+
+    // Declare elements outside to be accessible globally, but initialize inside DOMContentLoaded
+    let elements = {};
+
+    // Refined startAutoplay function
+    function startAutoplay() {
+        clearIdleTimer();
+        gameState.isAutoplayActive = true;
+        applySettings();
+        // The words are prepared and rendered by startNewRound/checkRoundCompletion
+        scheduleNextAutoplayAction();
+    }
+
+    // Refined stopAutoplay function
+    function stopAutoplay() {
+        clearTimeout(gameState.autoPlayTimer);
+        gameState.autoPlayTimer = null;
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        gameState.isAutoplayActive = false;
+        applySettings();
+        startIdleTimer();
+    }
+
+// Dữ liệu từ vựng
+    const vocabulary = {
+      'HSK1': [
+        { ch: "爱", pinyin: "ài", vn: "yêu" },{ ch: "八", pinyin: "bā", vn: "tám" },{ ch: "爸爸", pinyin: "bàba", vn: "bố" },{ ch: "杯子", pinyin: "bēizi", vn: "cái cốc" },{ ch: "北京", pinyin: "Běijīng", vn: "Bắc Kinh" },{ ch: "本", pinyin: "běn", vn: "quyển (lượng từ)" },{ ch: "不", pinyin: "bù", vn: "không" },
+{ ch: "菜", pinyin: "cài", vn: "món ăn, rau" },{ ch: "茶", pinyin: "chá", vn: "trà" },{ ch: "吃", pinyin: "chī", vn: "ăn" },{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
+{ ch: "打电话", pinyin: "dǎ diànhuà", vn: "gọi điện thoại" },{ ch: "大", pinyin: "dà", vn: "to, lớn" },
+{ ch: "的", pinyin: "de", vn: "của (trợ từ)" },{ ch: "点", pinyin: "diǎn", vn: "giờ, chấm, điểm" },{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },{ ch: "电视", pinyin: "diànshì", vn: "tivi" },
+{ ch: "电影", pinyin: "diànyǐng", vn: "phim" },{ ch: "东西", pinyin: "dōngxi", vn: "đồ vật" },{ ch: "都", pinyin: "dōu", vn: "đều" },{ ch: "读", pinyin: "dú", vn: "đọc" },
+{ ch: "对不起", pinyin: "duìbuqǐ", vn: "xin lỗi" },{ ch: "多", pinyin: "duō", vn: "nhiều" },{ ch: "多少", pinyin: "duōshao", vn: "bao nhiêu" },
+{ ch: "儿子", pinyin: "érzi", vn: "con trai" },{ ch: "二", pinyin: "èr", vn: "hai" },{ ch: "饭店", pinyin: "fàndiàn", vn: "nhà hàng, khách sạn" },{ ch: "飞机", pinyin: "fēijī", vn: "máy bay" },{ ch: "分钟", pinyin: "fēnzhōng", vn: "phút" },
+{ ch: "高兴", pinyin: "gāoxìng", vn: "vui" },{ ch: "个", pinyin: "gè", vn: "cái (lượng từ)" },{ ch: "工作", pinyin: "gōngzuò", vn: "công việc" },{ ch: "狗", pinyin: "gǒu", vn: "chó" },{ ch: "汉语", pinyin: "Hànyǔ", vn: "tiếng Trung" },
+{ ch: "好", pinyin: "hǎo", vn: "tốt" },{ ch: "喝", pinyin: "hē", vn: "uống" },{ ch: "和", pinyin: "hé", vn: "và" },{ ch: "很", pinyin: "hěn", vn: "rất" },
+{ ch: "后面", pinyin: "hòumiàn", vn: "phía sau" },{ ch: "回", pinyin: "huí", vn: "quay lại, trở về" },{ ch: "会", pinyin: "huì", vn: "biết, sẽ" },{ ch: "火车站", pinyin: "huǒchēzhàn", vn: "ga tàu hỏa" },{ ch: "几", pinyin: "jǐ", vn: "mấy, vài" },
+{ ch: "家", pinyin: "jiā", vn: "nhà, gia đình" },{ ch: "今天", pinyin: "jīntiān", vn: "hôm nay" },{ ch: "九", pinyin: "jiǔ", vn: "chín" },{ ch: "开", pinyin: "kāi", vn: "mở, lái (xe)" },{ ch: "看", pinyin: "kàn", vn: "nhìn, xem" },{ ch: "看见", pinyin: "kànjiàn", vn: "nhìn thấy" },
+{ ch: "块", pinyin: "kuài", vn: "đồng (tiền), miếng" },{ ch: "来", pinyin: "lái", vn: "đến" },{ ch: "老师", pinyin: "lǎoshī", vn: "giáo viên" },{ ch: "了", pinyin: "le", vn: "đã, rồi (trợ từ)" },{ ch: "冷", pinyin: "lěng", vn: "lạnh" },{ ch: "六", pinyin: "liù", vn: "sáu" },{ ch: "妈妈", pinyin: "māma", vn: "mẹ" },
+{ ch: "吗", pinyin: "ma", vn: "không? (trợ từ)" },{ ch: "买", pinyin: "mǎi", vn: "mua" },{ ch: "猫", pinyin: "māo", vn: "mèo" },{ ch: "没", pinyin: "méi", vn: "không có" },{ ch: "没关系", pinyin: "méi guānxi", vn: "không sao" },{ ch: "米饭", pinyin: "mǐfàn", vn: "cơm" },{ ch: "明天", pinyin: "míngtiān", vn: "ngày mai" },{ ch: "名字", pinyin: "míngzi", vn: "tên" },{ ch: "哪", pinyin: "nǎ", vn: "nào" },
+{ ch: "哪儿", pinyin: "nǎr", vn: "ở đâu" },{ ch: "那", pinyin: "nà", vn: "kia, đó" },{ ch: "呢", pinyin: "ne", vn: "thì sao? (trợ từ)" },{ ch: "能", pinyin: "néng", vn: "có thể" },{ ch: "你", pinyin: "nǐ", vn: "bạn, cậu" },{ ch: "年", pinyin: "nián", vn: "năm" },{ ch: "女儿", pinyin: "nǚ'ér", vn: "con gái" },{ ch: "朋友", pinyin: "péngyou", vn: "bạn bè" },{ ch: "漂亮", pinyin: "piàoliang", vn: "đẹp" },
+{ ch: "苹果", pinyin: "píngguǒ", vn: "táo" },{ ch: "七", pinyin: "qī", vn: "bảy" },{ ch: "钱", pinyin: "qián", vn: "tiền" },{ ch: "前面", pinyin: "qiánmiàn", vn: "phía trước" },{ ch: "请", pinyin: "qǐng", vn: "mời, xin vui lòng" },{ ch: "去", pinyin: "qù", vn: "đi" },{ ch: "热", pinyin: "rè", vn: "nóng" },{ ch: "人", pinyin: "rén", vn: "người" },{ ch: "认识", pinyin: "rènshi", vn: "quen, biết (người)" },{ ch: "三", pinyin: "sān", vn: "ba" },{ ch: "商店", pinyin: "shāngdiàn", vn: "cửa hàng" },{ ch: "上", pinyin: "shàng", vn: "trên, lên" },
+{ ch: "上午", pinyin: "shàngwǔ", vn: "buổi sáng" },{ ch: "少", pinyin: "shǎo", vn: "ít" },{ ch: "谁", pinyin: "shéi", vn: "ai" },{ ch: "什么", pinyin: "shénme", vn: "cái gì" },{ ch: "十", pinyin: "shí", vn: "mười" },{ ch: "时候", pinyin: "shíhou", vn: "khi, lúc" },{ ch: "是", pinyin: "shì", vn: "là" },{ ch: "书", pinyin: "shū", vn: "sách" },{ ch: "水", pinyin: "shuǐ", vn: "nước" },{ ch: "水果", pinyin: "shuǐguǒ", vn: "hoa quả" },{ ch: "睡觉", pinyin: "shuìjiào", vn: "ngủ" },{ ch: "说", pinyin: "shuō", vn: "nói" },
+{ ch: "四", pinyin: "sì", vn: "bốn" },{ ch: "岁", pinyin: "suì", vn: "tuổi" },{ ch: "他", pinyin: "tā", vn: "anh ấy" },{ ch: "她", pinyin: "tā", vn: "cô ấy" },{ ch: "太", pinyin: "tài", vn: "quá, rất" },{ ch: "天气", pinyin: "tiānqì", vn: "thời tiết" },{ ch: "听", pinyin: "tīng", vn: "nghe" },{ ch: "同学", pinyin: "tóngxué", vn: "bạn học" },{ ch: "喂", pinyin: "wèi", vn: "alo (gọi điện)" },{ ch: "我", pinyin: "wǒ", vn: "tôi" },{ ch: "我们", pinyin: "wǒmen", vn: "chúng tôi" },
+{ ch: "五", pinyin: "wǔ", vn: "năm" },{ ch: "喜欢", pinyin: "xǐhuan", vn: "thích" },{ ch: "下", pinyin: "xià", vn: "dưới, xuống" },{ ch: "下午", pinyin: "xiàwǔ", vn: "buổi chiều" },{ ch: "下雨", pinyin: "xià yǔ", vn: "mưa" },{ ch: "先生", pinyin: "xiānsheng", vn: "ông, ngài" },{ ch: "现在", pinyin: "xiànzài", vn: "bây giờ" },{ ch: "想", pinyin: "xiǎng", vn: "muốn, nghĩ" },{ ch: "小", pinyin: "xiǎo", vn: "nhỏ" },{ ch: "小姐", pinyin: "xiǎojiě", vn: "cô, tiểu thư" },{ ch: "写", pinyin: "xiě", vn: "viết" },
+{ ch: "谢谢", pinyin: "xièxie", vn: "cảm ơn" },{ ch: "星期", pinyin: "xīngqī", vn: "tuần" },{ ch: "学生", pinyin: "xuésheng", vn: "học sinh" },{ ch: "学校", pinyin: "xuéxiào", vn: "trường học" },{ ch: "一", pinyin: "yī", vn: "một" },{ ch: "衣服", pinyin: "yīfu", vn: "quần áo" },{ ch: "医生", pinyin: "yīshēng", vn: "bác sĩ" },{ ch: "医院", pinyin: "yīyuàn", vn: "bệnh viện" },{ ch: "椅子", pinyin: "yǐzi", vn: "cái ghế" },{ ch: "有", pinyin: "yǒu", vn: "có" },
+{ ch: "月", pinyin: "yuè", vn: "tháng, mặt trăng" },{ ch: "再见", pinyin: "zàijiàn", vn: "tạm biệt" },{ ch: "在", pinyin: "zài", vn: "ở, đang" },{ ch: "怎么", pinyin: "zěnme", vn: "như thế nào" },{ ch: "怎么样", pinyin: "zěnmeyàng", vn: "thế nào" },{ ch: "这", pinyin: "zhè", vn: "cái này, đây" },{ ch: "中国", pinyin: "Zhōngguó", vn: "Trung Quốc" },{ ch: "中午", pinyin: "zhōngwǔ", vn: "buổi trưa" },
+{ ch: "住", pinyin: "zhù", vn: "sống, ở" },{ ch: "桌子", pinyin: "zhuōzi", vn: "cái bàn" },
+{ ch: "字", pinyin: "zì", vn: "chữ" },{ ch: "昨天", pinyin: "zuótiān", vn: "hôm qua" },{ ch: "做", pinyin: "zuò", vn: "làm" },{ ch: "坐", pinyin: "zuò", vn: "ngồi" },{ ch: "左边", pinyin: "zuǒbian", vn: "bên trái" },{ ch: "右边", pinyin: "yòubian", vn: "bên phải" },{ ch: "前天", pinyin: "qiántiān", vn: "hôm kia" },{ ch: "后天", pinyin: "hòutiān", vn: "ngày kia (sau mai)" },{ ch: "以前", pinyin: "yǐqián", vn: "trước đây" },{ ch: "以后", pinyin: "yǐhòu", vn: "sau này" },
+
+      ],
+      'HSK2': [
+        { ch: "爸爸", pinyin: "bàba", vn: "bố" },
+{ ch: "妈妈", pinyin: "māma", vn: "mẹ" },
+{ ch: "哥哥", pinyin: "gēge", vn: "anh trai" },
+{ ch: "姐姐", pinyin: "jiějie", vn: "chị gái" },
+{ ch: "弟弟", pinyin: "dìdi", vn: "em trai" },
+{ ch: "妹妹", pinyin: "mèimei", vn: "em gái" },
+{ ch: "老师", pinyin: "lǎoshī", vn: "giáo viên" },
+{ ch: "学生", pinyin: "xuésheng", vn: "học sinh" },
+{ ch: "朋友", pinyin: "péngyǒu", vn: "bạn bè" },
+{ ch: "同学", pinyin: "tóngxué", vn: "bạn học" },
+{ ch: "医生", pinyin: "yīshēng", vn: "bác sĩ" },
+{ ch: "护士", pinyin: "hùshi", vn: "y tá" },
+{ ch: "工作", pinyin: "gōngzuò", vn: "công việc" },
+{ ch: "学习", pinyin: "xuéxí", vn: "học" },
+{ ch: "学校", pinyin: "xuéxiào", vn: "trường học" },
+{ ch: "教室", pinyin: "jiàoshì", vn: "phòng học" },
+{ ch: "图书馆", pinyin: "túshūguǎn", vn: "thư viện" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "商店", pinyin: "shāngdiàn", vn: "cửa hàng" },
+{ ch: "饭店", pinyin: "fàndiàn", vn: "nhà hàng" },
+{ ch: "咖啡", pinyin: "kāfēi", vn: "cà phê" },
+{ ch: "面包", pinyin: "miànbāo", vn: "bánh mì" },
+{ ch: "牛奶", pinyin: "niúnǎi", vn: "sữa bò" },
+{ ch: "茶", pinyin: "chá", vn: "trà" },
+{ ch: "水", pinyin: "shuǐ", vn: "nước" },
+{ ch: "米饭", pinyin: "mǐfàn", vn: "cơm" },
+{ ch: "苹果", pinyin: "píngguǒ", vn: "táo" },
+{ ch: "香蕉", pinyin: "xiāngjiāo", vn: "chuối" },
+{ ch: "西瓜", pinyin: "xīguā", vn: "dưa hấu" },
+{ ch: "蛋糕", pinyin: "dàngāo", vn: "bánh kem" },
+{ ch: "鸡蛋", pinyin: "jīdàn", vn: "trứng gà" },
+{ ch: "鱼", pinyin: "yú", vn: "cá" },
+{ ch: "菜", pinyin: "cài", vn: "rau / món ăn" },
+{ ch: "饺子", pinyin: "jiǎozi", vn: "bánh chẻo" },
+{ ch: "面条", pinyin: "miàntiáo", vn: "mì" },
+{ ch: "包子", pinyin: "bāozi", vn: "bánh bao" },
+{ ch: "钱", pinyin: "qián", vn: "tiền" },
+{ ch: "块", pinyin: "kuài", vn: "đồng (đơn vị)" },
+{ ch: "毛", pinyin: "máo", vn: "hào (1/10 đồng)" },
+{ ch: "分", pinyin: "fēn", vn: "xu" },
+{ ch: "买", pinyin: "mǎi", vn: "mua" },
+{ ch: "卖", pinyin: "mài", vn: "bán" },
+{ ch: "贵", pinyin: "guì", vn: "đắt" },
+{ ch: "便宜", pinyin: "piányi", vn: "rẻ" },
+{ ch: "给", pinyin: "gěi", vn: "cho, đưa cho" },
+{ ch: "找", pinyin: "zhǎo", vn: "tìm" },
+{ ch: "看", pinyin: "kàn", vn: "nhìn, xem" },
+{ ch: "听", pinyin: "tīng", vn: "nghe" },
+{ ch: "说话", pinyin: "shuōhuà", vn: "nói chuyện" },
+{ ch: "问", pinyin: "wèn", vn: "hỏi" },
+{ ch: "回答", pinyin: "huídá", vn: "trả lời" },
+{ ch: "读", pinyin: "dú", vn: "đọc" },
+{ ch: "写", pinyin: "xiě", vn: "viết" },
+{ ch: "唱歌", pinyin: "chànggē", vn: "hát" },
+{ ch: "跳舞", pinyin: "tiàowǔ", vn: "nhảy" },
+{ ch: "游泳", pinyin: "yóuyǒng", vn: "bơi" },
+{ ch: "跑步", pinyin: "pǎobù", vn: "chạy bộ" },
+{ ch: "踢足球", pinyin: "tī zúqiú", vn: "đá bóng" },
+{ ch: "打篮球", pinyin: "dǎ lánqiú", vn: "chơi bóng rổ" },
+{ ch: "打电话", pinyin: "dǎ diànhuà", vn: "gọi điện thoại" },
+{ ch: "电影", pinyin: "diànyǐng", vn: "phim" },
+{ ch: "音乐", pinyin: "yīnyuè", vn: "âm nhạc" },
+{ ch: "电视", pinyin: "diànshì", vn: "tivi" },
+{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },
+{ ch: "手机", pinyin: "shǒujī", vn: "điện thoại di động" },
+{ ch: "照片", pinyin: "zhàopiàn", vn: "ảnh" },
+{ ch: "地图", pinyin: "dìtú", vn: "bản đồ" },
+{ ch: "机场", pinyin: "jīchǎng", vn: "sân bay" },
+{ ch: "火车站", pinyin: "huǒchēzhàn", vn: "ga tàu" },
+{ ch: "公交车", pinyin: "gōngjiāochē", vn: "xe buýt" },
+{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
+{ ch: "自行车", pinyin: "zìxíngchē", vn: "xe đạp" },
+{ ch: "车", pinyin: "chē", vn: "xe hơi" },
+{ ch: "路", pinyin: "lù", vn: "đường" },
+{ ch: "街", pinyin: "jiē", vn: "phố" },
+{ ch: "商场", pinyin: "shāngchǎng", vn: "trung tâm mua sắm" },
+{ ch: "超市", pinyin: "chāoshì", vn: "siêu thị" },
+{ ch: "医院", pinyin: "yīyuàn", vn: "bệnh viện" },
+{ ch: "药店", pinyin: "yàodiàn", vn: "nhà thuốc" },
+{ ch: "银行", pinyin: "yínháng", vn: "ngân hàng" },
+{ ch: "邮局", pinyin: "yóujú", vn: "bưu điện" },
+{ ch: "公园", pinyin: "gōngyuán", vn: "công viên" },
+{ ch: "银行卡", pinyin: "yínhángkǎ", vn: "thẻ ngân hàng" },
+{ ch: "饭馆", pinyin: "fànguǎn", vn: "nhà hàng" },
+{ ch: "超市", pinyin: "chāoshì", vn: "siêu thị" },
+{ ch: "电影院", pinyin: "diànyǐngyuàn", vn: "rạp chiếu phim" },
+{ ch: "图书馆", pinyin: "túshūguǎn", vn: "thư viện" },
+{ ch: "洗手间", pinyin: "xǐshǒujiān", vn: "nhà vệ sinh" },
+{ ch: "教室", pinyin: "jiàoshì", vn: "phòng học" },
+{ ch: "书店", pinyin: "shūdiàn", vn: "hiệu sách" },
+{ ch: "桌子", pinyin: "zhuōzi", vn: "bàn" },
+{ ch: "椅子", pinyin: "yǐzi", vn: "ghế" },
+{ ch: "灯", pinyin: "dēng", vn: "đèn" },
+{ ch: "窗户", pinyin: "chuānghu", vn: "cửa sổ" },
+{ ch: "门", pinyin: "mén", vn: "cửa" },
+{ ch: "房间", pinyin: "fángjiān", vn: "phòng" },
+{ ch: "床", pinyin: "chuáng", vn: "giường" },
+{ ch: "衣服", pinyin: "yīfu", vn: "quần áo" },
+{ ch: "鞋子", pinyin: "xiézi", vn: "giày" },
+{ ch: "帽子", pinyin: "màozi", vn: "mũ" },
+{ ch: "眼镜", pinyin: "yǎnjìng", vn: "kính" },
+{ ch: "钱包", pinyin: "qiánbāo", vn: "ví tiền" },
+{ ch: "书", pinyin: "shū", vn: "sách" },
+{ ch: "笔", pinyin: "bǐ", vn: "bút" },
+{ ch: "纸", pinyin: "zhǐ", vn: "giấy" },
+{ ch: "手机", pinyin: "shǒujī", vn: "điện thoại" },
+{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },
+{ ch: "电视", pinyin: "diànshì", vn: "tivi" },
+{ ch: "电话", pinyin: "diànhuà", vn: "điện thoại" },
+{ ch: "电影", pinyin: "diànyǐng", vn: "phim" },
+{ ch: "音乐", pinyin: "yīnyuè", vn: "âm nhạc" },
+{ ch: "运动", pinyin: "yùndòng", vn: "thể thao" },
+{ ch: "足球", pinyin: "zúqiú", vn: "bóng đá" },
+{ ch: "篮球", pinyin: "lánqiú", vn: "bóng rổ" },
+{ ch: "游泳", pinyin: "yóuyǒng", vn: "bơi" },
+{ ch: "跑步", pinyin: "pǎobù", vn: "chạy bộ" },
+{ ch: "骑车", pinyin: "qíchē", vn: "đi xe đạp" },
+{ ch: "跳舞", pinyin: "tiàowǔ", vn: "nhảy múa" },
+{ ch: "唱歌", pinyin: "chànggē", vn: "hát" },
+{ ch: "旅行", pinyin: "lǚxíng", vn: "du lịch" },
+{ ch: "火车", pinyin: "huǒchē", vn: "tàu hỏa" },
+{ ch: "飞机", pinyin: "fēijī", vn: "máy bay" },
+{ ch: "汽车", pinyin: "qìchē", vn: "ô tô" },
+{ ch: "自行车", pinyin: "zìxíngchē", vn: "xe đạp" },
+{ ch: "公共汽车", pinyin: "gōnggòng qìchē", vn: "xe buýt" },
+{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
+{ ch: "地铁", pinyin: "dìtiě", vn: "tàu điện ngầm" },
+{ ch: "车站", pinyin: "chēzhàn", vn: "ga, bến xe" },
+{ ch: "机场", pinyin: "jīchǎng", vn: "sân bay" },
+{ ch: "路", pinyin: "lù", vn: "đường" },
+{ ch: "街", pinyin: "jiē", vn: "phố" },
+{ ch: "桥", pinyin: "qiáo", vn: "cầu" },
+{ ch: "银行", pinyin: "yínháng", vn: "ngân hàng" },
+{ ch: "邮局", pinyin: "yóujú", vn: "bưu điện" },
+{ ch: "商店", pinyin: "shāngdiàn", vn: "cửa hàng" },
+{ ch: "超市", pinyin: "chāoshì", vn: "siêu thị" },
+{ ch: "餐厅", pinyin: "cāntīng", vn: "nhà hàng" },
+{ ch: "饭馆", pinyin: "fànguǎn", vn: "nhà hàng" },
+{ ch: "医院", pinyin: "yīyuàn", vn: "bệnh viện" },
+{ ch: "药店", pinyin: "yàodiàn", vn: "nhà thuốc" },
+{ ch: "学校", pinyin: "xuéxiào", vn: "trường học" },
+{ ch: "图书馆", pinyin: "túshūguǎn", vn: "thư viện" },
+{ ch: "公园", pinyin: "gōngyuán", vn: "công viên" },
+{ ch: "电影院", pinyin: "diànyǐngyuàn", vn: "rạp chiếu phim" },
+{ ch: "体育馆", pinyin: "tǐyùguǎn", vn: "nhà thi đấu" },
+{ ch: "邮箱", pinyin: "yóuxiāng", vn: "hòm thư điện tử" },
+{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },
+{ ch: "手机", pinyin: "shǒujī", vn: "điện thoại" },
+{ ch: "电话", pinyin: "diànhuà", vn: "điện thoại" },
+{ ch: "照片", pinyin: "zhàopiàn", vn: "ảnh" },
+{ ch: "衣服", pinyin: "yīfu", vn: "quần áo" },
+{ ch: "裤子", pinyin: "kùzi", vn: "quần" },
+{ ch: "裙子", pinyin: "qúnzi", vn: "váy" },
+{ ch: "鞋子", pinyin: "xiézi", vn: "giày" },
+{ ch: "帽子", pinyin: "màozi", vn: "mũ" },
+{ ch: "眼镜", pinyin: "yǎnjìng", vn: "kính" },
+{ ch: "书包", pinyin: "shūbāo", vn: "cặp sách" },
+{ ch: "钱包", pinyin: "qiánbāo", vn: "ví tiền" },
+{ ch: "颜色", pinyin: "yánsè", vn: "màu sắc" },
+{ ch: "红色", pinyin: "hóngsè", vn: "màu đỏ" },
+{ ch: "绿色", pinyin: "lǜsè", vn: "màu xanh lá" },
+{ ch: "蓝色", pinyin: "lánsè", vn: "màu xanh dương" },
+{ ch: "白色", pinyin: "báisè", vn: "màu trắng" },
+{ ch: "黑色", pinyin: "hēisè", vn: "màu đen" },
+{ ch: "黄色", pinyin: "huángsè", vn: "màu vàng" },
+{ ch: "橙色", pinyin: "chéngsè", vn: "màu cam" },
+{ ch: "粉色", pinyin: "fěnsè", vn: "màu hồng" },
+{ ch: "灰色", pinyin: "huīsè", vn: "màu xám" },
+{ ch: "咖啡色", pinyin: "kāfēisè", vn: "màu cà phê" },
+{ ch: "颜色", pinyin: "yánsè", vn: "màu sắc" },
+{ ch: "天气", pinyin: "tiānqì", vn: "thời tiết" },
+{ ch: "太阳", pinyin: "tàiyáng", vn: "mặt trời" },
+{ ch: "雨", pinyin: "yǔ", vn: "mưa" },
+{ ch: "雪", pinyin: "xuě", vn: "tuyết" },
+{ ch: "风", pinyin: "fēng", vn: "gió" },
+{ ch: "云", pinyin: "yún", vn: "mây" },
+{ ch: "温度", pinyin: "wēndù", vn: "nhiệt độ" },
+{ ch: "春天", pinyin: "chūntiān", vn: "mùa xuân" },
+{ ch: "夏天", pinyin: "xiàtiān", vn: "mùa hè" },
+{ ch: "秋天", pinyin: "qiūtiān", vn: "mùa thu" },
+{ ch: "冬天", pinyin: "dōngtiān", vn: "mùa đông" },
+{ ch: "冷", pinyin: "lěng", vn: "lạnh" },
+{ ch: "热", pinyin: "rè", vn: "nóng" },
+{ ch: "雾", pinyin: "wù", vn: "sương mù" },
+{ ch: "雷", pinyin: "léi", vn: "sấm" },
+{ ch: "电", pinyin: "diàn", vn: "điện" },
+{ ch: "灯", pinyin: "dēng", vn: "đèn" },
+{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },
+{ ch: "手机", pinyin: "shǒujī", vn: "điện thoại" },
+{ ch: "电视", pinyin: "diànshì", vn: "tivi" },
+{ ch: "电影", pinyin: "diànyǐng", vn: "phim" },
+{ ch: "音乐", pinyin: "yīnyuè", vn: "âm nhạc" },
+{ ch: "书", pinyin: "shū", vn: "sách" },
+{ ch: "笔", pinyin: "bǐ", vn: "bút" },
+{ ch: "纸", pinyin: "zhǐ", vn: "giấy" },
+{ ch: "椅子", pinyin: "yǐzi", vn: "ghế" },
+{ ch: "桌子", pinyin: "zhuōzi", vn: "bàn" },
+{ ch: "床", pinyin: "chuáng", vn: "giường" },
+{ ch: "门", pinyin: "mén", vn: "cửa" },
+{ ch: "窗户", pinyin: "chuānghu", vn: "cửa sổ" },
+{ ch: "衣服", pinyin: "yīfu", vn: "quần áo" },
+{ ch: "裤子", pinyin: "kùzi", vn: "quần" },
+{ ch: "鞋子", pinyin: "xiézi", vn: "giày" },
+{ ch: "帽子", pinyin: "màozi", vn: "mũ" },
+{ ch: "眼镜", pinyin: "yǎnjìng", vn: "kính" },
+{ ch: "颜色", pinyin: "yánsè", vn: "màu sắc" },
+{ ch: "红色", pinyin: "hóngsè", vn: "màu đỏ" },
+{ ch: "蓝色", pinyin: "lánsè", vn: "màu xanh dương" },
+{ ch: "绿色", pinyin: "lǜsè", vn: "màu xanh lá" },
+{ ch: "白色", pinyin: "báisè", vn: "màu trắng" },
+{ ch: "黑色", pinyin: "hēisè", vn: "màu đen" },
+{ ch: "黄色", pinyin: "huángsè", vn: "màu vàng" },
+{ ch: "橙色", pinyin: "chéngsè", vn: "màu cam" },
+{ ch: "粉色", pinyin: "fěnsè", vn: "màu hồng" },
+{ ch: "灰色", pinyin: "huīsè", vn: "màu xám" },
+{ ch: "咖啡色", pinyin: "kāfēisè", vn: "màu cà phê" },
+{ ch: "春天", pinyin: "chūntiān", vn: "mùa xuân" },
+{ ch: "夏天", pinyin: "xiàtiān", vn: "mùa hè" },
+{ ch: "秋天", pinyin: "qiūtiān", vn: "mùa thu" },
+{ ch: "冬天", pinyin: "dōngtiān", vn: "mùa đông" },
+{ ch: "天气", pinyin: "tiānqì", vn: "thời tiết" },
+{ ch: "太阳", pinyin: "tàiyáng", vn: "mặt trời" },
+{ ch: "雨", pinyin: "yǔ", vn: "mưa" },
+{ ch: "雪", pinyin: "xuě", vn: "tuyết" },
+{ ch: "风", pinyin: "fēng", vn: "gió" },
+{ ch: "云", pinyin: "yún", vn: "mây" },
+{ ch: "温度", pinyin: "wēndù", vn: "nhiệt độ" },
+{ ch: "雾", pinyin: "wù", vn: "sương mù" },
+{ ch: "雷", pinyin: "léi", vn: "sấm" },
+{ ch: "电", pinyin: "diàn", vn: "điện" },
+{ ch: "书店", pinyin: "shūdiàn", vn: "hiệu sách" },
+{ ch: "饭馆", pinyin: "fànguǎn", vn: "nhà hàng" },
+{ ch: "医院", pinyin: "yīyuàn", vn: "bệnh viện" },
+{ ch: "药店", pinyin: "yàodiàn", vn: "nhà thuốc" },
+{ ch: "银行", pinyin: "yínháng", vn: "ngân hàng" },
+{ ch: "邮局", pinyin: "yóujú", vn: "bưu điện" },
+{ ch: "学校", pinyin: "xuéxiào", vn: "trường học" },
+{ ch: "图书馆", pinyin: "túshūguǎn", vn: "thư viện" },
+{ ch: "公园", pinyin: "gōngyuán", vn: "công viên" },
+{ ch: "电影院", pinyin: "diànyǐngyuàn", vn: "rạp chiếu phim" },
+{ ch: "体育馆", pinyin: "tǐyùguǎn", vn: "nhà thi đấu" },
+{ ch: "机场", pinyin: "jīchǎng", vn: "sân bay" },
+{ ch: "火车站", pinyin: "huǒchēzhàn", vn: "ga tàu hỏa" },
+{ ch: "公共汽车站", pinyin: "gōnggòng qìchē zhàn", vn: "trạm xe buýt" },
+{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
+{ ch: "地铁", pinyin: "dìtiě", vn: "tàu điện ngầm" },
+{ ch: "路", pinyin: "lù", vn: "đường" },
+{ ch: "街", pinyin: "jiē", vn: "phố" },
+{ ch: "桥", pinyin: "qiáo", vn: "cầu" },
+{ ch: "汽车", pinyin: "qìchē", vn: "ô tô" },
+{ ch: "自行车", pinyin: "zìxíngchē", vn: "xe đạp" },
+{ ch: "司机", pinyin: "sījī", vn: "tài xế" },
+{ ch: "车票", pinyin: "chēpiào", vn: "vé xe" },
+{ ch: "旅馆", pinyin: "lǚguǎn", vn: "nhà khách" },
+{ ch: "旅馆", pinyin: "lǚguǎn", vn: "khách sạn" },
+{ ch: "旅客", pinyin: "lǚkè", vn: "hành khách" },
+{ ch: "行李", pinyin: "xíngli", vn: "hành lý" },
+{ ch: "照相机", pinyin: "zhàoxiàngjī", vn: "máy ảnh" },
+{ ch: "地图", pinyin: "dìtú", vn: "bản đồ" },
+{ ch: "导游", pinyin: "dǎoyóu", vn: "hướng dẫn viên" },
+{ ch: "签证", pinyin: "qiānzhèng", vn: "thị thực" },
+{ ch: "护照", pinyin: "hùzhào", vn: "hộ chiếu" },
+{ ch: "旅行", pinyin: "lǚxíng", vn: "du lịch" },
+{ ch: "机票", pinyin: "jīpiào", vn: "vé máy bay" },
+{ ch: "登机口", pinyin: "dēngjīkǒu", vn: "cửa lên máy bay" },
+{ ch: "起飞", pinyin: "qǐfēi", vn: "cất cánh" },
+{ ch: "降落", pinyin: "jiàngluò", vn: "hạ cánh" },
+{ ch: "旅馆", pinyin: "lǚguǎn", vn: "nhà trọ" },
+{ ch: "旅客", pinyin: "lǚkè", vn: "khách du lịch" },
+{ ch: "旅行社", pinyin: "lǚxíngshè", vn: "công ty du lịch" },
+{ ch: "旅游", pinyin: "lǚyóu", vn: "du lịch" },
+{ ch: "旅馆", pinyin: "lǚguǎn", vn: "khách sạn" },
+{ ch: "住宿", pinyin: "zhùsù", vn: "chỗ ở" },
+{ ch: "预订", pinyin: "yùdìng", vn: "đặt trước" },
+{ ch: "取消", pinyin: "qǔxiāo", vn: "hủy bỏ" },
+{ ch: "护照", pinyin: "hùzhào", vn: "hộ chiếu" },
+{ ch: "行李箱", pinyin: "xínglǐxiāng", vn: "vali" },
+{ ch: "安全", pinyin: "ānquán", vn: "an toàn" },
+{ ch: "安检", pinyin: "ānjiǎn", vn: "kiểm tra an ninh" },
+{ ch: "出发", pinyin: "chūfā", vn: "xuất phát" },
+{ ch: "到达", pinyin: "dàodá", vn: "đến nơi" },
+{ ch: "旅行", pinyin: "lǚxíng", vn: "đi du lịch" },
+{ ch: "导游", pinyin: "dǎoyóu", vn: "hướng dẫn viên" },
+{ ch: "游客", pinyin: "yóukè", vn: "khách du lịch" },
+{ ch: "景点", pinyin: "jǐngdiǎn", vn: "điểm tham quan" },
+{ ch: "纪念品", pinyin: "jìniànpǐn", vn: "quà lưu niệm" },
+{ ch: "地图", pinyin: "dìtú", vn: "bản đồ" },
+{ ch: "天气预报", pinyin: "tiānqì yùbào", vn: "dự báo thời tiết" },
+{ ch: "旅行社", pinyin: "lǚxíngshè", vn: "công ty du lịch" },
+{ ch: "飞机票", pinyin: "fēijī piào", vn: "vé máy bay" },
+{ ch: "火车票", pinyin: "huǒchē piào", vn: "vé tàu hỏa" },
+{ ch: "住宿费", pinyin: "zhùsù fèi", vn: "phí lưu trú" },
+{ ch: "订票", pinyin: "dìngpiào", vn: "đặt vé" },
+{ ch: "车站", pinyin: "chēzhàn", vn: "bến xe" },
+{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
+{ ch: "地铁站", pinyin: "dìtiě zhàn", vn: "ga tàu điện ngầm" },
+{ ch: "安全检查", pinyin: "ānquán jiǎnchá", vn: "kiểm tra an ninh" },
+{ ch: "登机牌", pinyin: "dēngjī pái", vn: "thẻ lên máy bay" },
+{ ch: "乘客", pinyin: "chéngkè", vn: "hành khách" },
+{ ch: "航班", pinyin: "hángbān", vn: "chuyến bay" },
+
+              ],
+      'HSK3': [
+        { ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+{ ch: "啊", pinyin: "a", vn: "à, ừ (thán từ)" },
+{ ch: "阿姨", pinyin: "āyí", vn: "cô, dì" },
+{ ch: "矮", pinyin: "ǎi", vn: "thấp" },
+{ ch: "爱好", pinyin: "àihào", vn: "sở thích" },
+{ ch: "安静", pinyin: "ānjìng", vn: "yên tĩnh" },
+{ ch: "把", pinyin: "bǎ", vn: "đem, lấy" },
+{ ch: "搬", pinyin: "bān", vn: "chuyển, dọn" },
+{ ch: "办法", pinyin: "bànfǎ", vn: "phương pháp" },
+{ ch: "办公室", pinyin: "bàngōngshì", vn: "văn phòng" },
+{ ch: "帮忙", pinyin: "bāngmáng", vn: "giúp đỡ" },
+{ ch: "包", pinyin: "bāo", vn: "túi, bao" },
+{ ch: "饱", pinyin: "bǎo", vn: "no" },
+{ ch: "北方", pinyin: "běifāng", vn: "miền Bắc" },
+{ ch: "被", pinyin: "bèi", vn: "bị (bị động)" },
+{ ch: "鼻子", pinyin: "bízi", vn: "mũi" },
+{ ch: "比较", pinyin: "bǐjiào", vn: "so sánh" },
+{ ch: "比赛", pinyin: "bǐsài", vn: "thi đấu" },
+{ ch: "笔记本", pinyin: "bǐjìběn", vn: "sổ ghi chép" },
+{ ch: "必须", pinyin: "bìxū", vn: "phải, cần phải" },
+{ ch: "变化", pinyin: "biànhuà", vn: "thay đổi" },
+{ ch: "表示", pinyin: "biǎoshì", vn: "biểu thị" },
+{ ch: "表演", pinyin: "biǎoyǎn", vn: "biểu diễn" },
+{ ch: "别人", pinyin: "biérén", vn: "người khác" },
+{ ch: "冰箱", pinyin: "bīngxiāng", vn: "tủ lạnh" },
+{ ch: "不但...而且...", pinyin: "búdàn...érqiě...", vn: "không những...mà còn..." },
+{ ch: "菜单", pinyin: "càidān", vn: "thực đơn" },
+{ ch: "参加", pinyin: "cānjiā", vn: "tham gia" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "层", pinyin: "céng", vn: "tầng" },
+{ ch: "差", pinyin: "chà", vn: "kém" },
+
+      ],
+'600 Từ': [
+{ ch: "一", pinyin: "yī", vn: "một" },
+{ ch: "丁", pinyin: "dīng", vn: "họ Đinh" },
+{ ch: "七", pinyin: "qī", vn: "bảy" },
+{ ch: "万", pinyin: "wàn", vn: "vạn, 10 ngàn" },
+{ ch: "三", pinyin: "sān", vn: "ba" },
+{ ch: "上", pinyin: "shàng", vn: "trên" },
+{ ch: "下", pinyin: "xià", vn: "dưới" },
+{ ch: "不", pinyin: "bù", vn: "không" },
+{ ch: "专", pinyin: "zhuān", vn: "chuyên" },
+{ ch: "业", pinyin: "yè", vn: "nghề, công việc" },
+{ ch: "东", pinyin: "dōng", vn: "đông" },
+{ ch: "丢", pinyin: "diū", vn: "mất, quăng" },
+{ ch: "两", pinyin: "liǎng", vn: "hai (số lượng)" },
+{ ch: "严", pinyin: "yán", vn: "nghiêm" },
+{ ch: "个", pinyin: "gè", vn: "cái, chiếc" },
+{ ch: "中", pinyin: "zhōng", vn: "trung, giữa" },
+{ ch: "为", pinyin: "wèi", vn: "vì" },
+{ ch: "主", pinyin: "zhǔ", vn: "chủ" },
+{ ch: "丽", pinyin: "lì", vn: "đẹp" },
+{ ch: "举", pinyin: "jǔ", vn: "giơ, nêu lên" },
+{ ch: "久", pinyin: "jiǔ", vn: "lâu" },
+{ ch: "么", pinyin: "me", vn: "gì (trợ từ)" },
+{ ch: "义", pinyin: "yì", vn: "nghĩa" },
+{ ch: "之", pinyin: "zhī", vn: "của, (trợ từ)" },
+{ ch: "乌", pinyin: "wū", vn: "đen" },
+{ ch: "乐", pinyin: "lè", vn: "vui" },
+{ ch: "九", pinyin: "jiǔ", vn: "chín" },
+{ ch: "也", pinyin: "yě", vn: "cũng" },
+{ ch: "习", pinyin: "xí", vn: "học" },
+{ ch: "乡", pinyin: "xiāng", vn: "làng quê" },
+{ ch: "书", pinyin: "shū", vn: "sách" },
+{ ch: "乱", pinyin: "luàn", vn: "loạn, lộn xộn" },
+{ ch: "了", pinyin: "le, liǎo", vn: "rồi" },
+{ ch: "事", pinyin: "shì", vn: "việc" },
+{ ch: "二", pinyin: "èr", vn: "hai" },
+{ ch: "云", pinyin: "yún", vn: "mây" },
+{ ch: "五", pinyin: "wǔ", vn: "năm" },
+{ ch: "井", pinyin: "jǐng", vn: "giếng" },
+{ ch: "交", pinyin: "jiāo", vn: "giao, kết bạn" },
+{ ch: "产", pinyin: "chǎn", vn: "sản xuất" },
+{ ch: "京", pinyin: "jīng", vn: "kinh (thủ đô)" },
+{ ch: "亮", pinyin: "liàng", vn: "sáng" },
+{ ch: "亲", pinyin: "qīn", vn: "thân" },
+{ ch: "人", pinyin: "rén", vn: "người" },
+{ ch: "什么", pinyin: "shén me", vn: "cái gì" },
+{ ch: "今", pinyin: "jīn", vn: "hôm nay" },
+{ ch: "从", pinyin: "cóng", vn: "từ" },
+{ ch: "他", pinyin: "tā", vn: "anh ấy" },
+{ ch: "令", pinyin: "lìng", vn: "lệnh" },
+{ ch: "们", pinyin: "men", vn: "(hậu tố số nhiều)" },
+{ ch: "件", pinyin: "jiàn", vn: "cái (lượng từ)" },
+{ ch: "任", pinyin: "zhù", vn: "nhậm chức" },
+{ ch: "众", pinyin: "zhòng", vn: "đông người" },
+{ ch: "会", pinyin: "huì", vn: "biết, có thể" },
+{ ch: "伞", pinyin: "sǎn", vn: "ô (dù)" },
+{ ch: "低", pinyin: "dī", vn: "thấp" },
+{ ch: "住", pinyin: "zhù", vn: "sống, cư trú" },
+{ ch: "体", pinyin: "tǐ", vn: "thể" },
+{ ch: "作", pinyin: "zuò", vn: "làm, sáng tác" },
+{ ch: "你", pinyin: "nǐ", vn: "bạn" },
+{ ch: "保", pinyin: "bǎo", vn: "bảo vệ" },
+{ ch: "做", pinyin: "zuò", vn: "làm" },
+{ ch: "停", pinyin: "tíng", vn: "dừng" },
+{ ch: "偷", pinyin: "tōu", vn: "ăn trộm" },
+{ ch: "像", pinyin: "xiàng", vn: "giống như" },
+{ ch: "儿", pinyin: "ér", vn: "trẻ nhỏ" },
+{ ch: "元", pinyin: "yuán", vn: "đơn vị tiền tệ" },
+{ ch: "先", pinyin: "xiān", vn: "trước" },
+{ ch: "光", pinyin: "guāng", vn: "ánh sáng" },
+{ ch: "兔", pinyin: "tù", vn: "thỏ" },
+{ ch: "党", pinyin: "dǎng", vn: "đảng" },
+{ ch: "入", pinyin: "rù", vn: "vào" },
+{ ch: "全", pinyin: "quán", vn: "toàn bộ" },
+{ ch: "八", pinyin: "bā", vn: "tám" },
+{ ch: "公", pinyin: "gōng", vn: "công" },
+{ ch: "六", pinyin: "liù", vn: "sáu" },
+{ ch: "共", pinyin: "gòng", vn: "cùng nhau" },
+{ ch: "关", pinyin: "guān", vn: "đóng, liên quan" },
+{ ch: "兴", pinyin: "xìng", vn: "vui" },
+{ ch: "内", pinyin: "nèi", vn: "trong" },
+{ ch: "册", pinyin: "cè", vn: "quyển" },
+{ ch: "再", pinyin: "zài", vn: "lại" },
+{ ch: "写", pinyin: "xiě", vn: "viết" },
+{ ch: "冬", pinyin: "dōng", vn: "mùa đông" },
+{ ch: "冰", pinyin: "bīng", vn: "băng, đá" },
+{ ch: "凉", pinyin: "liáng", vn: "mát" },
+{ ch: "减", pinyin: "jiǎn", vn: "giảm" },
+{ ch: "几", pinyin: "jǐ", vn: "mấy, vài" },
+{ ch: "出", pinyin: "chū", vn: "ra" },
+{ ch: "刀", pinyin: "dāo", vn: "dao" },
+{ ch: "分", pinyin: "fēn", vn: "phút, chia" },
+{ ch: "初", pinyin: "chū", vn: "ban đầu" },
+{ ch: "到", pinyin: "dào", vn: "đến" },
+{ ch: "前", pinyin: "qián", vn: "trước" },
+{ ch: "力", pinyin: "lì", vn: "sức mạnh" },
+{ ch: "办", pinyin: "bàn", vn: "xử lý" },
+{ ch: "加", pinyin: "jiā", vn: "thêm vào" },
+{ ch: "动", pinyin: "dòng", vn: "động" },
+{ ch: "勇", pinyin: "yǒng", vn: "dũng cảm" },
+{ ch: "勤", pinyin: "jǐn", vn: "siêng năng" },
+{ ch: "包", pinyin: "bāo", vn: "túi, gói" },
+{ ch: "北", pinyin: "běi", vn: "bắc" },
+{ ch: "医", pinyin: "yī", vn: "y (y học)" },
+{ ch: "十", pinyin: "shí", vn: "mười" },
+{ ch: "千", pinyin: "qiān", vn: "nghìn" },
+{ ch: "升", pinyin: "shēng", vn: "lên" },
+{ ch: "午", pinyin: "wǔ", vn: "trưa" },
+{ ch: "半", pinyin: "bàn", vn: "một nửa" },
+{ ch: "单", pinyin: "dān", vn: "đơn" },
+{ ch: "南", pinyin: "nán", vn: "phía nam" },
+{ ch: "卜", pinyin: "dàn", vn: "bói, đoán" },
+{ ch: "卡", pinyin: "kǎ", vn: "thẻ, card" },
+{ ch: "卫", pinyin: "wèi", vn: "bảo vệ" },
+{ ch: "厂", pinyin: "chǎng", vn: "xưởng" },
+{ ch: "厅", pinyin: "tīng", vn: "phòng, sảnh" },
+{ ch: "原", pinyin: "yuán", vn: "đồng bằng, gốc" },
+{ ch: "去", pinyin: "qù", vn: "đi" },
+{ ch: "参", pinyin: "cān", vn: "tham gia" },
+{ ch: "又", pinyin: "yòu", vn: "lại" },
+{ ch: "友", pinyin: "yǒu", vn: "hữu (bạn)" },
+{ ch: "双", pinyin: "shuāng", vn: "đôi, hai" },
+{ ch: "反", pinyin: "fǎn", vn: "phản" },
+{ ch: "叔", pinyin: "shū", vn: "chú" },
+{ ch: "口", pinyin: "kǒu", vn: "miệng" },
+{ ch: "古", pinyin: "gǔ", vn: "cổ" },
+{ ch: "句", pinyin: "jù", vn: "câu" },
+{ ch: "只", pinyin: "zhǐ", vn: "chỉ" },
+{ ch: "叫", pinyin: "jiào", vn: "gọi" },
+{ ch: "可", pinyin: "kě", vn: "có thể" },
+{ ch: "台", pinyin: "tái", vn: "đài, bục" },
+{ ch: "右", pinyin: "yòu", vn: "phải" },
+{ ch: "叶", pinyin: "yè", vn: "lá cây" },
+{ ch: "吃", pinyin: "chī", vn: "ăn" },
+{ ch: "合", pinyin: "hé", vn: "hợp" },
+{ ch: "名", pinyin: "míng", vn: "tên" },
+{ ch: "后", pinyin: "hòu", vn: "sau" },
+{ ch: "向", pinyin: "xiàng", vn: "hướng về" },
+{ ch: "吗", pinyin: "ma", vn: "(trợ từ nghi vấn)" },
+{ ch: "吧", pinyin: "ba", vn: "nhé, đi (trợ từ)" },
+{ ch: "听", pinyin: "tīng", vn: "nghe" },
+{ ch: "吴", pinyin: "wú", vn: "họ Ngô" },
+{ ch: "吵", pinyin: "chǎo", vn: "ồn ào, cãi nhau" },
+{ ch: "吹", pinyin: "chuī", vn: "thổi" },
+{ ch: "呀", pinyin: "ya", vn: "a (thán từ)" },
+{ ch: "告", pinyin: "gào", vn: "báo, nói" },
+{ ch: "呢", pinyin: "ne", vn: "(trợ từ)" },
+{ ch: "呼", pinyin: "hū", vn: "kêu gọi" },
+{ ch: "和", pinyin: "hé", vn: "và, hòa" },
+{ ch: "咬", pinyin: "yǎo", vn: "cắn" },
+{ ch: "哥", pinyin: "gē", vn: "anh trai" },
+{ ch: "哪", pinyin: "nǎ", vn: "nào" },
+{ ch: "哭", pinyin: "kū", vn: "khóc" },
+{ ch: "唱", pinyin: "chàng", vn: "hát" },
+{ ch: "喊", pinyin: "hǎn", vn: "hét" },
+{ ch: "喜", pinyin: "xǐ", vn: "vui" },
+{ ch: "喝", pinyin: "hē", vn: "uống" },
+{ ch: "四", pinyin: "sì", vn: "bốn" },
+{ ch: "回", pinyin: "huí", vn: "quay về" },
+{ ch: "团", pinyin: "tuán", vn: "đoàn" },
+{ ch: "国", pinyin: "guó", vn: "nước (quốc gia)" },
+{ ch: "图", pinyin: "tú", vn: "bản đồ, hình" },
+{ ch: "圆", pinyin: "yuán", vn: "tròn" },
+{ ch: "圈", pinyin: "quān", vn: "vòng tròn" },
+{ ch: "土", pinyin: "tǔ", vn: "đất" },
+{ ch: "在", pinyin: "zài", vn: "ở, tại" },
+{ ch: "地", pinyin: "dì, de", vn: "đất" },
+{ ch: "场", pinyin: "chǎng", vn: "sân, bãi" },
+{ ch: "坐", pinyin: "zuò", vn: "ngồi" },
+{ ch: "坪", pinyin: "píng", vn: "bình nguyên" },
+{ ch: "城", pinyin: "chéng", vn: "thành phố" },
+{ ch: "填", pinyin: "tián", vn: "điền vào" },
+{ ch: "士", pinyin: "shì", vn: "chiến sĩ" },
+{ ch: "声", pinyin: "shēng", vn: "âm thanh" },
+{ ch: "壳", pinyin: "ké", vn: "vỏ" },
+{ ch: "夏", pinyin: "xià", vn: "mùa hè" },
+{ ch: "夕", pinyin: "xī", vn: "buổi tối" },
+{ ch: "外", pinyin: "wài", vn: "ngoài" },
+{ ch: "多", pinyin: "duō", vn: "nhiều" },
+{ ch: "夜", pinyin: "yè", vn: "đêm" },
+{ ch: "大", pinyin: "dà", vn: "to" },
+{ ch: "天", pinyin: "tiān", vn: "trời" },
+{ ch: "太", pinyin: "tài", vn: "quá, rất" },
+{ ch: "头", pinyin: "tóu", vn: "đầu" },
+{ ch: "女", pinyin: "nǚ", vn: "nữ" },
+{ ch: "奶", pinyin: "nǎi", vn: "bà nội" },
+{ ch: "她", pinyin: "tā", vn: "cô ấy" },
+{ ch: "好", pinyin: "hǎo", vn: "tốt" },
+{ ch: "妈", pinyin: "mā", vn: "mẹ" },
+{ ch: "妹", pinyin: "mèi", vn: "em gái" },
+{ ch: "姐", pinyin: "jiě", vn: "chị" },
+{ ch: "姓", pinyin: "xìng", vn: "họ" },
+{ ch: "娃", pinyin: "wá", vn: "em bé" },
+{ ch: "子", pinyin: "zǐ", vn: "con, cái" },
+{ ch: "字", pinyin: "zì", vn: "chữ" },
+{ ch: "孙", pinyin: "sūn", vn: "họ Tôn" },
+{ ch: "孤", pinyin: "gū", vn: "cô đơn" },
+{ ch: "学", pinyin: "xué", vn: "học" },
+{ ch: "孩", pinyin: "hái", vn: "trẻ em" },
+{ ch: "它", pinyin: "tā", vn: "nó" },
+{ ch: "安", pinyin: "ān", vn: "yên, an" },
+{ ch: "宝", pinyin: "bǎo", vn: "báu, quý giá" },
+{ ch: "家", pinyin: "jiā", vn: "nhà" },
+{ ch: "宽", pinyin: "kuān", vn: "rộng rãi" },
+{ ch: "寒", pinyin: "hán", vn: "lạnh" },
+{ ch: "寸", pinyin: "cùn", vn: "tấc" },
+{ ch: "对", pinyin: "duì", vn: "đúng, đối với" },
+{ ch: "小", pinyin: "xiǎo", vn: "nhỏ" },
+{ ch: "少", pinyin: "shǎo", vn: "ít" },
+{ ch: "尖", pinyin: "jiān", vn: "nhọn" },
+{ ch: "尘", pinyin: "chén", vn: "bụi" },
+{ ch: "就", pinyin: "jiù", vn: "thì, liền" },
+{ ch: "尺", pinyin: "chǐ", vn: "thước đo" },
+{ ch: "尾", pinyin: "wěi", vn: "đuôi" },
+{ ch: "居", pinyin: "jū", vn: "cư trú" },
+{ ch: "展", pinyin: "zhǎn", vn: "triển khai" },
+{ ch: "山", pinyin: "shān", vn: "núi" },
+{ ch: "川", pinyin: "chuān", vn: "sông" },
+{ ch: "工", pinyin: "gōng", vn: "công" },
+{ ch: "左", pinyin: "zuǒ", vn: "trái" },
+{ ch: "己", pinyin: "jǐ", vn: "bản thân" },
+{ ch: "已", pinyin: "yǐ", vn: "đã" },
+{ ch: "巴", pinyin: "bā", vn: "Ba (tên riêng)" },
+{ ch: "巾", pinyin: "jīn", vn: "khăn" },
+{ ch: "师", pinyin: "shī", vn: "thầy" },
+{ ch: "席", pinyin: "xí", vn: "ghế/chức vụ" },
+{ ch: "常", pinyin: "cháng", vn: "thường" },
+{ ch: "平", pinyin: "píng", vn: "bằng phẳng" },
+{ ch: "年", pinyin: "nián", vn: "năm" },
+{ ch: "幸", pinyin: "xìng", vn: "hạnh phúc" },
+{ ch: "幼", pinyin: "yòu", vn: "thơ ấu" },
+{ ch: "广", pinyin: "guǎng", vn: "rộng" },
+{ ch: "床", pinyin: "chuáng", vn: "giường" },
+{ ch: "座", pinyin: "zuò", vn: "chỗ, tòa" },
+{ ch: "开", pinyin: "kāi", vn: "mở" },
+{ ch: "式", pinyin: "shì", vn: "kiểu, dạng" },
+{ ch: "弓", pinyin: "gōng", vn: "cung" },
+{ ch: "弟", pinyin: "dì", vn: "em trai" },
+{ ch: "张", pinyin: "zhāng", vn: "họ Trương" },
+{ ch: "弯", pinyin: "wān", vn: "cong" },
+{ ch: "当", pinyin: "dāng", vn: "làm (nghề), đương" },
+{ ch: "形", pinyin: "xíng", vn: "hình dạng" },
+{ ch: "彩", pinyin: "cǎi", vn: "màu sắc" },
+{ ch: "影", pinyin: "yǐng", vn: "bóng, hình ảnh" },
+{ ch: "往", pinyin: "wǎng", vn: "hướng tới" },
+{ ch: "很", pinyin: "hěn", vn: "rất" },
+{ ch: "得", pinyin: "de", vn: "được, rất" },
+{ ch: "得", pinyin: "děi", vn: "phải" },
+{ ch: "心", pinyin: "xīn", vn: "tim, lòng" },
+{ ch: "忙", pinyin: "máng", vn: "bận" },
+{ ch: "快", pinyin: "kuài", vn: "nhanh" },
+{ ch: "快乐", pinyin: "kuài lè", vn: "vui vẻ" },
+{ ch: "念", pinyin: "niàn", vn: "nhớ, niệm" },
+{ ch: "忽", pinyin: "hū", vn: "thình lình" },
+{ ch: "怀", pinyin: "huái", vn: "hoài (nhớ)" },
+{ ch: "怎", pinyin: "zěn", vn: "thế nào" },
+{ ch: "怕", pinyin: "pà", vn: "sợ" },
+{ ch: "思", pinyin: "sī", vn: "nghĩ" },
+{ ch: "急", pinyin: "jí", vn: "gấp, vội" },
+{ ch: "总", pinyin: "zǒng", vn: "tổng cộng" },
+{ ch: "悄", pinyin: "qiāo", vn: "lặng lẽ" },
+{ ch: "您", pinyin: "nín", vn: "ngài (lịch sự)" },
+{ ch: "情", pinyin: "qíng", vn: "tình cảm" },
+{ ch: "想", pinyin: "xiǎng", vn: "nghĩ" },
+{ ch: "感", pinyin: "gǎn", vn: "cảm thấy" },
+{ ch: "戏", pinyin: "xì", vn: "kịch" },
+{ ch: "成", pinyin: "chéng", vn: "thành công" },
+{ ch: "我", pinyin: "wǒ", vn: "tôi" },
+{ ch: "战", pinyin: "zhàn", vn: "chiến đấu" },
+{ ch: "户", pinyin: "hù", vn: "hộ, nhà" },
+{ ch: "房", pinyin: "fáng", vn: "phòng" },
+{ ch: "手", pinyin: "shǒu", vn: "tay" },
+{ ch: "才", pinyin: "cái", vn: "tài năng, mới (chỉ thời gian)" },
+{ ch: "打", pinyin: "dǎ", vn: "đánh, gọi" },
+{ ch: "找", pinyin: "zhǎo", vn: "tìm" },
+{ ch: "把", pinyin: "bǎ", vn: "cầm, nắm" },
+{ ch: "护", pinyin: "hù", vn: "bảo hộ" },
+{ ch: "抱", pinyin: "bào", vn: "ôm" },
+{ ch: "拉", pinyin: "lā", vn: "kéo" },
+{ ch: "拍", pinyin: "pāi", vn: "vỗ, quay phim" },
+{ ch: "拔", pinyin: "bá", vn: "nhổ, rút" },
+{ ch: "招", pinyin: "zhāo", vn: "chiêu, vẫy gọi" },
+{ ch: "拨", pinyin: "bō", vn: "quay, bấm (số)" },
+{ ch: "拼", pinyin: "pīn", vn: "ghép" },
+{ ch: "捉", pinyin: "zhuō", vn: "bắt" },
+{ ch: "排", pinyin: "pái", vn: "hàng, sắp xếp" },
+{ ch: "摆", pinyin: "bǎi", vn: "bày, xếp" },
+{ ch: "摇", pinyin: "yáo", vn: "lắc" },
+{ ch: "操", pinyin: "cāo", vn: "thao tác, tập luyện" },
+{ ch: "支", pinyin: "zhī", vn: "chi, nhánh" },
+{ ch: "攻", pinyin: "gōng", vn: "công (công kích)" },
+{ ch: "放", pinyin: "fàng", vn: "thả, để" },
+{ ch: "故", pinyin: "gù", vn: "cũ, nguyên nhân" },
+{ ch: "教", pinyin: "jiào", vn: "dạy" },
+{ ch: "敢", pinyin: "gǎn", vn: "dám" },
+{ ch: "数", pinyin: "shù", vn: "số học" },
+{ ch: "文", pinyin: "wén", vn: "văn, chữ viết" },
+{ ch: "斗", pinyin: "dòu", vn: "đấu" },
+{ ch: "斤", pinyin: "jīn", vn: "cân (0.5kg)" },
+{ ch: "方", pinyin: "fāng", vn: "phương, phía" },
+{ ch: "旗", pinyin: "qí", vn: "cờ" },
+{ ch: "无", pinyin: "wú", vn: "không có" },
+{ ch: "日", pinyin: "rì", vn: "mặt trời, ngày" },
+{ ch: "早", pinyin: "zǎo", vn: "sớm" },
+{ ch: "时", pinyin: "shí", vn: "thời gian" },
+{ ch: "明", pinyin: "míng", vn: "sáng" },
+{ ch: "星", pinyin: "xīng", vn: "sao" },
+{ ch: "春", pinyin: "chūn", vn: "mùa xuân" },
+{ ch: "昨", pinyin: "zuó", vn: "hôm qua" },
+{ ch: "是", pinyin: "shì", vn: "là" },
+{ ch: "晚", pinyin: "wǎn", vn: "tối, muộn" },
+{ ch: "晨", pinyin: "chén", vn: "buổi sáng" },
+{ ch: "晴", pinyin: "qíng", vn: "trời quang" },
+{ ch: "晶", pinyin: "jīng", vn: "tinh khiết" },
+{ ch: "暑", pinyin: "shǔ", vn: "nóng bức" },
+{ ch: "暖", pinyin: "nuǎn", vn: "ấm áp" },
+{ ch: "更", pinyin: "gèng", vn: "hơn, càng" },
+{ ch: "最", pinyin: "zuì", vn: "nhất" },
+{ ch: "月", pinyin: "yuè", vn: "mặt trăng, tháng" },
+{ ch: "有", pinyin: "yǒu", vn: "có" },
+{ ch: "朋", pinyin: "péng", vn: "bạn" },
+{ ch: "望", pinyin: "wàng", vn: "hy vọng, nhìn" },
+{ ch: "朝", pinyin: "zhāo", vn: "buổi sáng" },
+{ ch: "期", pinyin: "qī", vn: "kỳ hạn" },
+{ ch: "木", pinyin: "mù", vn: "gỗ, cây" },
+{ ch: "本", pinyin: "běn", vn: "gốc, quyển" },
+{ ch: "朵", pinyin: "duǒ", vn: "bông (hoa)" },
+{ ch: "机", pinyin: "jī", vn: "máy" },
+{ ch: "李", pinyin: "lǐ", vn: "họ Lý" },
+{ ch: "村", pinyin: "cūn", vn: "làng" },
+{ ch: "条", pinyin: "tiáo", vn: "sợi, điều" },
+{ ch: "来", pinyin: "lái", vn: "đến" },
+{ ch: "杨", pinyin: "yáng", vn: "cây dương" },
+{ ch: "林", pinyin: "lín", vn: "rừng" },
+{ ch: "果", pinyin: "guǒ", vn: "quả" },
+{ ch: "柔", pinyin: "róu", vn: "mềm mại" },
+{ ch: "柳", pinyin: "liǔ", vn: "liễu" },
+{ ch: "树", pinyin: "shù", vn: "cây" },
+{ ch: "校", pinyin: "xiào", vn: "trường học" },
+{ ch: "样", pinyin: "yàng", vn: "mẫu, dáng" },
+{ ch: "桃", pinyin: "táo", vn: "đào" },
+{ ch: "桌", pinyin: "zhuō", vn: "bàn" },
+{ ch: "桥", pinyin: "qiáo", vn: "cầu" },
+{ ch: "棋", pinyin: "qí", vn: "cờ" },
+{ ch: "森", pinyin: "sēn", vn: "rừng rậm" },
+{ ch: "次", pinyin: "cì", vn: "lần" },
+{ ch: "欢", pinyin: "huān", vn: "vui mừng" },
+{ ch: "歌", pinyin: "gē", vn: "bài hát" },
+{ ch: "止", pinyin: "zhǐ", vn: "dừng, ngưng" },
+{ ch: "正", pinyin: "zhèng", vn: "đúng, chính" },
+{ ch: "步", pinyin: "bù", vn: "bước" },
+{ ch: "母", pinyin: "mǔ", vn: "mẹ" },
+{ ch: "每", pinyin: "měi", vn: "mỗi" },
+{ ch: "比", pinyin: "bǐ", vn: "so với" },
+{ ch: "毛", pinyin: "máo", vn: "lông" },
+{ ch: "民", pinyin: "mín", vn: "dân" },
+{ ch: "气", pinyin: "qì", vn: "khí" },
+{ ch: "水", pinyin: "shuǐ", vn: "nước" },
+{ ch: "江", pinyin: "jiāng", vn: "sông" },
+{ ch: "池", pinyin: "chí", vn: "ao, hồ" },
+{ ch: "沉", pinyin: "chén", vn: "chìm, trầm" },
+{ ch: "沙", pinyin: "shā", vn: "cát" },
+{ ch: "没", pinyin: "méi", vn: "không có" },
+{ ch: "河", pinyin: "hé", vn: "sông" },
+{ ch: "泉", pinyin: "quán", vn: "suối" },
+{ ch: "法", pinyin: "fǎ", vn: "pháp, cách" },
+{ ch: "泡", pinyin: "pào", vn: "ngâm, pha" },
+{ ch: "泪", pinyin: "lèi", vn: "nước mắt" },
+{ ch: "洁", pinyin: "jié", vn: "sạch" },
+{ ch: "洗", pinyin: "xǐ", vn: "rửa" },
+{ ch: "流", pinyin: "liú", vn: "chảy" },
+{ ch: "浪", pinyin: "làng", vn: "sóng" },
+{ ch: "浮", pinyin: "fú", vn: "nổi" },
+{ ch: "涂", pinyin: "tú", vn: "tô, bôi" },
+{ ch: "淘", pinyin: "táo", vn: "rửa, lọc" },
+{ ch: "清", pinyin: "qīng", vn: "trong, sạch" },
+{ ch: "游", pinyin: "yóu", vn: "bơi, du ngoạn" },
+{ ch: "火", pinyin: "huǒ", vn: "lửa" },
+{ ch: "灯", pinyin: "dēng", vn: "đèn" },
+{ ch: "炮", pinyin: "pào", vn: "pháo" },
+{ ch: "点", pinyin: "diǎn", vn: "điểm, chấm" },
+{ ch: "热", pinyin: "rè", vn: "nóng" },
+{ ch: "然", pinyin: "rán", vn: "vậy, thế" },
+{ ch: "照", pinyin: "zhào", vn: "chiếu, soi" },
+{ ch: "煮", pinyin: "zhǔ", vn: "nấu" },
+{ ch: "爪", pinyin: "zhuǎ", vn: "móng, vuốt" },
+{ ch: "爬", pinyin: "pá", vn: "leo, trèo" },
+{ ch: "爱", pinyin: "ài", vn: "yêu" },
+{ ch: "父", pinyin: "fù", vn: "cha" },
+{ ch: "爷", pinyin: "yé", vn: "ông nội" },
+{ ch: "爸", pinyin: "bà", vn: "bố" },
+{ ch: "片", pinyin: "piàn", vn: "mảnh, tấm" },
+{ ch: "牙", pinyin: "yá", vn: "răng" },
+{ ch: "牛", pinyin: "niú", vn: "bò" },
+{ ch: "物", pinyin: "wù", vn: "vật" },
+{ ch: "狗", pinyin: "gǒu", vn: "chó" },
+{ ch: "独", pinyin: "dú", vn: "một mình" },
+{ ch: "猜", pinyin: "cāi", vn: "đoán" },
+{ ch: "玉", pinyin: "yù", vn: "ngọc" },
+{ ch: "王", pinyin: "wáng", vn: "Vương,vua" },
+{ ch: "玩", pinyin: "wán", vn: "chơi" },
+{ ch: "现", pinyin: "xiàn", vn: "hiện tại" },
+{ ch: "珠", pinyin: "zhū", vn: "ngọc trai" },
+{ ch: "班", pinyin: "bān", vn: "lớp" },
+{ ch: "球", pinyin: "qiú", vn: "bóng" },
+{ ch: "瓜", pinyin: "guā", vn: "dưa" },
+{ ch: "生", pinyin: "shēng", vn: "sinh" },
+{ ch: "用", pinyin: "yòng", vn: "dùng" },
+{ ch: "田", pinyin: "tián", vn: "ruộng" },
+{ ch: "电", pinyin: "diàn", vn: "điện" },
+{ ch: "男", pinyin: "nán", vn: "nam" },
+{ ch: "画", pinyin: "huà", vn: "vẽ, tranh" },
+{ ch: "疑", pinyin: "yí", vn: "nghi ngờ" },
+{ ch: "白", pinyin: "bái", vn: "trắng" },
+{ ch: "百", pinyin: "bǎi", vn: "trăm" },
+{ ch: "的", pinyin: "de", vn: "của (trợ từ)" },
+{ ch: "皮", pinyin: "pí", vn: "da, vỏ" },
+{ ch: "目", pinyin: "mù", vn: "mắt" },
+{ ch: "直", pinyin: "zhí", vn: "thẳng" },
+{ ch: "相", pinyin: "xiāng", vn: "tương" },
+{ ch: "盼", pinyin: "pàn", vn: "mong đợi" },
+{ ch: "看", pinyin: "kàn", vn: "nhìn" },
+{ ch: "真", pinyin: "zhēn", vn: "thật" },
+{ ch: "眼", pinyin: "yǎn", vn: "mắt" },
+{ ch: "着", pinyin: "zhe", vn: "đang (trợ từ)" },
+{ ch: "睛", pinyin: "jīng", vn: "con ngươi" },
+{ ch: "睡", pinyin: "shuì", vn: "ngủ" },
+{ ch: "知", pinyin: "zhī", vn: "biết" },
+{ ch: "短", pinyin: "duǎn", vn: "ngắn" },
+{ ch: "石", pinyin: "shí", vn: "đá" },
+{ ch: "票", pinyin: "piào", vn: "vé" },
+{ ch: "福", pinyin: "fú", vn: "phúc" },
+{ ch: "禾", pinyin: "hé", vn: "cây lúa" },
+{ ch: "秋", pinyin: "qiū", vn: "mùa thu" },
+{ ch: "种", pinyin: "zhǒng", vn: "loại, trồng" },
+{ ch: "积", pinyin: "jī", vn: "tích lũy" },
+{ ch: "空", pinyin: "kòng, kōng", vn: "trống, không gian" },
+{ ch: "穿", pinyin: "chuān", vn: "mặc, xuyên qua" },
+{ ch: "窗", pinyin: "chuāng", vn: "cửa sổ" },
+{ ch: "立", pinyin: "lì", vn: "đứng" },
+{ ch: "站", pinyin: "zhàn", vn: "trạm, đứng" },
+{ ch: "端", pinyin: "duān", vn: "đầu, cuối" },
+{ ch: "竹", pinyin: "zhú", vn: "tre" },
+{ ch: "笑", pinyin: "xiào", vn: "cười" },
+{ ch: "笔", pinyin: "bǐ", vn: "bút" },
+{ ch: "答", pinyin: "dá", vn: "trả lời" },
+{ ch: "算", pinyin: "suàn", vn: "tính" },
+{ ch: "米", pinyin: "mǐ", vn: "gạo" },
+{ ch: "粮", pinyin: "liáng", vn: "lương thực" },
+{ ch: "粽", pinyin: "zòng", vn: "bánh chưng" },
+{ ch: "红", pinyin: "hóng", vn: "đỏ" },
+{ ch: "级", pinyin: "jí", vn: "cấp" },
+{ ch: "纸", pinyin: "zhǐ", vn: "giấy" },
+{ ch: "练", pinyin: "liàn", vn: "luyện tập" },
+{ ch: "组", pinyin: "zǔ", vn: "nhóm" },
+{ ch: "细", pinyin: "xì", vn: "mảnh, nhỏ" },
+{ ch: "结", pinyin: "jié", vn: "kết" },
+{ ch: "绕", pinyin: "rào", vn: "quấn quanh" },
+{ ch: "给", pinyin: "gěi", vn: "cho, đưa" },
+{ ch: "绝", pinyin: "jué", vn: "tuyệt đối" },
+{ ch: "绿", pinyin: "lǜ", vn: "xanh lá cây" },
+{ ch: "网", pinyin: "wǎng", vn: "mạng, lưới" },
+{ ch: "羊", pinyin: "yáng", vn: "dê" },
+{ ch: "美", pinyin: "měi", vn: "đẹp" },
+{ ch: "羽", pinyin: "yǔ", vn: "lông" },
+{ ch: "老", pinyin: "lǎo", vn: "già, cũ" },
+{ ch: "耳", pinyin: "ěr", vn: "tai" },
+{ ch: "肉", pinyin: "ròu", vn: "thịt" },
+{ ch: "胆", pinyin: "dǎn", vn: "lá gan" },
+{ ch: "背", pinyin: "bèi", vn: "lưng, học thuộc" },
+{ ch: "胖", pinyin: "pàng", vn: "béo" },
+{ ch: "胡", pinyin: "hú", vn: "họ Hồ" },
+{ ch: "能", pinyin: "néng", vn: "có thể" },
+{ ch: "腰", pinyin: "yāo", vn: "eo" },
+{ ch: "腾", pinyin: "téng", vn: "bay vút, tăng" },
+{ ch: "自", pinyin: "zì", vn: "tự" },
+{ ch: "船", pinyin: "chuán", vn: "thuyền" },
+{ ch: "色", pinyin: "sè", vn: "màu sắc" },
+{ ch: "节", pinyin: "jié", vn: "tiết, lễ hội" },
+{ ch: "花", pinyin: "huā", vn: "hoa" },
+{ ch: "苗", pinyin: "miáo", vn: "mầm, cây non" },
+{ ch: "茶", pinyin: "chá", vn: "trà" },
+{ ch: "草", pinyin: "cǎo", vn: "cỏ" },
+{ ch: "荷", pinyin: "hé", vn: "sen" },
+{ ch: "莲", pinyin: "lián", vn: "sen" },
+{ ch: "菜", pinyin: "cài", vn: "rau, món ăn" },
+{ ch: "萍", pinyin: "píng", vn: "bèo (thực vật)" },
+{ ch: "落", pinyin: "luò", vn: "rơi" },
+{ ch: "蓝", pinyin: "lán", vn: "xanh dương" },
+{ ch: "藏", pinyin: "cáng", vn: "giấu, cất" },
+{ ch: "虫", pinyin: "chóng", vn: "sâu, côn trùng" },
+{ ch: "虾", pinyin: "xiā", vn: "tôm" },
+{ ch: "蚁", pinyin: "yǐ", vn: "kiến" },
+{ ch: "蛙", pinyin: "wā", vn: "ếch" },
+{ ch: "行", pinyin: "xíng", vn: "đi, di chuyển" },
+{ ch: "衣", pinyin: "yī", vn: "quần áo" },
+{ ch: "袍", pinyin: "páo", vn: "áo dài" },
+{ ch: "被", pinyin: "bèi", vn: "bị, chăn" },
+{ ch: "装", pinyin: "zhuāng", vn: "trang, mặc" },
+{ ch: "裤", pinyin: "kù", vn: "quần" },
+{ ch: "西", pinyin: "xī", vn: "tây" },
+{ ch: "要", pinyin: "yào", vn: "muốn, cần" },
+{ ch: "见", pinyin: "jiàn", vn: "thấy" },
+{ ch: "视", pinyin: "shì", vn: "nhìn, xem" },
+{ ch: "觉", pinyin: "jiào", vn: "giấc ngủ" },
+{ ch: "角", pinyin: "jiǎo", vn: "góc, sừng" },
+{ ch: "言", pinyin: "yán", vn: "lời nói" },
+{ ch: "计", pinyin: "jì", vn: "tính toán" },
+{ ch: "认", pinyin: "rèn", vn: "nhận" },
+{ ch: "让", pinyin: "ràng", vn: "nhường, để" },
+{ ch: "讲", pinyin: "jiǎng", vn: "giảng, nói" },
+{ ch: "许", pinyin: "xǔ", vn: "cho phép, hứa" },
+{ ch: "识", pinyin: "shí", vn: "biết" },
+{ ch: "诉", pinyin: "sù", vn: "tố cáo" },
+{ ch: "词", pinyin: "cí", vn: "từ" },
+{ ch: "试", pinyin: "shì", vn: "thử, kiểm tra" },
+{ ch: "诗", pinyin: "shī", vn: "thơ" },
+{ ch: "语", pinyin: "yǔ", vn: "ngôn ngữ" },
+{ ch: "说", pinyin: "shuō", vn: "nói" },
+{ ch: "请", pinyin: "qǐng", vn: "mời, xin" },
+{ ch: "读", pinyin: "dú", vn: "đọc" },
+{ ch: "课", pinyin: "kè", vn: "bài học" },
+{ ch: "谁", pinyin: "shuí", vn: "ai" },
+{ ch: "豆", pinyin: "dòu", vn: "đậu" },
+{ ch: "象", pinyin: "xiàng", vn: "voi" },
+{ ch: "贝", pinyin: "bèi", vn: "vỏ sò" },
+{ ch: "走", pinyin: "zǒu", vn: "đi bộ" },
+{ ch: "赶", pinyin: "gǎn", vn: "vội, đuổi kịp" },
+{ ch: "起", pinyin: "qǐ", vn: "dậy, nổi lên" },
+{ ch: "越", pinyin: "gǎn", vn: "vượt, qua" },
+{ ch: "足", pinyin: "zú", vn: "chân" },
+{ ch: "跑", pinyin: "pǎo", vn: "chạy" },
+{ ch: "跟", pinyin: "gēn", vn: "với, theo" },
+{ ch: "路", pinyin: "lù", vn: "đường" },
+{ ch: "跳", pinyin: "tiào", vn: "nhảy" },
+{ ch: "踢", pinyin: "tī", vn: "đá (bóng)" },
+{ ch: "身", pinyin: "shēn", vn: "thân, cơ thể" },
+{ ch: "车", pinyin: "chē", vn: "xe" },
+{ ch: "转", pinyin: "zhuǎn", vn: "chuyển, quay" },
+{ ch: "轮", pinyin: "lún", vn: "bánh xe" },
+{ ch: "轻", pinyin: "qīng", vn: "nhẹ" },
+{ ch: "边", pinyin: "biān", vn: "bên, cạnh" },
+{ ch: "过", pinyin: "guò", vn: "qua, vượt qua" },
+{ ch: "迈", pinyin: "mài", vn: "bước" },
+{ ch: "运", pinyin: "yùn", vn: "vận chuyển" },
+{ ch: "近", pinyin: "jìn", vn: "gần" },
+{ ch: "还", pinyin: "hái", vn: "còn, vẫn" },
+{ ch: "这", pinyin: "zhè", vn: "cái này" },
+{ ch: "进", pinyin: "jìn", vn: "vào" },
+{ ch: "远", pinyin: "yuǎn", vn: "xa" },
+{ ch: "连", pinyin: "lián", vn: "liên tục" },
+{ ch: "迷", pinyin: "mí", vn: "mê, lạc" },
+{ ch: "选", pinyin: "xuǎn", vn: "chọn" },
+{ ch: "透", pinyin: "tòu", vn: "xuyên qua" },
+{ ch: "造", pinyin: "zào", vn: "tạo, làm" },
+{ ch: "道", pinyin: "dào", vn: "đường, đạo" },
+{ ch: "邻", pinyin: "lín", vn: "hàng xóm" },
+{ ch: "部", pinyin: "bù", vn: "bộ" },
+{ ch: "都", pinyin: "dōu", vn: "đều" },
+{ ch: "酷", pinyin: "kù", vn: "ngầu, lạnh lẽo" },
+{ ch: "采", pinyin: "cǎi", vn: "hái, lựa chọn" },
+{ ch: "里", pinyin: "lǐ", vn: "trong" },
+{ ch: "金", pinyin: "jīn", vn: "vàng" },
+{ ch: "钻", pinyin: "zuān", vn: "khoan, chui" },
+{ ch: "铃", pinyin: "líng", vn: "chuông" },
+{ ch: "长", pinyin: "cháng", vn: "dài" },
+{ ch: "长", pinyin: "zhǎng", vn: "trưởng thành" },
+{ ch: "门", pinyin: "mén", vn: "cửa" },
+{ ch: "闪", pinyin: "shǎn", vn: "loé sáng, lóe" },
+{ ch: "问", pinyin: "wèn", vn: "hỏi" },
+{ ch: "间", pinyin: "jiān", vn: "gian, phòng" },
+{ ch: "闹", pinyin: "nào", vn: "ồn ào" },
+{ ch: "阳", pinyin: "yáng", vn: "mặt trời" },
+{ ch: "阴", pinyin: "yīn", vn: "âm u" },
+{ ch: "降", pinyin: "jiàng", vn: "hạ" },
+{ ch: "院", pinyin: "yuàn", vn: "viện" },
+{ ch: "难", pinyin: "nán", vn: "khó" },
+{ ch: "雨", pinyin: "yǔ", vn: "mưa" },
+{ ch: "雪", pinyin: "xuě", vn: "tuyết" },
+{ ch: "霜", pinyin: "shuāng", vn: "sương" },
+{ ch: "霞", pinyin: "xiá", vn: "mây đỏ" },
+{ ch: "露", pinyin: "lù", vn: "sương" },
+{ ch: "青", pinyin: "qīng", vn: "xanh" },
+{ ch: "静", pinyin: "jìng", vn: "yên tĩnh" },
+{ ch: "非", pinyin: "fēi", vn: "không, phi" },
+{ ch: "面", pinyin: "miàn", vn: "mặt, mì" },
+{ ch: "鞭", pinyin: "biān", vn: "roi" },
+{ ch: "音", pinyin: "yīn", vn: "âm" },
+{ ch: "页", pinyin: "yè", vn: "trang" },
+{ ch: "顶", pinyin: "dǐng", vn: "đỉnh, chóp" },
+{ ch: "风", pinyin: "fēng", vn: "gió" },
+{ ch: "飘", pinyin: "piāo", vn: "bay (lơ lửng)" },
+{ ch: "飞", pinyin: "fēi", vn: "bay" },
+{ ch: "食", pinyin: "shí", vn: "ăn, thực phẩm" },
+{ ch: "饭", pinyin: "fàn", vn: "cơm" },
+{ ch: "饱", pinyin: "bǎo", vn: "no (ăn)" },
+{ ch: "首", pinyin: "shǒu", vn: "đầu" },
+{ ch: "香", pinyin: "xiāng", vn: "thơm" },
+{ ch: "马", pinyin: "mǎ", vn: "ngựa" },
+{ ch: "高", pinyin: "gāo", vn: "cao" },
+{ ch: "鱼", pinyin: "yú", vn: "cá" },
+{ ch: "鲜", pinyin: "xiān", vn: "tươi" },
+{ ch: "鸟", pinyin: "niǎo", vn: "chim" },
+{ ch: "鸡", pinyin: "jī", vn: "gà" },
+{ ch: "鸭", pinyin: "yā", vn: "vịt" },
+{ ch: "黄", pinyin: "huáng", vn: "màu vàng" },
+{ ch: "黑", pinyin: "hēi", vn: "đen" },
+
+],
+    };
+    // Load/Save Settings
+    function loadSettings() {
+      const savedSettings = localStorage.getItem("gameSettings");
+      if (savedSettings) {
+        gameState.settings = { ...gameState.settings, ...JSON.parse(savedSettings) };
+      }
+
+      // Ensure default voice order if not set
+      if (typeof gameState.settings.voiceOrder === 'undefined') {
+          gameState.settings.voiceOrder = 'chinese-vietnamese';
+      }
+
+      if (gameState.settings.darkMode && gameState.settings.textColor === LIGHT_MODE_DEFAULT_TEXT_COLOR) {
+          gameState.settings.textColor = DARK_MODE_DEFAULT_TEXT_COLOR;
+      } else if (!gameState.settings.darkMode && gameState.settings.textColor === DARK_MODE_DEFAULT_TEXT_COLOR) {
+          gameState.settings.textColor = LIGHT_MODE_DEFAULT_TEXT_COLOR;
+      }
+
+      gameState.settings.enableSound = true;
+      if (typeof gameState.settings.chineseRepetitions === 'undefined') {
+          gameState.settings.chineseRepetitions = 1;
+      }
+      if (typeof gameState.settings.vietnameseRepetitions === 'undefined') {
+          gameState.settings.vietnameseRepetitions = 1;
+      }
+      if (typeof gameState.settings.repetitionDelay === 'undefined') {
+          gameState.settings.repetitionDelay = 600;
+      }
+      gameState.settings.flashcardFlipBackDelay = 500;
+
+      const allowedDelayValues = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
+      if (!allowedDelayValues.includes(gameState.settings.delayBetweenVoices)) {
+          gameState.settings.delayBetweenVoices = 2000;
+      }
+      if (!allowedDelayValues.includes(gameState.settings.delayNextRound)) {
+          gameState.settings.delayNextRound = 4000;
+      }
+
+      gameState.settings.manualInteractionDelay = 0;
+      if (typeof gameState.settings.speakOnCorrectMatch === 'undefined') {
+          gameState.settings.speakOnCorrectMatch = false;
+      }
+
+      applySettings();
+    }
+
+    function saveSettings() {
+      gameState.settings.wordsPerRound = parseInt(elements.settingWordsPerRound.value, 10);
+      gameState.settings.voiceOrder = elements.settingVoiceOrder.value;
+      gameState.settings.chineseRepetitions = parseInt(elements.settingChineseRepetitions.value, 10);
+      gameState.settings.vietnameseRepetitions = parseInt(elements.settingVietnameseRepetitions.value, 10);
+      gameState.settings.delayBetweenVoices = parseInt(elements.settingDelayBetweenVoices.value, 10);
+      gameState.settings.delayNextRound = parseInt(elements.settingDelayNextRound.value, 10);
+      gameState.settings.speakOnCorrectMatch = elements.settingSpeakOnCorrectMatch.checked;
+
+      localStorage.setItem("gameSettings", JSON.stringify(gameState.settings));
+      applySettings();
+      showCustomAlert("Cài đặt đã được lưu!");
+      elements.settingsModal.style.display = "none";
+      toggleMistakeBadges(true);
+
+      if (gameState.isAutoplayActive) {
+        scheduleNextAutoplayAction();
+      } else {
+        startIdleTimer();
+      }
+    }
+
+    function applySettings() {
+      document.body.classList.toggle("dark-mode", gameState.settings.darkMode);
+      if (!gameState.settings.darkMode) {
+        document.documentElement.style.setProperty("--text-color", gameState.settings.textColor);
+      } else {
+        document.documentElement.style.setProperty("--dark-mode-text-color", gameState.settings.textColor);
+      }
+      elements.settingDarkMode.checked = gameState.settings.darkMode;
+      elements.settingTextColor.value = gameState.settings.textColor;
+      elements.settingWordsPerRound.value = gameState.settings.wordsPerRound;
+      elements.settingDelayBetweenVoices.value = gameState.settings.delayBetweenVoices; // Corrected to use gameState.settings
+      elements.settingDelayNextRound.value = gameState.settings.delayNextRound; // Corrected to use gameState.settings
+      elements.settingSpeakOnCorrectMatch.checked = gameState.settings.speakOnCorrectMatch;
+      if (elements.settingVoiceOrder) {
+          elements.settingVoiceOrder.value = gameState.settings.voiceOrder;
+      }
+      if (elements.settingChineseRepetitions) {
+          elements.settingChineseRepetitions.value = gameState.settings.chineseRepetitions;
+      }
+      // FIX: Changed elements.settings.vietnameseRepetitions.value to elements.settingVietnameseRepetitions.value
+      if (elements.settingVietnameseRepetitions) {
+          elements.settingVietnameseRepetitions.value = gameState.settings.vietnameseRepetitions;
+      }
+
+      const autoplayIcon = document.querySelector('#btn-autoplay-toggle i');
+      if (autoplayIcon) {
+          autoplayIcon.classList.toggle('fa-pause', gameState.isAutoplayActive);
+          autoplayIcon.classList.toggle('fa-play', !gameState.isAutoplayActive);
+      }
+
+      // Disable pinyin toggle if in advanced-card-matching mode
+      const pinyinToggle = elements.togglePhonetic;
+      if (pinyinToggle) {
+          pinyinToggle.disabled = (gameState.currentMode === 'advanced-card-matching');
+          // If disabled, ensure it's unchecked and display is updated
+          if (pinyinToggle.disabled) {
+              pinyinToggle.checked = false;
+              updatePhoneticDisplay();
+          }
+      }
+    }
+
+    // Initialize game
+    function initGame(level, wordCount = 'Tất cả') { // Add wordCount parameter
+      // Check if the level or word count has changed from the previous session
+      const levelChanged = gameState.previousLevel !== level;
+      const wordCountChanged = gameState.previousWordCount !== wordCount;
+
+      gameState.currentLevel = level;
+      gameState.currentWordCount = wordCount;
+      gameState.correct = 0;
+      gameState.incorrect = 0;
+      resetSelection();
+
+      // ONLY reset weakWords and masteredWords if the topic or word count has changed
+      if (levelChanged || wordCountChanged) {
+          gameState.weakWords.clear();
+          gameState.masteredWords.clear();
+          console.log("Resetting learned words due to topic/word count change.");
+      }
+
+      // Determine the sessionWordsPool based on selected wordCount
+      let fullLevelWords = vocabulary[gameState.currentLevel];
+      if (gameState.currentWordCount === 'Tất cả') {
+        gameState.sessionWordsPool = [...fullLevelWords];
+      } else {
+        const count = parseInt(gameState.currentWordCount, 10);
+        // Shuffle the full level words and take a subset
+        gameState.sessionWordsPool = shuffleArray([...fullLevelWords]).slice(0, count);
+      }
+
+      // Initialize or update weakWords for words in the current session pool
+      // Words not in the session pool will retain their state if they exist in weakWords,
+      // but they won't be considered for current session's progress or mastery.
+      gameState.sessionWordsPool.forEach(pair => {
+          if (!gameState.weakWords.has(pair.ch)) {
+              gameState.weakWords.set(pair.ch, 0); // Initialize new words to 0 mistakes
+          }
+          // If a word is in the session pool but was previously mastered (mistake count < 0),
+          // ensure it's still considered mastered. If it was not mastered, it retains its mistake count.
+      });
+
+      // totalWordsInLevel now reflects the size of the current session's word pool
+      gameState.totalWordsInLevel = gameState.sessionWordsPool.length;
+      // Recalculate currentMastered based on the new session pool and weakWords
+      gameState.currentMastered = 0;
+      gameState.sessionWordsPool.forEach(pair => {
+          if ((gameState.weakWords.get(pair.ch) || 0) < 0) {
+              gameState.currentMastered++;
+          }
+      });
+
+      // Update the level button text based on selected word count
+      if (wordCount === 'Tất cả') {
+        elements.btnLevel.textContent = `Chủ đề ${level} - ${gameState.totalWordsInLevel} từ`;
+      } else {
+        elements.btnLevel.textContent = `Chủ đề ${level} - ${wordCount} từ`;
+      }
+
+
+      clearInterval(gameState.timerInterval);
+      gameState.startTime = new Date();
+      gameState.timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
+      updateScores();
+
+      resetTimeoutMechanismForSelectedChineseWord();
+      clearHint();
+      stopAutoplay();
+      clearIdleTimer();
+
+      startNewRound(); // This will now draw from sessionWordsPool
+      updatePhoneticDisplay(); // Call this to update pinyin toggle state
+      updateProgress(); // This will now use totalWordsInLevel (session pool size)
+
+      startIdleTimer();
+
+      // Update previous level and word count for the next comparison
+      gameState.previousLevel = level;
+      gameState.previousWordCount = wordCount;
+    }
+
+    // MODIFIED: Function to start a completely new phase of words (not just retrying incorrect)
+    function startNewRound() {
+        console.log("Starting a new major round.");
+        gameState.roundIncorrectWords.clear();
+        gameState.isRetryingIncorrectWords = false;
+
+        // wordsToSelectFrom now comes from the sessionWordsPool, filtering out mastered words
+        let wordsToSelectFrom = [];
+        gameState.sessionWordsPool.forEach(pair => {
+            // Only consider words that are not yet mastered (mistake count >= 0)
+            if ((gameState.weakWords.get(pair.ch) || 0) >= 0) {
+                wordsToSelectFrom.push(pair);
+            }
+        });
+
+        if (wordsToSelectFrom.length === 0) {
+            // All words in the current session pool are mastered
+            completeLevel(); // Or handle completion of the selected word set
+            return;
+        }
+
+        if (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching') {
+            let candidateWords = [];
+            const wordsWithMistakes = [];
+            const wordsWithoutMistakes = []; // These are words with 0 mistakes
+
+            wordsToSelectFrom.forEach(pair => {
+                const mistakes = gameState.weakWords.get(pair.ch) || 0;
+                if (mistakes > 0) {
+                    wordsWithMistakes.push(pair);
+                } else if (mistakes === 0) { // Only include words with 0 mistakes here
+                    wordsWithoutMistakes.push(pair);
+                }
+            });
+
+            // Sort words with mistakes by descending mistake count
+            wordsWithMistakes.sort((a, b) => {
+                const mA = gameState.weakWords.get(a.ch) || 0;
+                const mB = gameState.weakWords.get(b.ch) || 0;
+                return mB - mA;
+            });
+
+            candidateWords = [...wordsWithMistakes]; // Start with words that have mistakes
+
+            let numWordsForThisRound = gameState.settings.wordsPerRound;
+            // Ensure we don't pick more than available unmastered words in the current session pool
+            numWordsForThisRound = Math.min(numWordsForThisRound, wordsToSelectFrom.length);
+
+            const remainingSlots = numWordsForThisRound - candidateWords.length;
+            if (remainingSlots > 0) {
+                // Shuffle words without mistakes and add to fill remaining slots
+                const shuffledOtherWords = shuffleArray(wordsWithoutMistakes);
+                candidateWords.push(...shuffledOtherWords.slice(0, remainingSlots));
+            }
+
+            // Ensure unique words and correct count
+            const uniqueCandidateWords = [];
+            const seenChineseWords = new Set();
+            for (const pair of candidateWords) {
+                if (!seenChineseWords.has(pair.ch) && uniqueCandidateWords.length < numWordsForThisRound) {
+                    uniqueCandidateWords.push(pair);
+                    seenChineseWords.add(pair.ch);
+                }
+            }
+            gameState.currentInitialRoundPairs = uniqueCandidateWords;
+            gameState.activePairs = [...gameState.currentInitialRoundPairs];
+
+        } else if (gameState.currentMode === 'flashcards') {
+            // For flashcards, activePairs are all words in the session pool that are not yet mastered
+            gameState.activePairs = wordsToSelectFrom;
+            gameState.flashcardIndex = 0;
+        }
+
+        renderGameArea();
+    }
+
+    function renderGameArea() {
+      // Reset column displays first
+      elements.chineseColumn.style.display = 'none';
+      elements.pinyinColumn.style.display = 'none'; // NEW
+      elements.vietnameseColumn.style.display = 'none';
+      document.body.classList.remove('flashcard-mode', 'advanced-card-matching'); // Remove all mode classes
+
+      // Clear all columns
+      elements.chineseColumn.innerHTML = "";
+      elements.pinyinColumn.innerHTML = ""; // NEW
+      elements.vietnameseColumn.innerHTML = "";
+
+      const existingFlashcards = elements.gameArea.querySelectorAll('.flashcard-container');
+      existingFlashcards.forEach(card => card.remove());
+
+      if (gameState.currentMode === 'card-matching') {
+        elements.chineseColumn.style.display = 'flex';
+        elements.vietnameseColumn.style.display = 'flex';
+        renderCardMatching();
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW mode rendering
+        document.body.classList.add('advanced-card-matching');
+        elements.chineseColumn.style.display = 'flex';
+        elements.pinyinColumn.style.display = 'flex';
+        elements.vietnameseColumn.style.display = 'flex';
+        renderAdvancedCardMatching();
+      } else if (gameState.currentMode === 'flashcards') {
+        document.body.classList.add('flashcard-mode');
+        renderFlashcards();
+      }
+      updatePhoneticDisplay(); // Re-apply phonetic display settings based on new mode
+    }
+
+    function updateMistakeBadge(chineseWord, cardElement) {
+      let card = cardElement;
+      if (!card) {
+        card = elements.chineseColumn.querySelector(`[data-word="${chineseWord}"]`);
+      }
+      if (card) {
+        const mistakeCount = gameState.weakWords.get(chineseWord) || 0;
+        if (mistakeCount > 0) { // Only show badge if mistake count is positive
+          let badge = card.querySelector(".mistake-badge");
+          if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "mistake-badge";
+            card.appendChild(badge);
+          }
+          badge.textContent = mistakeCount;
+        } else {
+          // If mistakeCount is 0 or negative, ensure badge is removed
+          let badge = card.querySelector(".mistake-badge");
+          if (badge) {
+            badge.remove();
+          }
+        }
+        updateProgress();
+      }
+    }
+
+    function renderCardMatching() {
+      // Clear columns
+      elements.chineseColumn.innerHTML = "";
+      elements.vietnameseColumn.innerHTML = "";
+
+      // Use activePairs for rendering
+      const chineseWords = shuffleArray([...gameState.activePairs]);
+      const vietnameseWords = shuffleArray([...gameState.activePairs]);
+
+      chineseWords.forEach((pair, index) => {
+        const card = document.createElement("div");
+        card.className = "word-card";
+        card.dataset.word = pair.ch;
+        card.dataset.index = index;
+        card.innerHTML = `<span>${pair.ch}</span><span class="phonetic">${pair.pinyin}</span>`;
+        // Mastery condition now uses < 0
+        if ((gameState.weakWords.get(pair.ch) || 0) < 0) { // If mistake count is negative, it's mastered
+          card.classList.add("mastered");
+          const checkmark = document.createElement("span");
+          checkmark.className = "mastered-check";
+          checkmark.innerHTML = "&#10003;";
+          card.appendChild(checkmark);
+        }
+        updateMistakeBadge(pair.ch, card);
+        card.addEventListener("click", () => {
+          if (!gameState.isAutoplayActive) {
+            speakWord(pair.ch, "zh-CN");
+            selectCard(card, "ch", index);
+          }
+        });
+        elements.chineseColumn.appendChild(card);
+      });
+
+      vietnameseWords.forEach((pair, index) => {
+        const card = document.createElement("div");
+        card.className = "word-card";
+        card.dataset.word = pair.vn;
+        card.dataset.originalCh = pair.ch;
+        card.dataset.index = index;
+        card.textContent = pair.vn;
+        // Mastery condition now uses < 0
+        if ((gameState.weakWords.get(pair.ch) || 0) < 0) { // If mistake count is negative, it's mastered
+          card.classList.add("mastered");
+        }
+        card.addEventListener("click", () => {
+          if (!gameState.isAutoplayActive) {
+            selectCard(card, "vn", index);
+          }
+        });
+        elements.vietnameseColumn.appendChild(card);
+      });
+      updatePhoneticDisplay();
+    }
+
+    // NEW: Render function for advanced card matching
+    function renderAdvancedCardMatching() {
+        elements.chineseColumn.innerHTML = "";
+        elements.pinyinColumn.innerHTML = "";
+        elements.vietnameseColumn.innerHTML = "";
+
+        // Create separate shuffled lists for each column
+        const chineseCardsData = shuffleArray(gameState.activePairs.map(p => ({ ch: p.ch, originalCh: p.ch })));
+        const pinyinCardsData = shuffleArray(gameState.activePairs.map(p => ({ pinyin: p.pinyin, originalCh: p.ch })));
+        const vietnameseCardsData = shuffleArray(gameState.activePairs.map(p => ({ vn: p.vn, originalCh: p.ch })));
+
+        chineseCardsData.forEach((data, index) => {
+            // Chinese Card
+            const chCard = document.createElement("div");
+            chCard.className = "word-card";
+            chCard.dataset.word = data.ch;
+            chCard.dataset.originalCh = data.originalCh; // Link back to the original Chinese word
+            chCard.dataset.index = index; // Keep index for selection
+            chCard.dataset.type = 'ch';
+            chCard.textContent = data.ch;
+            if ((gameState.weakWords.get(data.originalCh) || 0) < 0) {
+                chCard.classList.add("mastered");
+                const checkmark = document.createElement("span");
+                checkmark.className = "mastered-check";
+                checkmark.innerHTML = "&#10003;";
+                chCard.appendChild(checkmark);
+            }
+            updateMistakeBadge(data.originalCh, chCard);
+            chCard.addEventListener("click", () => {
+                if (!gameState.isAutoplayActive) {
+                    speakWord(data.ch, "zh-CN");
+                    selectCard(chCard, "ch", index);
+                }
+            });
+            elements.chineseColumn.appendChild(chCard);
+        });
+
+        pinyinCardsData.forEach((data, index) => {
+            // Pinyin Card
+            const pinyinCard = document.createElement("div");
+            pinyinCard.className = "word-card";
+            pinyinCard.dataset.word = data.pinyin;
+            pinyinCard.dataset.originalCh = data.originalCh; // Link back to the original Chinese word
+            pinyinCard.dataset.index = index; // Keep index for selection
+            pinyinCard.dataset.type = 'pinyin';
+            pinyinCard.textContent = data.pinyin;
+            if ((gameState.weakWords.get(data.originalCh) || 0) < 0) {
+                pinyinCard.classList.add("mastered");
+            }
+            pinyinCard.addEventListener("click", () => {
+                if (!gameState.isAutoplayActive) {
+                    selectCard(pinyinCard, "pinyin", index);
+                }
+            });
+            elements.pinyinColumn.appendChild(pinyinCard);
+        });
+
+        vietnameseCardsData.forEach((data, index) => {
+            // Vietnamese Card
+            const vnCard = document.createElement("div");
+            vnCard.className = "word-card";
+            vnCard.dataset.word = data.vn;
+            vnCard.dataset.originalCh = data.originalCh; // Link back to the original Chinese word
+            vnCard.dataset.index = index; // Keep index for selection
+            vnCard.dataset.type = 'vn';
+            vnCard.textContent = data.vn;
+            if ((gameState.weakWords.get(data.originalCh) || 0) < 0) {
+                vnCard.classList.add("mastered");
+            }
+            vnCard.addEventListener("click", () => {
+                if (!gameState.isAutoplayActive) {
+                    selectCard(vnCard, "vn", index);
+                }
+            });
+            elements.vietnameseColumn.appendChild(vnCard);
+        });
+        updatePhoneticDisplay(); // Ensure pinyin toggle is disabled
+    }
+
+    function renderFlashcards() {
+      elements.chineseColumn.style.display = 'none';
+      elements.vietnameseColumn.style.display = 'none';
+      elements.pinyinColumn.style.display = 'none'; // Ensure pinyin column is hidden
+
+      const existingFlashcards = elements.gameArea.querySelectorAll('.flashcard-container');
+      existingFlashcards.forEach(card => card.remove());
+
+      // Flashcard words are already in gameState.activePairs set by startNewRound
+      const flashcardWords = shuffleArray([...gameState.activePairs]);
+
+      flashcardWords.forEach((pair, index) => {
+        const flashcardContainer = document.createElement("div");
+        flashcardContainer.className = "flashcard-container";
+        flashcardContainer.dataset.index = index;
+        flashcardContainer.dataset.ch = pair.ch;
+
+        const flashcardInner = document.createElement("div");
+        flashcardInner.className = "flashcard-card-inner";
+
+        const flashcardFront = document.createElement("div");
+        flashcardFront.className = "flashcard-front";
+        flashcardFront.innerHTML = `<span>${pair.ch}</span>`;
+
+        const flashcardBack = document.createElement("div");
+        flashcardBack.className = "flashcard-back";
+        flashcardBack.innerHTML = `<span class="vietnamese-text">${pair.vn}</span><span class="pinyin-text">${pair.pinyin}</span>`;
+
+        flashcardInner.appendChild(flashcardFront);
+        flashcardInner.appendChild(flashcardBack);
+        flashcardContainer.appendChild(flashcardInner);
+
+        flashcardContainer.addEventListener("click", async () => {
+          clearIdleTimer();
+          if (gameState.isAutoplayActive) return; // Prevent manual interaction during autoplay
+
+          const wasFlipped = flashcardContainer.classList.contains("flipped");
+          const wasSeen = flashcardContainer.classList.contains("flashcard-seen");
+
+          if (wasFlipped) {
+            flashcardContainer.classList.remove("flipped");
+            if (!wasSeen) {
+                flashcardContainer.classList.add("flashcard-seen");
+            }
+            await speakWord(pair.ch, "zh-CN");
+          } else {
+            if (wasSeen) {
+              flashcardContainer.classList.remove("flashcard-seen");
+            }
+            flashcardContainer.classList.add("flipped");
+            await speakWord(pair.ch, "zh-CN");
+
+            // For flashcard manual mode, if not in autoplay, flip back after a delay
+            setTimeout(() => {
+                flashcardContainer.classList.remove("flipped");
+            }, gameState.settings.flashcardFlipBackDelay);
+          }
+        });
+
+        elements.gameArea.appendChild(flashcardContainer);
+      });
+      gameState.flashcardIndex = 0; // Reset flashcard index for new display
+    }
+
+    // MODIFIED: selectCard to handle 3 columns
+    function selectCard(card, type, index) {
+      clearHint();
+      clearIdleTimer();
+
+      if (
+        card.classList.contains("hidden") ||
+        card.classList.contains("correct-animation") ||
+        card.classList.contains("incorrect-animation")
+      ) {
+        return;
+      }
+
+      // Deselect existing card of the same type if it's not the current one
+      // In advanced mode, selection is based on the original Chinese word, not index
+      if (type === "ch") {
+        if (gameState.selectedCh && gameState.selectedCh.card === card) { // Check if the same card is clicked again
+          gameState.selectedCh.card.classList.remove("selected");
+          gameState.selectedCh = null;
+          resetTimeoutMechanismForSelectedChineseWord();
+          startIdleTimer();
+        } else {
+          if (gameState.selectedCh !== null) {
+            gameState.selectedCh.card.classList.remove("selected");
+          }
+          gameState.selectedCh = { card: card, originalCh: card.dataset.originalCh };
+          card.classList.add("selected");
+          startTimeoutMechanismForSelectedChineseWord(card.dataset.originalCh);
+        }
+      } else if (type === "pinyin") {
+        if (gameState.selectedPinyin && gameState.selectedPinyin.card === card) {
+          gameState.selectedPinyin.card.classList.remove("selected");
+          gameState.selectedPinyin = null;
+          startIdleTimer();
+        } else {
+          if (gameState.selectedPinyin !== null) {
+            gameState.selectedPinyin.card.classList.remove("selected");
+          }
+          gameState.selectedPinyin = { card: card, originalCh: card.dataset.originalCh };
+          card.classList.add("selected");
+        }
+      } else { // type === "vn"
+        if (gameState.selectedVn && gameState.selectedVn.card === card) {
+          card.classList.remove("selected");
+          gameState.selectedVn = null;
+          startIdleTimer();
+        } else {
+          if (gameState.selectedVn !== null) {
+            gameState.selectedVn.card.classList.remove("selected");
+          }
+          gameState.selectedVn = { card: card, originalCh: card.dataset.originalCh };
+          card.classList.add("selected");
+        }
+      }
+
+      // Check for a match based on current mode
+      if (gameState.currentMode === 'card-matching') {
+        // For card matching, we still use the index-based selection as columns are ordered
+        if (gameState.selectedCh !== null && gameState.selectedVn !== null) {
+          checkPair();
+        }
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW: Check for 3-way match
+        if (gameState.selectedCh !== null && gameState.selectedPinyin !== null && gameState.selectedVn !== null) {
+          checkPair();
+        }
+      }
+    }
+
+    // MODIFIED: checkPair logic for scoring (now handles 2 or 3 columns)
+    function checkPair() {
+      let isCorrectMatch = false;
+      let chineseWord = null;
+      let chineseCard = null;
+      let vietnameseCard = null;
+      let pinyinCard = null; // NEW
+
+      resetTimeoutMechanismForSelectedChineseWord();
+      clearIdleTimer(); // Clear idle timer immediately when interaction occurs
+
+      if (gameState.currentMode === 'card-matching') {
+        // In card-matching, selectedCh and selectedVn are indices
+        chineseCard = elements.chineseColumn.children[gameState.selectedCh];
+        vietnameseCard = elements.vietnameseColumn.children[gameState.selectedVn];
+
+        chineseWord = chineseCard.dataset.word;
+        const vietnameseOriginalCh = vietnameseCard.dataset.originalCh;
+
+        isCorrectMatch = (chineseWord === vietnameseOriginalCh);
+
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW: 3-way match logic
+        // In advanced-card-matching, selectedCh, selectedPinyin, selectedVn are objects with card and originalCh
+        chineseCard = gameState.selectedCh.card;
+        pinyinCard = gameState.selectedPinyin.card;
+        vietnameseCard = gameState.selectedVn.card;
+
+        chineseWord = chineseCard.dataset.originalCh; // Use originalCh from the card itself
+        const pinyinOriginalCh = pinyinCard.dataset.originalCh;
+        const vietnameseOriginalCh = vietnameseCard.dataset.originalCh;
+
+        isCorrectMatch = (chineseWord === pinyinOriginalCh && chineseWord === vietnameseOriginalCh);
+      }
+
+      if (isCorrectMatch) {
+        gameState.correct++;
+        updateScores('correct');
+
+        chineseCard.classList.add("correct-animation");
+        if (pinyinCard) pinyinCard.classList.add("correct-animation"); // NEW
+        vietnameseCard.classList.add("correct-animation");
+
+        let currentMistakes = gameState.weakWords.get(chineseWord) || 0;
+        // Correct match: Decrease mistake count by 1
+        gameState.weakWords.set(chineseWord, currentMistakes - 1);
+
+        // Mastery condition: mistake count < 0
+        if ((gameState.weakWords.get(chineseWord) || 0) < 0) {
+          gameState.masteredWords.add(chineseWord);
+          chineseCard.classList.add("mastered");
+          if (pinyinCard) pinyinCard.classList.add("mastered"); // NEW
+          vietnameseCard.classList.add("mastered");
+          const checkmark = document.createElement("span");
+          checkmark.className = "mastered-check";
+          checkmark.innerHTML = "&#10003;";
+          chineseCard.appendChild(checkmark);
+        } else {
+            // If still >= 0, ensure it's not in masteredWords and remove checkmark
+            gameState.masteredWords.delete(chineseWord);
+            chineseCard.classList.remove("mastered");
+            if (pinyinCard) pinyinCard.classList.remove("mastered"); // NEW
+            vietnameseCard.classList.remove("mastered");
+            const checkmark = chineseCard.querySelector(".mastered-check");
+            if (checkmark) checkmark.remove();
+        }
+
+        updateMistakeBadge(chineseWord); // This updates the count display on the card itself
+        // Remove from roundIncorrectWords if it was there (since it's now correct)
+        if (gameState.roundIncorrectWords.has(chineseWord)) {
+            gameState.roundIncorrectWords.delete(chineseWord);
+        }
+
+        if (gameState.settings.speakOnCorrectMatch) {
+            playWordPairAudio(chineseWord, vocabulary[gameState.currentLevel].find(p => p.ch === chineseWord).vn, false);
+        }
+
+        // Reset selection immediately after pair is confirmed
+        // For advanced mode, remove the cards from view
+        setTimeout(() => {
+          chineseCard.classList.add("hidden");
+          if (pinyinCard) pinyinCard.classList.add("hidden"); // NEW
+          vietnameseCard.classList.add("hidden");
+          chineseCard.classList.remove("selected", "correct-animation");
+          if (pinyinCard) pinyinCard.classList.remove("selected", "correct-animation"); // NEW
+          vietnameseCard.classList.remove("selected", "correct-animation");
+          resetSelection(); // Reset selection *after* cards are hidden
+          checkRoundCompletion(); // Check if all current active pairs are handled
+          startIdleTimer(); // Restart idle timer after completion check and potential new round
+        }, 700);
+      } else { // Incorrect Match
+        gameState.incorrect++;
+        updateScores('incorrect');
+
+        chineseCard.classList.add("incorrect-animation");
+        if (pinyinCard) pinyinCard.classList.add("incorrect-animation"); // NEW
+        vietnameseCard.classList.add("incorrect-animation");
+
+        const currentMistakes = gameState.weakWords.get(chineseWord) || 0;
+        // Incorrect match: Increase mistake count by 2
+        gameState.weakWords.set(chineseWord, currentMistakes + 2); // Increase mistake count
+        updateMistakeBadge(chineseWord);
+        // If it was mastered, it's not anymore
+        if (gameState.masteredWords.has(chineseWord)) {
+          gameState.masteredWords.delete(chineseWord);
+          const checkmark = chineseCard.querySelector(".mastered-check");
+          if (checkmark) checkmark.remove();
+        }
+        updateProgress();
+        // Add to roundIncorrectWords for later re-presentation
+        gameState.roundIncorrectWords.add(chineseWord);
+
+        resetSelection(); // Reset selection immediately after incorrect match
+
+        setTimeout(() => {
+          chineseCard.classList.remove("incorrect-animation");
+          if (pinyinCard) pinyinCard.classList.remove("incorrect-animation"); // NEW
+          vietnameseCard.classList.remove("incorrect-animation");
+          // Cards remain in place, they are not moved to the end visually here.
+          // The re-presentation logic for incorrect words is handled by checkRoundCompletion
+          startIdleTimer(); // Restart idle timer after animations
+        }, 500);
+      }
+    }
+
+    // MODIFIED: checkRoundCompletion now handles phases of a round
+    function checkRoundCompletion() {
+      // Check if all words in the current session pool are mastered
+      const allSessionWordsMastered = gameState.sessionWordsPool.every(
+          (word) => (gameState.weakWords.get(word.ch) || 0) < 0
+      );
+
+      if (allSessionWordsMastered) {
+          completeLevel(); // All words in the selected set are mastered
+          return; // Exit early as the game is complete for this selection
+      }
+
+      // The rest of the logic only applies if not all words in the session are mastered yet.
+      if (gameState.currentMode === 'flashcards') {
+        const allFlashcardsHidden = [...elements.gameArea.querySelectorAll('.flashcard-container')].every(
+            (card) => card.classList.contains("hidden")
+        );
+        if (allFlashcardsHidden) {
+            // If all *displayed* flashcards are hidden, but not all session words are mastered,
+            // it means we need to re-render the unmastered ones from the session pool.
+            setTimeout(startNewRound, 1000); // Start a new round to show remaining unmastered flashcards
+        }
+        return;
+      }
+
+      // For Card Matching and Advanced Card Matching modes
+      // Check if all currently active (displayed) pairs have been matched/hidden
+      const allActivePairsMatched = gameState.activePairs.every(pair => {
+          const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${pair.ch}"]`); // Use originalCh for lookup
+          return chCard && chCard.classList.contains("hidden");
+      });
+
+      if (allActivePairsMatched) {
+          console.log("All active pairs of this phase are matched.");
+          if (gameState.isRetryingIncorrectWords) {
+              console.log("Finished retrying incorrect words. Starting new major round.");
+              gameState.isRetryingIncorrectWords = false;
+              gameState.roundIncorrectWords.clear();
+
+              // If not all session words are mastered, start a new major round
+              setTimeout(startNewRound, 1000); // <-- This is the key line
+          } else {
+              console.log("Finished initial set of words.");
+              if (gameState.roundIncorrectWords.size > 0) {
+                  console.log(`Re-presenting ${gameState.roundIncorrectWords.size} incorrect words from this phase.`);
+                  gameState.activePairs = Array.from(gameState.roundIncorrectWords).map(ch =>
+                      gameState.sessionWordsPool.find(p => p.ch === ch) // Find from session pool
+                  );
+                  gameState.isRetryingIncorrectWords = true;
+                  gameState.roundIncorrectWords.clear(); // Clear for the *next* retry phase
+                  setTimeout(renderGameArea, 1000); // Call renderGameArea to re-render based on current mode
+              } else {
+                  console.log("No incorrect words in this phase. Starting new major round.");
+                  // If not all session words are mastered, start a new major round
+                  setTimeout(startNewRound, 1000); // <-- This is also a key line
+              }
+          }
+      }
+    }
+
+    function startTimeoutMechanismForSelectedChineseWord(chineseWord) {
+      if (gameState.currentMode === 'flashcards') return; // Only for card matching modes
+
+      resetTimeoutMechanismForSelectedChineseWord();
+      gameState.currentChineseTimeoutWord = chineseWord;
+      gameState.timeoutIncreaseInterval = setTimeout(() => {
+        if (gameState.currentChineseTimeoutWord === chineseWord) {
+            const currentMistakes = gameState.weakWords.get(chineseWord) || 0;
+            // Timeout: Increase mistake count by 2
+            gameState.weakWords.set(chineseWord, currentMistakes + 2);
+            updateMistakeBadge(chineseWord);
+            // If it was mastered, it's not anymore due to timeout
+            if (gameState.masteredWords.has(chineseWord)) {
+                gameState.masteredWords.delete(chineseWord);
+                const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${chineseWord}"]`); // Use originalCh for lookup
+                if(chCard) {
+                    chCard.classList.remove("mastered");
+                    const checkmark = chCard.querySelector(".mastered-check");
+                    if (checkmark) checkmark.remove();
+                }
+            }
+            updateProgress();
+            gameState.roundIncorrectWords.add(chineseWord); // Add to current round's incorrect list
+            showHint();
+        }
+        resetTimeoutMechanismForSelectedChineseWord();
+      }, gameState.timeoutBaseDelay);
+    }
+
+    function resetTimeoutMechanismForSelectedChineseWord() {
+      if (gameState.timeoutIncreaseInterval) {
+        clearTimeout(gameState.timeoutIncreaseInterval);
+        gameState.timeoutIncreaseInterval = null;
+      }
+      gameState.currentChineseTimeoutWord = null;
+    }
+
+    function startIdleTimer() {
+      if (gameState.selectedCh === null && gameState.selectedPinyin === null && gameState.selectedVn === null && !gameState.isAutoplayActive && (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching')) {
+        clearIdleTimer();
+        gameState.idleTimer = setTimeout(() => {
+          showHint();
+        }, gameState.hintDelay);
+      }
+    }
+
+    function clearIdleTimer() {
+      if (gameState.idleTimer) {
+        clearTimeout(gameState.idleTimer);
+        gameState.idleTimer = null;
+      }
+      if (gameState.hintTimeout) {
+        clearTimeout(gameState.hintTimeout);
+        gameState.hintTimeout = null;
+      }
+    }
+
+    // MODIFIED: showHint to handle 2 or 3 columns
+    function showHint() {
+      if (gameState.currentMode === 'flashcards') return; // Hints only for card matching modes
+
+      clearHint();
+      const availablePairs = gameState.activePairs.filter(pair => {
+        const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${pair.ch}"]`); // Use originalCh for lookup
+        // Hint only words that are currently displayed and not hidden, and not mastered
+        return chCard && !chCard.classList.contains('hidden') && (gameState.weakWords.get(pair.ch) || 0) >= 0;
+      });
+
+      if (availablePairs.length > 0) {
+        // Prioritize hinting words with mistakes
+        const hintableWordsWithMistakes = availablePairs.filter(pair => (gameState.weakWords.get(pair.ch) || 0) > 0);
+        let hintPair;
+        if (hintableWordsWithMistakes.length > 0) {
+            hintPair = shuffleArray(hintableWordsWithMistakes)[0];
+        } else {
+            hintPair = shuffleArray(availablePairs)[0];
+        }
+
+        const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${hintPair.ch}"]`);
+        const vnCard = elements.vietnameseColumn.querySelector(`[data-original-ch="${hintPair.ch}"]`);
+        const pinyinCard = elements.pinyinColumn.querySelector(`[data-original-ch="${hintPair.ch}"]`); // NEW
+
+        if (chCard && vnCard) { // Always need Chinese and Vietnamese
+          chCard.classList.add('hint-glow-green');
+          vnCard.classList.add('hint-glow-green');
+          if (pinyinCard) pinyinCard.classList.add('hint-glow-green'); // NEW: If pinyin card exists
+          gameState.currentHintPair = hintPair;
+        }
+      }
+    }
+
+    // MODIFIED: clearHint to handle 2 or 3 columns
+    function clearHint() {
+      if (gameState.currentHintPair) {
+        const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${gameState.currentHintPair.ch}"]`);
+        const vnCard = elements.vietnameseColumn.querySelector(`[data-original-ch="${gameState.currentHintPair.ch}"]`);
+        const pinyinCard = elements.pinyinColumn.querySelector(`[data-original-ch="${gameState.currentHintPair.ch}"]`); // NEW
+
+        if (chCard) {
+          chCard.classList.remove('hint-glow-green');
+        }
+        if (vnCard) {
+          vnCard.classList.remove('hint-glow-green');
+        }
+        if (pinyinCard) { // NEW
+          pinyinCard.classList.remove('hint-glow-green');
+        }
+        gameState.currentHintPair = null;
+      }
+    }
+
+    function scheduleNextAutoplayAction() {
+        clearTimeout(gameState.autoPlayTimer);
+        if (gameState.isAutoplayActive) {
+            gameState.autoPlayTimer = setTimeout(autoPlayNextPair, gameState.settings.delayNextRound);
+        }
+    }
+
+    async function autoPlayNextPair() {
+      if (!gameState.isAutoplayActive) return;
+
+      if (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching') { // Apply to both card matching modes
+        const availableCards = [...elements.chineseColumn.children].filter(
+          // Only select unhidden cards that are not yet mastered (mistake count >= 0)
+          (card) => !card.classList.contains("hidden") && (gameState.weakWords.get(card.dataset.originalCh || card.dataset.word) || 0) >= 0 // Use originalCh or word for lookup
+        );
+
+        if (availableCards.length === 0) {
+          // All currently displayed cards are matched or mastered in autoplay
+          checkRoundCompletion(); // This will handle transitioning to the next phase or round
+          return;
+        }
+
+        const randomChCard = shuffleArray(availableCards)[0];
+        const chineseWord = randomChCard.dataset.originalCh || randomChCard.dataset.word; // Get the Chinese word
+        const pairToPlay = gameState.sessionWordsPool.find(p => p.ch === chineseWord); // Find from session pool
+        const vnCard = elements.vietnameseColumn.querySelector(`[data-original-ch="${pairToPlay.ch}"]`);
+        const pinyinCard = elements.pinyinColumn.querySelector(`[data-original-ch="${pairToPlay.ch}"]`); // NEW
+
+        if (randomChCard && vnCard && (gameState.currentMode === 'card-matching' || (gameState.currentMode === 'advanced-card-matching' && pinyinCard))) {
+          randomChCard.classList.add("selected");
+          if (pinyinCard) pinyinCard.classList.add("selected"); // NEW
+          vnCard.classList.add("selected");
+          document.querySelectorAll(".word-card").forEach(
+            (card) => (card.style.pointerEvents = "none") // Disable clicks during autoplay
+          );
+
+          await playWordPairAudio(pairToPlay.ch, pairToPlay.vn, true);
+
+          // In autoplay, treat as a correct match: decrease mistake count by 1
+          let currentMistakes = gameState.weakWords.get(chineseWord) || 0;
+          gameState.weakWords.set(chineseWord, currentMistakes - 1);
+
+          if ((gameState.weakWords.get(chineseWord) || 0) < 0) { // New mastery condition
+            gameState.masteredWords.add(chineseWord);
+            randomChCard.classList.add("mastered");
+            if (pinyinCard) pinyinCard.classList.add("mastered"); // NEW
+            vnCard.classList.add("mastered");
+            const checkmark = document.createElement("span");
+            checkmark.className = "mastered-check";
+            checkmark.innerHTML = "&#10003;";
+            randomChCard.appendChild(checkmark);
+          } else {
+              gameState.masteredWords.delete(chineseWord); // Remove if not yet mastered
+              randomChCard.classList.remove("mastered");
+              if (pinyinCard) pinyinCard.classList.remove("mastered"); // NEW
+              vnCard.classList.remove("mastered");
+              const checkmark = randomChCard.querySelector(".mastered-check");
+              if (checkmark) checkmark.remove();
+          }
+          updateMistakeBadge(chineseWord, randomChCard);
+          updateProgress();
+          // Remove from roundIncorrectWords if it was there (since autoplay considers it correct)
+          if (gameState.roundIncorrectWords.has(chineseWord)) {
+            gameState.roundIncorrectWords.delete(chineseWord);
+          }
+
+
+          setTimeout(() => {
+              randomChCard.classList.add("hidden");
+              if (pinyinCard) pinyinCard.classList.add("hidden"); // NEW
+              vnCard.classList.add("hidden");
+              randomChCard.classList.remove("selected", "correct-animation");
+              if (pinyinCard) pinyinCard.classList.remove("selected", "correct-animation"); // NEW
+              vnCard.classList.remove("selected", "incorrect-animation"); // Ensure incorrect is removed too
+              resetSelection();
+              document.querySelectorAll(".word-card").forEach(
+                  (card) => (card.style.pointerEvents = "auto")
+              );
+              scheduleNextAutoplayAction(); // Schedule next action, which will call checkRoundCompletion eventually
+          }, 700);
+        } else {
+            scheduleNextAutoplayAction();
+        }
+      } else if (gameState.currentMode === 'flashcards') {
+        const flashcards = [...elements.gameArea.querySelectorAll('.flashcard-container')];
+
+        // Find the next unhidden card based on gameState.flashcardIndex
+        let currentCardContainer = null;
+        let nextIndexToPlay = gameState.flashcardIndex;
+        let foundCard = false;
+        for (let i = 0; i < flashcards.length; i++) {
+            const potentialCard = flashcards[nextIndexToPlay];
+            if (potentialCard && !potentialCard.classList.contains("hidden")) {
+                currentCardContainer = potentialCard;
+                foundCard = true;
+                break;
+            }
+            nextIndexToPlay = (nextIndexToPlay + 1) % flashcards.length;
+        }
+
+        if (!foundCard) {
+            checkRoundCompletion(); // All cards effectively "hidden" or done
+            return;
+        }
+
+        const chineseWord = currentCardContainer.dataset.ch;
+        const pairToPlay = gameState.sessionWordsPool.find(p => p.ch === chineseWord); // Find from session pool
+
+        if (!pairToPlay) {
+          console.error("Flashcard data mismatch for autoplay:", chineseWord);
+          gameState.flashcardIndex = (gameState.flashcardIndex + 1) % flashcards.length; // Move to next to avoid infinite loop on error
+          scheduleNextAutoplayAction();
+          return;
+        }
+
+        // 1. "sáng thẻ" (highlight card) - scroll into view and ensure front is visible
+        currentCardContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        currentCardContainer.classList.remove('flipped'); // Ensure front is showing
+        currentCardContainer.classList.remove('flashcard-seen'); // Remove 'seen' for new display cycle
+
+        // 2. "phát âm" (pronounce Chinese)
+        await playSingleWordWithRepetitions(pairToPlay.ch, "zh-CN", gameState.settings.chineseRepetitions, gameState.settings.repetitionDelay);
+
+        // Add a small delay before flipping to allow audio to finish/register
+        await new Promise(resolve => setTimeout(resolve, 300)); // Small pause
+
+        // 3. "lật thẻ" (flip card to back)
+        currentCardContainer.classList.add('flipped');
+
+        // 4. "phát âm" (pronounce Vietnamese) after flip
+        await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices)); // Delay before Vietnamese voice
+        await playSingleWordWithRepetitions(pairToPlay.vn, "vi-VN", gameState.settings.vietnameseRepetitions, gameState.settings.repetitionDelay);
+
+        // 5. "rồi lật lại" (then flip back to front) after Vietnamese audio
+        await new Promise(resolve => setTimeout(resolve, gameState.settings.flashcardFlipBackDelay));
+        currentCardContainer.classList.remove('flipped');
+
+        // 6. "sáng thẻ để ghi nhận là đã lật" (highlight card to acknowledge it's seen)
+        currentCardContainer.classList.add('flashcard-seen');
+
+        // Update weakWords and mastery for flashcards during autoplay
+        let currentMistakes = gameState.weakWords.get(chineseWord) || 0;
+        gameState.weakWords.set(chineseWord, currentMistakes - 1); // Decrease mistake count for each view in autoplay
+        if ((gameState.weakWords.get(chineseWord) || 0) < 0) { // New mastery condition
+            gameState.masteredWords.add(chineseWord);
+            currentCardContainer.classList.add("hidden"); // Hide mastered flashcards in autoplay
+        } else {
+            gameState.masteredWords.remove(chineseWord); // Ensure it's not in masteredWords if not mastered
+            currentCardContainer.classList.remove("hidden"); // Ensure it's not hidden if not mastered
+        }
+        updateProgress();
+
+        // Move to the next flashcard for the next autoplay iteration
+        gameState.flashcardIndex = (gameState.flashcardIndex + 1) % flashcards.length;
+        scheduleNextAutoplayAction();
+      }
+    }
+
+    function completeLevel() {
+      clearInterval(gameState.timerInterval);
+      resetTimeoutMechanismForSelectedChineseWord();
+      clearHint();
+      stopAutoplay();
+      const endTime = new Date();
+      const diff = Math.floor((endTime - gameState.startTime) / 1000);
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      setTimeout(() => {
+        showCustomAlert(`Chúc mừng! Bạn đã hoàn thành ${gameState.currentWordCount === 'Tất cả' ? 'cấp độ' : 'bộ từ'} ${gameState.currentLevel} (${gameState.currentWordCount !== 'Tất cả' ? gameState.currentWordCount + ' từ' : 'tất cả'})!\nThời gian: ${timeString}\nĐúng: ${gameState.correct}\nSai: ${gameState.incorrect}\nTổng số từ đã học trong phiên: ${gameState.totalWordsInLevel}\nTừ đã thuộc: ${gameState.currentMastered}`);
+
+        // Reset mistake count for all words in the current session pool back to 0
+        gameState.sessionWordsPool.forEach(pair => {
+            gameState.weakWords.set(pair.ch, 0); // Reset mistake count to 0
+        });
+        gameState.masteredWords.clear(); // Clear mastered status for the session
+
+        // Re-initialize game to restart the cycle with fresh mastery for the same level and word count
+        // This will now pick up all words again as their mistake counts are reset to 0.
+        initGame(gameState.currentLevel, gameState.currentWordCount);
+      }, 500);
+    }
+
+    // MODIFIED: updateProgress to reflect new mastery condition
+    function updateProgress() {
+      let masteredCount = 0;
+      let wordsWithMistakes = 0;
+
+      // Iterate over the current session's word pool
+      gameState.sessionWordsPool.forEach((word) => {
+        // Mastery condition for progress bar: mistake count < 0
+        if ((gameState.weakWords.get(word.ch) || 0) < 0) {
+          masteredCount++;
+        }
+        if ((gameState.weakWords.get(word.ch) || 0) > 0) { // Count words with positive mistake counts
+            wordsWithMistakes++;
+        }
+      });
+      gameState.currentMastered = masteredCount;
+
+      // The progress bar should reflect mastery of the *current session's word pool*
+      const totalWordsForSession = gameState.totalWordsInLevel; // This is already set correctly in initGame
+      const progress = (gameState.currentMastered / totalWordsForSession) * 100;
+      elements.progressBar.style.width = `${progress}%`;
+
+      elements.progressDetails.textContent = `Đã thuộc: ${gameState.currentMastered}/${totalWordsForSession} (Từ lỗi: ${wordsWithMistakes})`;
+    }
+
+    // MODIFIED: resetSelection to handle 3 columns
+    function resetSelection() {
+      if (gameState.selectedCh !== null) {
+        // Access the card directly from the stored object in gameState.selectedCh
+        const chineseCard = gameState.selectedCh.card;
+        if (chineseCard) {
+            chineseCard.classList.remove("selected");
+        }
+      }
+      if (gameState.selectedPinyin !== null) {
+        const pinyinCard = gameState.selectedPinyin.card;
+        if (pinyinCard) {
+            pinyinCard.classList.remove("selected");
+        }
+      }
+      if (gameState.selectedVn !== null) {
+        const vietnameseCard = gameState.selectedVn.card;
+        if (vietnameseCard) {
+            vietnameseCard.classList.remove("selected");
+        }
+      }
+      gameState.selectedCh = null;
+      gameState.selectedPinyin = null;
+      gameState.selectedVn = null;
+      // Ensure any ongoing speech is cancelled when selection is reset
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function updateScores(type = null) {
+      elements.scoreCorrect.textContent = gameState.correct;
+      elements.scoreIncorrect.textContent = gameState.incorrect;
+
+      if (type === 'correct') {
+        elements.scoreCorrect.classList.remove('flash-correct');
+        void elements.scoreCorrect.offsetWidth;
+        elements.scoreCorrect.classList.add('flash-correct');
+      } else if (type === 'incorrect') {
+        elements.scoreIncorrect.classList.remove('flash-incorrect');
+        void elements.scoreIncorrect.offsetWidth;
+        elements.scoreIncorrect.classList.add('flash-incorrect');
+      }
+    }
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = Math.floor((now - gameState.startTime) / 1000);
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      elements.timer.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    }
+
+    // MODIFIED: updatePhoneticDisplay to handle pinyin column
+    function updatePhoneticDisplay() {
+      const show = elements.togglePhonetic.checked;
+      if (gameState.currentMode === 'card-matching') {
+        document.querySelectorAll(".word-card .phonetic").forEach((phoneticSpan) => {
+          phoneticSpan.style.display = show ? 'block' : 'none';
+        });
+        elements.togglePhonetic.disabled = false; // Enable toggle for regular matching
+      } else if (gameState.currentMode === 'flashcards') {
+        document.querySelectorAll(".flashcard-back .pinyin-text").forEach((pinyinSpan) => {
+          pinyinSpan.style.display = show ? 'block' : 'none';
+        });
+        elements.togglePhonetic.disabled = false; // Enable toggle for flashcards
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW: Disable for advanced mode
+        document.querySelectorAll(".word-card .phonetic").forEach((phoneticSpan) => {
+          phoneticSpan.style.display = 'none'; // Always hide phonetic span in Chinese cards
+        });
+        document.querySelectorAll(".flashcard-back .pinyin-text").forEach((pinyinSpan) => {
+          pinyinSpan.style.display = 'none'; // Also hide for flashcard elements if they somehow exist
+        });
+        elements.togglePhonetic.checked = false; // Uncheck it
+        elements.togglePhonetic.disabled = true; // Disable the toggle
+      }
+    }
+
+    function speakWord(word, lang) {
+      console.log(`Attempting to speak: "${word}" in language: "${lang}"`);
+      if (!window.speechSynthesis) {
+        console.warn("Text-to-Speech không được hỗ trợ trên trình duyệt này.");
+        return Promise.resolve();
+      }
+      if (!gameState.settings.enableSound) {
+        console.warn("Cài đặt âm thanh đã tắt.");
+        return Promise.resolve();
+      }
+      // Check if TTS is ready
+      if (!ttsReady) {
+          console.warn("TTS not ready yet. Skipping speech.");
+          return Promise.resolve();
+      }
+
+      return new Promise((resolve) => {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = lang;
+
+        const voices = speechSynthesis.getVoices();
+        // console.log(`Voices available when speaking "${word}" (${lang}): ${voices.length}`); // Log voice count
+        const selectedVoice = voices.find(voice => voice.lang === lang);
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+            // console.log(`Using voice: ${selectedVoice.name} for ${lang}`);
+        } else {
+            console.warn(`No specific voice found for ${lang}. Using default voice if available.`);
+        }
+
+        let timerId;
+
+        const onEndHandler = () => {
+          // console.log(`Speech finished for: "${word}"`);
+          clearTimeout(timerId);
+          resolve();
+        };
+
+        utterance.onend = onEndHandler;
+        utterance.onerror = (event) => {
+          if (event.error === 'interrupted') {
+            console.info(`TTS Info for "${word}" (${lang}): Speech was interrupted.`);
+          } else {
+            console.error(`TTS Error for "${word}" (${lang}):`, event.error);
+          }
+          clearTimeout(timerId);
+          resolve();
+        };
+
+        speechSynthesis.cancel(); // This is crucial for stopping old speech
+        try {
+          speechSynthesis.speak(utterance);
+          // console.log(`Speaking initiated for: "${word}"`);
+        } catch (e) {
+          console.error(`Error initiating speech for "${word}":`, e);
+          resolve(); // Resolve promise even if speak fails to prevent hanging
+        }
+
+        timerId = setTimeout(() => {
+          console.warn(`TTS onend/onerror for "${word}" (${lang}) did not fire within timeout. Resolving with fallback.`);
+          resolve();
+        }, 5000);
+      });
+    }
+
+    async function playSingleWordWithRepetitions(word, lang, repetitions, delay) {
+      for (let i = 0; i < repetitions; i++) {
+        await speakWord(word, lang);
+        if (i < repetitions - 1) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    async function playWordPairAudio(chineseWord, vietnameseWord, isAutoplay = false) {
+      if (isAutoplay) {
+        const { voiceOrder, chineseRepetitions, vietnameseRepetitions, repetitionDelay } = gameState.settings;
+
+        if (voiceOrder === 'chinese-vietnamese') {
+          await playSingleWordWithRepetitions(chineseWord, "zh-CN", chineseRepetitions, repetitionDelay);
+          await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices));
+          await playSingleWordWithRepetitions(vietnameseWord, "vi-VN", vietnameseRepetitions, repetitionDelay);
+        } else {
+          await playSingleWordWithRepetitions(vietnameseWord, "vi-VN", vietnameseRepetitions, repetitionDelay);
+          await new Promise(resolve => setTimeout(resolve, gameState.settings.delayBetweenVoices));
+          await playSingleWordWithRepetitions(chineseWord, "zh-CN", chineseRepetitions, repetitionDelay);
+        }
+      } else {
+        await speakWord(chineseWord, "zh-CN");
+        await new Promise(resolve => setTimeout(resolve, gameState.settings.manualInteractionDelay));
+        await speakWord(vietnameseWord, "vi-VN");
+      }
+    }
+
+    // Function to load voices and set ttsReady flag
+    function loadVoices() {
+      applySettings(); // Apply other saved settings
+      gameState.speechSynthesisReady = true; // Still keep this internal flag
+      ttsReady = true; // Set the global flag for speakWord to check
+      const voices = speechSynthesis.getVoices();
+      console.log("Available voices after loadVoices:");
+      voices.forEach(voice => {
+        console.log(`- Name: ${voice.name}, Lang: ${voice.lang}, Default: ${voice.default}`);
+      });
+    }
+
+    // Shuffles an array randomly
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        // Using a temporary variable for swapping to avoid potential 'object is not iterable' error
+        let temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    function initLevelSelection() {
+      elements.levelList.innerHTML = "";
+      Object.keys(vocabulary).forEach((level) => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = `Chủ đề ${level}`;
+        btn.onclick = () => {
+          elements.levelModal.style.display = "none";
+          // Store the selected level temporarily
+          // gameState.currentLevel = level; // This is set in initGame later
+          populateWordsToLearnOptions(level); // Populate the new modal
+          elements.wordsToLearnModal.style.display = "flex"; // Show the new modal
+        };
+        elements.levelList.appendChild(btn);
+      });
+    }
+
+    // Function to populate word count options
+    function populateWordsToLearnOptions(level) {
+        elements.wordsToLearnList.innerHTML = "";
+        const totalWordsInLevel = vocabulary[level].length;
+        const options = [];
+
+        if (totalWordsInLevel < 20) {
+            options.push('Tất cả');
+        } else if (totalWordsInLevel >= 20 && totalWordsInLevel < 30) {
+            options.push(20, 'Tất cả');
+        } else if (totalWordsInLevel >= 30 && totalWordsInLevel < 50) {
+            options.push(20, 30, 'Tất cả');
+        } else if (totalWordsInLevel >= 50 && totalWordsInLevel < 100) {
+            options.push(20, 30, 50, 'Tất cả');
+        } else { // totalWordsInLevel >= 100
+            options.push(20, 30, 50, 100, 'Tất cả');
+        }
+
+        options.forEach(count => {
+            const btn = document.createElement("button");
+            btn.className = "btn";
+            btn.textContent = count === 'Tất cả' ? 'Tất cả' : `${count} từ`;
+            btn.onclick = () => {
+                elements.wordsToLearnModal.style.display = "none";
+                toggleMistakeBadges(true);
+                // Now call initGame with the selected level and word count
+                initGame(level, count);
+            };
+            elements.wordsToLearnList.appendChild(btn);
+        });
+    }
+
+
+    function showCustomAlert(message) {
+      toggleMistakeBadges(false);
+      const alertModal = document.createElement('div');
+      alertModal.className = 'modal';
+      alertModal.style.display = 'flex';
+      alertModal.innerHTML = `
+        <div class="modal-content">
+          <h2>Thông báo</h2>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+          <button id="alert-ok-btn" class="btn">OK</button>
+        </div>
+      `;
+      document.body.appendChild(alertModal);
+
+      document.getElementById('alert-ok-btn').addEventListener('click', () => {
+        document.body.removeChild(alertModal);
+        toggleMistakeBadges(true);
+      });
+
+      alertModal.addEventListener('click', (e) => {
+        if (e.target === alertModal) {
+          document.body.removeChild(alertModal);
+          toggleMistakeBadges(true);
+        }
+      });
+    }
+
+    function toggleMistakeBadges(show) {
+      if (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching') {
+        const badges = document.querySelectorAll('.mistake-badge');
+        badges.forEach(badge => {
+          badge.style.display = show ? 'flex' : 'none';
+        });
+      } else {
+        const badges = document.querySelectorAll('.mistake-badge');
+        badges.forEach(badge => {
+          badge.style.display = 'none';
+        });
+      }
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize elements object here to ensure DOM is ready
+        elements = {
+            chineseColumn: document.getElementById('chinese-column'),
+            pinyinColumn: document.getElementById('pinyin-column'), // NEW
+            vietnameseColumn: document.getElementById('vietnamese-column'),
+            scoreCorrect: document.getElementById('score-correct'),
+            scoreIncorrect: document.getElementById('score-incorrect'),
+            timer: document.getElementById('timer'),
+            levelModal: document.getElementById('level-modal'),
+            levelList: document.getElementById('level-list'),
+            wordsToLearnModal: document.getElementById('words-to-learn-modal'),
+            wordsToLearnList: document.getElementById('words-to-learn-list'),
+            modeModal: document.getElementById('mode-modal'),
+            togglePhonetic: document.getElementById('toggle-phonetic'),
+            btnAutoplayToggle: document.getElementById('btn-autoplay-toggle'),
+            progressBar: document.getElementById('progress-bar'),
+            progressDetails: document.getElementById('progress-details'),
+            settingsModal: document.getElementById('settings-modal'),
+            settingDarkMode: document.getElementById('setting-dark-mode'),
+            settingTextColor: document.getElementById('setting-text-color'),
+            settingWordsPerRound: document.getElementById('setting-words-per-round'),
+            settingDelayBetweenVoices: document.getElementById('setting-delay-between-voices'),
+            settingDelayNextRound: document.getElementById('setting-delay-next-round'),
+            settingSpeakOnCorrectMatch: document.getElementById('setting-speak-on-correct-match'),
+            settingVoiceOrder: document.getElementById('setting-voice-order'),
+            settingChineseRepetitions: document.getElementById('setting-chinese-repetitions'),
+            settingVietnameseRepetitions: document.getElementById('setting-vietnamese-repetitions'),
+            gameArea: document.getElementById('game-area'),
+            btnCardMatching: document.getElementById('btn-card-matching'),
+            btnAdvancedCardMatching: document.getElementById('btn-advanced-card-matching'), // NEW
+            btnFlashcards: document.getElementById('btn-flashcards'),
+            btnWordSelection: document.getElementById('btn-word-selection'),
+            btnLevel: document.getElementById('btn-level'),
+            btnMode: document.getElementById('btn-mode'),
+            btnSettings: document.getElementById('btn-settings'),
+            btnSaveSettings: document.getElementById('btn-save-settings'),
+        };
+
+        // Now, attach event listeners and call other functions
+        elements.togglePhonetic.addEventListener("change", updatePhoneticDisplay);
+
+        elements.btnAutoplayToggle.addEventListener("click", () => {
+            if (gameState.isAutoplayActive) {
+                stopAutoplay();
+            } else {
+                startAutoplay();
+            }
+        });
+
+        elements.btnMode.addEventListener("click", () => {
+          stopAutoplay();
+          toggleMistakeBadges(false);
+          elements.modeModal.style.display = "flex";
+        });
+        elements.btnCardMatching.addEventListener("click", () => {
+          elements.modeModal.style.display = "none";
+          toggleMistakeBadges(true);
+          gameState.currentMode = 'card-matching';
+          stopAutoplay();
+          initGame(gameState.currentLevel, gameState.currentWordCount); // Re-initialize game to apply mode and restart round logic
+        });
+        elements.btnAdvancedCardMatching.addEventListener("click", () => { // NEW mode event listener
+            elements.modeModal.style.display = "none";
+            toggleMistakeBadges(true);
+            gameState.currentMode = 'advanced-card-matching';
+            stopAutoplay();
+            initGame(gameState.currentLevel, gameState.currentWordCount);
+        });
+        elements.btnFlashcards.addEventListener("click", () => {
+          elements.modeModal.style.display = "none";
+          toggleMistakeBadges(true);
+          gameState.currentMode = 'flashcards';
+          stopAutoplay();
+          initGame(gameState.currentLevel, gameState.currentWordCount); // Re-initialize game to apply mode and restart round logic
+        });
+        elements.btnWordSelection.addEventListener("click", () => {
+            // Do nothing for now, as it's disabled
+        });
+        elements.btnLevel.addEventListener("click", () => {
+          stopAutoplay();
+          toggleMistakeBadges(false);
+          elements.levelModal.style.display = "flex";
+        });
+        elements.levelModal.addEventListener("click", (e) => {
+          if (e.target === elements.levelModal) {
+            elements.levelModal.style.display = "none";
+            toggleMistakeBadges(true);
+            startIdleTimer();
+          }
+        });
+        elements.wordsToLearnModal.addEventListener("click", (e) => { // NEW event listener for the new modal
+          if (e.target === elements.wordsToLearnModal) {
+            elements.wordsToLearnModal.style.display = "none";
+            toggleMistakeBadges(true);
+            startIdleTimer();
+          }
+        });
+        elements.modeModal.addEventListener("click", (e) => {
+          if (e.target === elements.modeModal) {
+            elements.modeModal.style.display = "none";
+            toggleMistakeBadges(true);
+            startIdleTimer();
+          }
+        });
+        elements.btnSettings.addEventListener("click", () => {
+          stopAutoplay();
+          toggleMistakeBadges(false);
+          elements.settingsModal.style.display = "flex";
+        });
+        elements.btnSaveSettings.addEventListener("click", saveSettings);
+        elements.settingsModal.addEventListener("click", (e) => {
+          if (e.target === elements.settingsModal) {
+            elements.settingsModal.style.display = "none";
+            toggleMistakeBadges(true);
+            startIdleTimer();
+          }
+        });
+        elements.settingDarkMode.addEventListener("change", (e) => {
+          const newDarkModeState = e.target.checked;
+          const currentTextColor = gameState.settings.textColor;
+
+          if (newDarkModeState) {
+            if (currentTextColor === LIGHT_MODE_DEFAULT_TEXT_COLOR) {
+              gameState.settings.textColor = DARK_MODE_DEFAULT_TEXT_COLOR;
+            }
+          } else {
+            if (currentTextColor === DARK_MODE_DEFAULT_TEXT_COLOR) {
+              gameState.settings.textColor = LIGHT_MODE_DEFAULT_TEXT_COLOR;
+            }
+          }
+
+          gameState.settings.darkMode = newDarkModeState;
+          applySettings();
+        });
+        elements.settingTextColor.addEventListener("change", (e) => {
+          gameState.settings.textColor = e.target.value;
+          applySettings();
+        });
+        elements.settingWordsPerRound.addEventListener("change", (e) => {
+          const newValue = parseInt(e.target.value);
+          if (!isNaN(newValue)) {
+            gameState.settings.wordsPerRound = newValue;
+            // Re-initialize game to apply new words per round
+            initGame(gameState.currentLevel, gameState.currentWordCount);
+          }
+        });
+        elements.settingDelayBetweenVoices.addEventListener("change", (e) => {
+          gameState.settings.delayBetweenVoices = parseInt(e.target.value, 10);
+        });
+        elements.settingDelayNextRound.addEventListener("change", (e) => {
+          gameState.settings.delayNextRound = parseInt(e.target.value, 10);
+        });
+
+        elements.settingSpeakOnCorrectMatch.addEventListener("change", (e) => {
+          gameState.settings.speakOnCorrectMatch = e.target.checked;
+          applySettings();
+        });
+        elements.settingVoiceOrder.addEventListener("change", (e) => {
+          gameState.settings.voiceOrder = e.target.value;
+          applySettings();
+        });
+        elements.settingChineseRepetitions.addEventListener("change", (e) => {
+          gameState.settings.chineseRepetitions = parseInt(e.target.value, 10);
+          applySettings();
+        });
+        elements.settingVietnameseRepetitions.addEventListener("change", (e) => {
+          gameState.settings.vietnameseRepetitions = parseInt(e.target.value, 10);
+          applySettings();
+        });
+
+        loadSettings();
+        initLevelSelection();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+          speechSynthesis.onvoiceschanged = loadVoices;
+        } else {
+            loadVoices(); // Fallback for browsers that don't support onvoiceschanged
+        }
+        // Set initial game state based on new defaults
+        gameState.currentLevel = Object.keys(vocabulary)[0]; // First level
+        gameState.currentWordCount = 'Tất cả'; // All words
+        // gameState.currentMode = 'card-matching'; // Default mode - already set in gameState declaration
+        initGame(gameState.currentLevel, gameState.currentWordCount); // Initial game setup with default word count and mode
+    });
+
+  </script>
+</body>
+</html>
