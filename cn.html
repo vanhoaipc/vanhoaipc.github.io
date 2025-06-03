@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -270,6 +270,32 @@
       min-height: 400px;
       overflow-y: hidden;
     }
+    /* NEW: Styles for 3-column layout */
+    body.advanced-card-matching #game-area {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        flex-grow: 1;
+        min-height: 400px;
+    }
+    /* Updated column widths for larger screens */
+    body.advanced-card-matching #chinese-column {
+        flex: 0 0 25%; /* 25% width */
+        min-width: unset; /* Override min-width */
+    }
+    body.advanced-card-matching #pinyin-column { /* New Pinyin column */
+        display: flex; /* Ensure it's shown */
+        flex: 0 0 25%; /* 25% width */
+        min-width: unset; /* Override min-width */
+    }
+    body.advanced-card-matching #vietnamese-column {
+        flex: 0 0 50%; /* 50% width */
+        min-width: unset; /* Override min-width */
+    }
+
     .word-card {
       min-height: 50px;
       max-height: 50px;
@@ -312,6 +338,11 @@
     .word-card.show-phonetic .phonetic {
       display: block;
     }
+    /* In advanced mode, pinyin is its own column, so hide phonetic span in Chinese cards */
+    body.advanced-card-matching .word-card .phonetic {
+        display: none !important;
+    }
+
     @keyframes correct-fade-out {
       0% { background-color: var(--correct-bg-color); border-color: var(--correct-border-color); transform: scale(1.03); opacity: 1; }
       50% { opacity: 1; transform: scale(1); }
@@ -418,7 +449,7 @@
       text-decoration: none; /* Ensure no underline for links */
       display: inline-flex; /* Use flex to center content if needed */
       align-items: center;
-      justify-content: center;
+      justify: center;
     }
     .btn:hover {
       background-color: var(--button-hover-bg-color);
@@ -509,9 +540,9 @@
         }
         /* Ensure modal content itself is not too wide */
         .modal-content {
-            width: 90%; /* Keep it at 90% or similar for smaller screens */
-            max-width: 450px; /* Retain max-width for larger screens */
-            padding: 15px; /* Ensure sufficient padding */
+            width: 90%;
+            max-width: 450px;
+            padding: 15px;
         }
     }
 
@@ -571,7 +602,8 @@
     }
 
     body.flashcard-mode #chinese-column,
-    body.flashcard-mode #vietnamese-column {
+    body.flashcard-mode #vietnamese-column,
+    body.flashcard-mode #pinyin-column { /* Hide pinyin column in flashcard mode */
       display: none;
     }
 
@@ -710,6 +742,13 @@
         gap: 5px;
         min-height: 350px;
       }
+      /* Responsive adjustments for 3-column layout */
+      body.advanced-card-matching #chinese-column,
+      body.advanced-card-matching #pinyin-column,
+      body.advanced-card-matching #vietnamese-column {
+          flex: 1; /* Allow columns to grow equally */
+          min-width: 90px; /* Smaller min-width for smaller screens */
+      }
       .word-card {
         min-height: 45px;
         max-height: 45px;
@@ -820,6 +859,13 @@
         min-width: 110px;
         min-height: 320px;
       }
+      /* Responsive adjustments for 3-column layout on very small screens */
+      body.advanced-card-matching #chinese-column,
+      body.advanced-card-matching #pinyin-column,
+      body.advanced-card-matching #vietnamese-column {
+          flex: 1;
+          min-width: 70px; /* Even smaller min-width */
+      }
       .word-card .phonetic {
         font-size: 0.8em;
         margin-top: 2px;
@@ -889,7 +935,7 @@
 
     <div id="game-area">
       <div id="chinese-column" class="column"></div>
-      <div id="vietnamese-column" class="column"></div>
+      <div id="pinyin-column" class="column" style="display: none;"></div> <div id="vietnamese-column" class="column"></div>
     </div>
   </div>
 
@@ -912,7 +958,7 @@
       <h2>Chọn Chế độ học</h2>
       <div id="mode-list">
         <button id="btn-card-matching" class="btn">Ghép thẻ theo chủ đề</button>
-        <button id="btn-flashcards" class="btn">Flash card</button>
+        <button id="btn-advanced-card-matching" class="btn">Ghép thẻ theo chủ đề (nâng cao)</button> <button id="btn-flashcards" class="btn">Flash card</button>
         <button id="btn-word-selection" class="btn" disabled>Chọn từ ghép thẻ (sắp ra mắt)</button>
         <a href="index.html" class="btn">Về Home - Info</a>
       </div>
@@ -1027,8 +1073,9 @@
       previousWordCount: null, // Stores the word count from the previous session
       correct: 0,
       incorrect: 0,
-      selectedCh: null,
-      selectedVn: null,
+      selectedCh: null, // For card-matching: index of selected Chinese card; For advanced: {card, originalCh}
+      selectedPinyin: null, // For advanced mode: {card, originalCh}
+      selectedVn: null, // For card-matching: index of selected Vietnamese card; For advanced: {card, originalCh}
       sessionWordsPool: [], // The pool of words for the current learning session (either full level or selected subset)
       activePairs: [], // Words currently displayed on the board for the current round
       weakWords: new Map(), // Stores words with mistakes and their count (ch -> count)
@@ -1095,159 +1142,31 @@
         startIdleTimer();
     }
 
-    // Dữ liệu từ vựng
+// Dữ liệu từ vựng
     const vocabulary = {
       'HSK1': [
-        { ch: "爱", pinyin: "ài", vn: "yêu" },
-{ ch: "八", pinyin: "bā", vn: "tám" },
-{ ch: "爸爸", pinyin: "bàba", vn: "bố" },
-{ ch: "杯子", pinyin: "bēizi", vn: "cái cốc" },
-{ ch: "北京", pinyin: "Běijīng", vn: "Bắc Kinh" },
-{ ch: "本", pinyin: "běn", vn: "quyển (lượng từ)" },
-{ ch: "不", pinyin: "bù", vn: "không" },
-{ ch: "菜", pinyin: "cài", vn: "món ăn, rau" },
-{ ch: "茶", pinyin: "chá", vn: "trà" },
-{ ch: "吃", pinyin: "chī", vn: "ăn" },
-{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
-{ ch: "打电话", pinyin: "dǎ diànhuà", vn: "gọi điện thoại" },
-{ ch: "大", pinyin: "dà", vn: "to, lớn" },
-{ ch: "的", pinyin: "de", vn: "của (trợ từ)" },
-{ ch: "点", pinyin: "diǎn", vn: "giờ, chấm, điểm" },
-{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },
-{ ch: "电视", pinyin: "diànshì", vn: "tivi" },
-{ ch: "电影", pinyin: "diànyǐng", vn: "phim" },
-{ ch: "东西", pinyin: "dōngxi", vn: "đồ vật" },
-{ ch: "都", pinyin: "dōu", vn: "đều" },
-{ ch: "读", pinyin: "dú", vn: "đọc" },
-{ ch: "对不起", pinyin: "duìbuqǐ", vn: "xin lỗi" },
-{ ch: "多", pinyin: "duō", vn: "nhiều" },
-{ ch: "多少", pinyin: "duōshao", vn: "bao nhiêu" },
-{ ch: "儿子", pinyin: "érzi", vn: "con trai" },
-{ ch: "二", pinyin: "èr", vn: "hai" },
-{ ch: "饭店", pinyin: "fàndiàn", vn: "nhà hàng, khách sạn" },
-{ ch: "飞机", pinyin: "fēijī", vn: "máy bay" },
-{ ch: "分钟", pinyin: "fēnzhōng", vn: "phút" },
-{ ch: "高兴", pinyin: "gāoxìng", vn: "vui" },
-{ ch: "个", pinyin: "gè", vn: "cái (lượng từ)" },
-{ ch: "工作", pinyin: "gōngzuò", vn: "công việc" },
-{ ch: "狗", pinyin: "gǒu", vn: "chó" },
-{ ch: "汉语", pinyin: "Hànyǔ", vn: "tiếng Trung" },
-{ ch: "好", pinyin: "hǎo", vn: "tốt" },
-{ ch: "喝", pinyin: "hē", vn: "uống" },
-{ ch: "和", pinyin: "hé", vn: "và" },
-{ ch: "很", pinyin: "hěn", vn: "rất" },
-{ ch: "后面", pinyin: "hòumiàn", vn: "phía sau" },
-{ ch: "回", pinyin: "huí", vn: "quay lại, trở về" },
-{ ch: "会", pinyin: "huì", vn: "biết, sẽ" },
-{ ch: "火车站", pinyin: "huǒchēzhàn", vn: "ga tàu hỏa" },
-{ ch: "几", pinyin: "jǐ", vn: "mấy, vài" },
-{ ch: "家", pinyin: "jiā", vn: "nhà, gia đình" },
-{ ch: "今天", pinyin: "jīntiān", vn: "hôm nay" },
-{ ch: "九", pinyin: "jiǔ", vn: "chín" },
-{ ch: "开", pinyin: "kāi", vn: "mở, lái (xe)" },
-{ ch: "看", pinyin: "kàn", vn: "nhìn, xem" },
-{ ch: "看见", pinyin: "kànjiàn", vn: "nhìn thấy" },
-{ ch: "块", pinyin: "kuài", vn: "đồng (tiền), miếng" },
-{ ch: "来", pinyin: "lái", vn: "đến" },
-{ ch: "老师", pinyin: "lǎoshī", vn: "giáo viên" },
-{ ch: "了", pinyin: "le", vn: "đã, rồi (trợ từ)" },
-{ ch: "冷", pinyin: "lěng", vn: "lạnh" },
-{ ch: "六", pinyin: "liù", vn: "sáu" },
-{ ch: "妈妈", pinyin: "māma", vn: "mẹ" },
-{ ch: "吗", pinyin: "ma", vn: "không? (trợ từ)" },
-{ ch: "买", pinyin: "mǎi", vn: "mua" },
-{ ch: "猫", pinyin: "māo", vn: "mèo" },
-{ ch: "没", pinyin: "méi", vn: "không có" },
-{ ch: "没关系", pinyin: "méi guānxi", vn: "không sao" },
-{ ch: "米饭", pinyin: "mǐfàn", vn: "cơm" },
-{ ch: "明天", pinyin: "míngtiān", vn: "ngày mai" },
-{ ch: "名字", pinyin: "míngzi", vn: "tên" },
-{ ch: "哪", pinyin: "nǎ", vn: "nào" },
-{ ch: "哪儿", pinyin: "nǎr", vn: "ở đâu" },
-{ ch: "那", pinyin: "nà", vn: "kia, đó" },
-{ ch: "呢", pinyin: "ne", vn: "thì sao? (trợ từ)" },
-{ ch: "能", pinyin: "néng", vn: "có thể" },
-{ ch: "你", pinyin: "nǐ", vn: "bạn, cậu" },
-{ ch: "年", pinyin: "nián", vn: "năm" },
-{ ch: "女儿", pinyin: "nǚ'ér", vn: "con gái" },
-{ ch: "朋友", pinyin: "péngyou", vn: "bạn bè" },
-{ ch: "漂亮", pinyin: "piàoliang", vn: "đẹp" },
-{ ch: "苹果", pinyin: "píngguǒ", vn: "táo" },
-{ ch: "七", pinyin: "qī", vn: "bảy" },
-{ ch: "钱", pinyin: "qián", vn: "tiền" },
-{ ch: "前面", pinyin: "qiánmiàn", vn: "phía trước" },
-{ ch: "请", pinyin: "qǐng", vn: "mời, xin vui lòng" },
-{ ch: "去", pinyin: "qù", vn: "đi" },
-{ ch: "热", pinyin: "rè", vn: "nóng" },
-{ ch: "人", pinyin: "rén", vn: "người" },
-{ ch: "认识", pinyin: "rènshi", vn: "quen, biết (người)" },
-{ ch: "三", pinyin: "sān", vn: "ba" },
-{ ch: "商店", pinyin: "shāngdiàn", vn: "cửa hàng" },
-{ ch: "上", pinyin: "shàng", vn: "trên, lên" },
-{ ch: "上午", pinyin: "shàngwǔ", vn: "buổi sáng" },
-{ ch: "少", pinyin: "shǎo", vn: "ít" },
-{ ch: "谁", pinyin: "shéi", vn: "ai" },
-{ ch: "什么", pinyin: "shénme", vn: "cái gì" },
-{ ch: "十", pinyin: "shí", vn: "mười" },
-{ ch: "时候", pinyin: "shíhou", vn: "khi, lúc" },
-{ ch: "是", pinyin: "shì", vn: "là" },
-{ ch: "书", pinyin: "shū", vn: "sách" },
-{ ch: "水", pinyin: "shuǐ", vn: "nước" },
-{ ch: "水果", pinyin: "shuǐguǒ", vn: "hoa quả" },
-{ ch: "睡觉", pinyin: "shuìjiào", vn: "ngủ" },
-{ ch: "说", pinyin: "shuō", vn: "nói" },
-{ ch: "四", pinyin: "sì", vn: "bốn" },
-{ ch: "岁", pinyin: "suì", vn: "tuổi" },
-{ ch: "他", pinyin: "tā", vn: "anh ấy" },
-{ ch: "她", pinyin: "tā", vn: "cô ấy" },
-{ ch: "太", pinyin: "tài", vn: "quá, rất" },
-{ ch: "天气", pinyin: "tiānqì", vn: "thời tiết" },
-{ ch: "听", pinyin: "tīng", vn: "nghe" },
-{ ch: "同学", pinyin: "tóngxué", vn: "bạn học" },
-{ ch: "喂", pinyin: "wèi", vn: "alo (gọi điện)" },
-{ ch: "我", pinyin: "wǒ", vn: "tôi" },
-{ ch: "我们", pinyin: "wǒmen", vn: "chúng tôi" },
-{ ch: "五", pinyin: "wǔ", vn: "năm" },
-{ ch: "喜欢", pinyin: "xǐhuan", vn: "thích" },
-{ ch: "下", pinyin: "xià", vn: "dưới, xuống" },
-{ ch: "下午", pinyin: "xiàwǔ", vn: "buổi chiều" },
-{ ch: "下雨", pinyin: "xià yǔ", vn: "mưa" },
-{ ch: "先生", pinyin: "xiānsheng", vn: "ông, ngài" },
-{ ch: "现在", pinyin: "xiànzài", vn: "bây giờ" },
-{ ch: "想", pinyin: "xiǎng", vn: "muốn, nghĩ" },
-{ ch: "小", pinyin: "xiǎo", vn: "nhỏ" },
-{ ch: "小姐", pinyin: "xiǎojiě", vn: "cô, tiểu thư" },
-{ ch: "写", pinyin: "xiě", vn: "viết" },
-{ ch: "谢谢", pinyin: "xièxie", vn: "cảm ơn" },
-{ ch: "星期", pinyin: "xīngqī", vn: "tuần" },
-{ ch: "学生", pinyin: "xuésheng", vn: "học sinh" },
-{ ch: "学校", pinyin: "xuéxiào", vn: "trường học" },
-{ ch: "一", pinyin: "yī", vn: "một" },
-{ ch: "衣服", pinyin: "yīfu", vn: "quần áo" },
-{ ch: "医生", pinyin: "yīshēng", vn: "bác sĩ" },
-{ ch: "医院", pinyin: "yīyuàn", vn: "bệnh viện" },
-{ ch: "椅子", pinyin: "yǐzi", vn: "cái ghế" },
-{ ch: "有", pinyin: "yǒu", vn: "có" },
-{ ch: "月", pinyin: "yuè", vn: "tháng, mặt trăng" },
-{ ch: "再见", pinyin: "zàijiàn", vn: "tạm biệt" },
-{ ch: "在", pinyin: "zài", vn: "ở, đang" },
-{ ch: "怎么", pinyin: "zěnme", vn: "như thế nào" },
-{ ch: "怎么样", pinyin: "zěnmeyàng", vn: "thế nào" },
-{ ch: "这", pinyin: "zhè", vn: "cái này, đây" },
-{ ch: "中国", pinyin: "Zhōngguó", vn: "Trung Quốc" },
-{ ch: "中午", pinyin: "zhōngwǔ", vn: "buổi trưa" },
-{ ch: "住", pinyin: "zhù", vn: "sống, ở" },
-{ ch: "桌子", pinyin: "zhuōzi", vn: "cái bàn" },
-{ ch: "字", pinyin: "zì", vn: "chữ" },
-{ ch: "昨天", pinyin: "zuótiān", vn: "hôm qua" },
-{ ch: "做", pinyin: "zuò", vn: "làm" },
-{ ch: "坐", pinyin: "zuò", vn: "ngồi" },
-{ ch: "左边", pinyin: "zuǒbian", vn: "bên trái" },
-{ ch: "右边", pinyin: "yòubian", vn: "bên phải" },
-{ ch: "前天", pinyin: "qiántiān", vn: "hôm kia" },
-{ ch: "后天", pinyin: "hòutiān", vn: "ngày kia (sau mai)" },
-{ ch: "以前", pinyin: "yǐqián", vn: "trước đây" },
-{ ch: "以后", pinyin: "yǐhòu", vn: "sau này" },
+        { ch: "爱", pinyin: "ài", vn: "yêu" },{ ch: "八", pinyin: "bā", vn: "tám" },{ ch: "爸爸", pinyin: "bàba", vn: "bố" },{ ch: "杯子", pinyin: "bēizi", vn: "cái cốc" },{ ch: "北京", pinyin: "Běijīng", vn: "Bắc Kinh" },{ ch: "本", pinyin: "běn", vn: "quyển (lượng từ)" },{ ch: "不", pinyin: "bù", vn: "không" },
+{ ch: "菜", pinyin: "cài", vn: "món ăn, rau" },{ ch: "茶", pinyin: "chá", vn: "trà" },{ ch: "吃", pinyin: "chī", vn: "ăn" },{ ch: "出租车", pinyin: "chūzūchē", vn: "taxi" },
+{ ch: "打电话", pinyin: "dǎ diànhuà", vn: "gọi điện thoại" },{ ch: "大", pinyin: "dà", vn: "to, lớn" },
+{ ch: "的", pinyin: "de", vn: "của (trợ từ)" },{ ch: "点", pinyin: "diǎn", vn: "giờ, chấm, điểm" },{ ch: "电脑", pinyin: "diànnǎo", vn: "máy tính" },{ ch: "电视", pinyin: "diànshì", vn: "tivi" },
+{ ch: "电影", pinyin: "diànyǐng", vn: "phim" },{ ch: "东西", pinyin: "dōngxi", vn: "đồ vật" },{ ch: "都", pinyin: "dōu", vn: "đều" },{ ch: "读", pinyin: "dú", vn: "đọc" },
+{ ch: "对不起", pinyin: "duìbuqǐ", vn: "xin lỗi" },{ ch: "多", pinyin: "duō", vn: "nhiều" },{ ch: "多少", pinyin: "duōshao", vn: "bao nhiêu" },
+{ ch: "儿子", pinyin: "érzi", vn: "con trai" },{ ch: "二", pinyin: "èr", vn: "hai" },{ ch: "饭店", pinyin: "fàndiàn", vn: "nhà hàng, khách sạn" },{ ch: "飞机", pinyin: "fēijī", vn: "máy bay" },{ ch: "分钟", pinyin: "fēnzhōng", vn: "phút" },
+{ ch: "高兴", pinyin: "gāoxìng", vn: "vui" },{ ch: "个", pinyin: "gè", vn: "cái (lượng từ)" },{ ch: "工作", pinyin: "gōngzuò", vn: "công việc" },{ ch: "狗", pinyin: "gǒu", vn: "chó" },{ ch: "汉语", pinyin: "Hànyǔ", vn: "tiếng Trung" },
+{ ch: "好", pinyin: "hǎo", vn: "tốt" },{ ch: "喝", pinyin: "hē", vn: "uống" },{ ch: "和", pinyin: "hé", vn: "và" },{ ch: "很", pinyin: "hěn", vn: "rất" },
+{ ch: "后面", pinyin: "hòumiàn", vn: "phía sau" },{ ch: "回", pinyin: "huí", vn: "quay lại, trở về" },{ ch: "会", pinyin: "huì", vn: "biết, sẽ" },{ ch: "火车站", pinyin: "huǒchēzhàn", vn: "ga tàu hỏa" },{ ch: "几", pinyin: "jǐ", vn: "mấy, vài" },
+{ ch: "家", pinyin: "jiā", vn: "nhà, gia đình" },{ ch: "今天", pinyin: "jīntiān", vn: "hôm nay" },{ ch: "九", pinyin: "jiǔ", vn: "chín" },{ ch: "开", pinyin: "kāi", vn: "mở, lái (xe)" },{ ch: "看", pinyin: "kàn", vn: "nhìn, xem" },{ ch: "看见", pinyin: "kànjiàn", vn: "nhìn thấy" },
+{ ch: "块", pinyin: "kuài", vn: "đồng (tiền), miếng" },{ ch: "来", pinyin: "lái", vn: "đến" },{ ch: "老师", pinyin: "lǎoshī", vn: "giáo viên" },{ ch: "了", pinyin: "le", vn: "đã, rồi (trợ từ)" },{ ch: "冷", pinyin: "lěng", vn: "lạnh" },{ ch: "六", pinyin: "liù", vn: "sáu" },{ ch: "妈妈", pinyin: "māma", vn: "mẹ" },
+{ ch: "吗", pinyin: "ma", vn: "không? (trợ từ)" },{ ch: "买", pinyin: "mǎi", vn: "mua" },{ ch: "猫", pinyin: "māo", vn: "mèo" },{ ch: "没", pinyin: "méi", vn: "không có" },{ ch: "没关系", pinyin: "méi guānxi", vn: "không sao" },{ ch: "米饭", pinyin: "mǐfàn", vn: "cơm" },{ ch: "明天", pinyin: "míngtiān", vn: "ngày mai" },{ ch: "名字", pinyin: "míngzi", vn: "tên" },{ ch: "哪", pinyin: "nǎ", vn: "nào" },
+{ ch: "哪儿", pinyin: "nǎr", vn: "ở đâu" },{ ch: "那", pinyin: "nà", vn: "kia, đó" },{ ch: "呢", pinyin: "ne", vn: "thì sao? (trợ từ)" },{ ch: "能", pinyin: "néng", vn: "có thể" },{ ch: "你", pinyin: "nǐ", vn: "bạn, cậu" },{ ch: "年", pinyin: "nián", vn: "năm" },{ ch: "女儿", pinyin: "nǚ'ér", vn: "con gái" },{ ch: "朋友", pinyin: "péngyou", vn: "bạn bè" },{ ch: "漂亮", pinyin: "piàoliang", vn: "đẹp" },
+{ ch: "苹果", pinyin: "píngguǒ", vn: "táo" },{ ch: "七", pinyin: "qī", vn: "bảy" },{ ch: "钱", pinyin: "qián", vn: "tiền" },{ ch: "前面", pinyin: "qiánmiàn", vn: "phía trước" },{ ch: "请", pinyin: "qǐng", vn: "mời, xin vui lòng" },{ ch: "去", pinyin: "qù", vn: "đi" },{ ch: "热", pinyin: "rè", vn: "nóng" },{ ch: "人", pinyin: "rén", vn: "người" },{ ch: "认识", pinyin: "rènshi", vn: "quen, biết (người)" },{ ch: "三", pinyin: "sān", vn: "ba" },{ ch: "商店", pinyin: "shāngdiàn", vn: "cửa hàng" },{ ch: "上", pinyin: "shàng", vn: "trên, lên" },
+{ ch: "上午", pinyin: "shàngwǔ", vn: "buổi sáng" },{ ch: "少", pinyin: "shǎo", vn: "ít" },{ ch: "谁", pinyin: "shéi", vn: "ai" },{ ch: "什么", pinyin: "shénme", vn: "cái gì" },{ ch: "十", pinyin: "shí", vn: "mười" },{ ch: "时候", pinyin: "shíhou", vn: "khi, lúc" },{ ch: "是", pinyin: "shì", vn: "là" },{ ch: "书", pinyin: "shū", vn: "sách" },{ ch: "水", pinyin: "shuǐ", vn: "nước" },{ ch: "水果", pinyin: "shuǐguǒ", vn: "hoa quả" },{ ch: "睡觉", pinyin: "shuìjiào", vn: "ngủ" },{ ch: "说", pinyin: "shuō", vn: "nói" },
+{ ch: "四", pinyin: "sì", vn: "bốn" },{ ch: "岁", pinyin: "suì", vn: "tuổi" },{ ch: "他", pinyin: "tā", vn: "anh ấy" },{ ch: "她", pinyin: "tā", vn: "cô ấy" },{ ch: "太", pinyin: "tài", vn: "quá, rất" },{ ch: "天气", pinyin: "tiānqì", vn: "thời tiết" },{ ch: "听", pinyin: "tīng", vn: "nghe" },{ ch: "同学", pinyin: "tóngxué", vn: "bạn học" },{ ch: "喂", pinyin: "wèi", vn: "alo (gọi điện)" },{ ch: "我", pinyin: "wǒ", vn: "tôi" },{ ch: "我们", pinyin: "wǒmen", vn: "chúng tôi" },
+{ ch: "五", pinyin: "wǔ", vn: "năm" },{ ch: "喜欢", pinyin: "xǐhuan", vn: "thích" },{ ch: "下", pinyin: "xià", vn: "dưới, xuống" },{ ch: "下午", pinyin: "xiàwǔ", vn: "buổi chiều" },{ ch: "下雨", pinyin: "xià yǔ", vn: "mưa" },{ ch: "先生", pinyin: "xiānsheng", vn: "ông, ngài" },{ ch: "现在", pinyin: "xiànzài", vn: "bây giờ" },{ ch: "想", pinyin: "xiǎng", vn: "muốn, nghĩ" },{ ch: "小", pinyin: "xiǎo", vn: "nhỏ" },{ ch: "小姐", pinyin: "xiǎojiě", vn: "cô, tiểu thư" },{ ch: "写", pinyin: "xiě", vn: "viết" },
+{ ch: "谢谢", pinyin: "xièxie", vn: "cảm ơn" },{ ch: "星期", pinyin: "xīngqī", vn: "tuần" },{ ch: "学生", pinyin: "xuésheng", vn: "học sinh" },{ ch: "学校", pinyin: "xuéxiào", vn: "trường học" },{ ch: "一", pinyin: "yī", vn: "một" },{ ch: "衣服", pinyin: "yīfu", vn: "quần áo" },{ ch: "医生", pinyin: "yīshēng", vn: "bác sĩ" },{ ch: "医院", pinyin: "yīyuàn", vn: "bệnh viện" },{ ch: "椅子", pinyin: "yǐzi", vn: "cái ghế" },{ ch: "有", pinyin: "yǒu", vn: "có" },
+{ ch: "月", pinyin: "yuè", vn: "tháng, mặt trăng" },{ ch: "再见", pinyin: "zàijiàn", vn: "tạm biệt" },{ ch: "在", pinyin: "zài", vn: "ở, đang" },{ ch: "怎么", pinyin: "zěnme", vn: "như thế nào" },{ ch: "怎么样", pinyin: "zěnmeyàng", vn: "thế nào" },{ ch: "这", pinyin: "zhè", vn: "cái này, đây" },{ ch: "中国", pinyin: "Zhōngguó", vn: "Trung Quốc" },{ ch: "中午", pinyin: "zhōngwǔ", vn: "buổi trưa" },
+{ ch: "住", pinyin: "zhù", vn: "sống, ở" },{ ch: "桌子", pinyin: "zhuōzi", vn: "cái bàn" },
+{ ch: "字", pinyin: "zì", vn: "chữ" },{ ch: "昨天", pinyin: "zuótiān", vn: "hôm qua" },{ ch: "做", pinyin: "zuò", vn: "làm" },{ ch: "坐", pinyin: "zuò", vn: "ngồi" },{ ch: "左边", pinyin: "zuǒbian", vn: "bên trái" },{ ch: "右边", pinyin: "yòubian", vn: "bên phải" },{ ch: "前天", pinyin: "qiántiān", vn: "hôm kia" },{ ch: "后天", pinyin: "hòutiān", vn: "ngày kia (sau mai)" },{ ch: "以前", pinyin: "yǐqián", vn: "trước đây" },{ ch: "以后", pinyin: "yǐhòu", vn: "sau này" },
 
       ],
       'HSK2': [
@@ -2466,6 +2385,7 @@
 
 ],
     };
+
     // Load/Save Settings
     function loadSettings() {
       const savedSettings = localStorage.getItem("gameSettings");
@@ -2553,6 +2473,7 @@
       if (elements.settingChineseRepetitions) {
           elements.settingChineseRepetitions.value = gameState.settings.chineseRepetitions;
       }
+      // FIX: Changed elements.settings.vietnameseRepetitions.value to elements.settingVietnameseRepetitions.value
       if (elements.settingVietnameseRepetitions) {
           elements.settingVietnameseRepetitions.value = gameState.settings.vietnameseRepetitions;
       }
@@ -2561,6 +2482,17 @@
       if (autoplayIcon) {
           autoplayIcon.classList.toggle('fa-pause', gameState.isAutoplayActive);
           autoplayIcon.classList.toggle('fa-play', !gameState.isAutoplayActive);
+      }
+
+      // Disable pinyin toggle if in advanced-card-matching mode
+      const pinyinToggle = elements.togglePhonetic;
+      if (pinyinToggle) {
+          pinyinToggle.disabled = (gameState.currentMode === 'advanced-card-matching');
+          // If disabled, ensure it's unchecked and display is updated
+          if (pinyinToggle.disabled) {
+              pinyinToggle.checked = false;
+              updatePhoneticDisplay();
+          }
       }
     }
 
@@ -2634,7 +2566,7 @@
       clearIdleTimer();
 
       startNewRound(); // This will now draw from sessionWordsPool
-      updatePhoneticDisplay();
+      updatePhoneticDisplay(); // Call this to update pinyin toggle state
       updateProgress(); // This will now use totalWordsInLevel (session pool size)
 
       startIdleTimer();
@@ -2665,7 +2597,7 @@
             return;
         }
 
-        if (gameState.currentMode === 'card-matching') {
+        if (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching') {
             let candidateWords = [];
             const wordsWithMistakes = [];
             const wordsWithoutMistakes = []; // These are words with 0 mistakes
@@ -2721,13 +2653,35 @@
     }
 
     function renderGameArea() {
+      // Reset column displays first
+      elements.chineseColumn.style.display = 'none';
+      elements.pinyinColumn.style.display = 'none'; // NEW
+      elements.vietnameseColumn.style.display = 'none';
+      document.body.classList.remove('flashcard-mode', 'advanced-card-matching'); // Remove all mode classes
+
+      // Clear all columns
+      elements.chineseColumn.innerHTML = "";
+      elements.pinyinColumn.innerHTML = ""; // NEW
+      elements.vietnameseColumn.innerHTML = "";
+
+      const existingFlashcards = elements.gameArea.querySelectorAll('.flashcard-container');
+      existingFlashcards.forEach(card => card.remove());
+
       if (gameState.currentMode === 'card-matching') {
-        document.body.classList.remove('flashcard-mode');
+        elements.chineseColumn.style.display = 'flex';
+        elements.vietnameseColumn.style.display = 'flex';
         renderCardMatching();
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW mode rendering
+        document.body.classList.add('advanced-card-matching');
+        elements.chineseColumn.style.display = 'flex';
+        elements.pinyinColumn.style.display = 'flex';
+        elements.vietnameseColumn.style.display = 'flex';
+        renderAdvancedCardMatching();
       } else if (gameState.currentMode === 'flashcards') {
         document.body.classList.add('flashcard-mode');
         renderFlashcards();
       }
+      updatePhoneticDisplay(); // Re-apply phonetic display settings based on new mode
     }
 
     function updateMistakeBadge(chineseWord, cardElement) {
@@ -2757,13 +2711,9 @@
     }
 
     function renderCardMatching() {
-      elements.chineseColumn.style.display = 'flex';
-      elements.vietnameseColumn.style.display = 'flex';
+      // Clear columns
       elements.chineseColumn.innerHTML = "";
       elements.vietnameseColumn.innerHTML = "";
-
-      const existingFlashcards = elements.gameArea.querySelectorAll('.flashcard-container');
-      existingFlashcards.forEach(card => card.remove());
 
       // Use activePairs for rendering
       const chineseWords = shuffleArray([...gameState.activePairs]);
@@ -2774,6 +2724,8 @@
         card.className = "word-card";
         card.dataset.word = pair.ch;
         card.dataset.index = index;
+        // In card-matching mode, data-original-ch is used for consistent lookup in checkPair
+        card.dataset.originalCh = pair.ch;
         card.innerHTML = `<span>${pair.ch}</span><span class="phonetic">${pair.pinyin}</span>`;
         // Mastery condition now uses < 0
         if ((gameState.weakWords.get(pair.ch) || 0) < 0) { // If mistake count is negative, it's mastered
@@ -2787,6 +2739,7 @@
         card.addEventListener("click", () => {
           if (!gameState.isAutoplayActive) {
             speakWord(pair.ch, "zh-CN");
+            // Pass the card element directly for selection
             selectCard(card, "ch", index);
           }
         });
@@ -2806,6 +2759,7 @@
         }
         card.addEventListener("click", () => {
           if (!gameState.isAutoplayActive) {
+            // Pass the card element directly for selection
             selectCard(card, "vn", index);
           }
         });
@@ -2814,9 +2768,89 @@
       updatePhoneticDisplay();
     }
 
+    // NEW: Render function for advanced card matching
+    function renderAdvancedCardMatching() {
+        elements.chineseColumn.innerHTML = "";
+        elements.pinyinColumn.innerHTML = "";
+        elements.vietnameseColumn.innerHTML = "";
+
+        // Create separate shuffled lists for each column
+        const chineseCardsData = shuffleArray(gameState.activePairs.map(p => ({ ch: p.ch, originalCh: p.ch })));
+        const pinyinCardsData = shuffleArray(gameState.activePairs.map(p => ({ pinyin: p.pinyin, originalCh: p.ch })));
+        const vietnameseCardsData = shuffleArray(gameState.activePairs.map(p => ({ vn: p.vn, originalCh: p.ch })));
+
+        chineseCardsData.forEach((data, index) => {
+            // Chinese Card
+            const chCard = document.createElement("div");
+            chCard.className = "word-card";
+            chCard.dataset.word = data.ch;
+            chCard.dataset.originalCh = data.originalCh; // Link back to the original Chinese word
+            chCard.dataset.index = index; // Keep index for selection
+            chCard.dataset.type = 'ch';
+            chCard.textContent = data.ch;
+            if ((gameState.weakWords.get(data.originalCh) || 0) < 0) {
+                chCard.classList.add("mastered");
+                const checkmark = document.createElement("span");
+                checkmark.className = "mastered-check";
+                checkmark.innerHTML = "&#10003;";
+                chCard.appendChild(checkmark);
+            }
+            updateMistakeBadge(data.originalCh, chCard);
+            chCard.addEventListener("click", () => {
+                if (!gameState.isAutoplayActive) {
+                    speakWord(data.ch, "zh-CN");
+                    selectCard(chCard, "ch", index);
+                }
+            });
+            elements.chineseColumn.appendChild(chCard);
+        });
+
+        pinyinCardsData.forEach((data, index) => {
+            // Pinyin Card
+            const pinyinCard = document.createElement("div");
+            pinyinCard.className = "word-card";
+            pinyinCard.dataset.word = data.pinyin;
+            pinyinCard.dataset.originalCh = data.originalCh; // Link back to the original Chinese word
+            pinyinCard.dataset.index = index; // Keep index for selection
+            pinyinCard.dataset.type = 'pinyin';
+            pinyinCard.textContent = data.pinyin;
+            if ((gameState.weakWords.get(data.originalCh) || 0) < 0) {
+                pinyinCard.classList.add("mastered");
+            }
+            pinyinCard.addEventListener("click", () => {
+                if (!gameState.isAutoplayActive) {
+                    selectCard(pinyinCard, "pinyin", index);
+                }
+            });
+            elements.pinyinColumn.appendChild(pinyinCard);
+        });
+
+        vietnameseCardsData.forEach((data, index) => {
+            // Vietnamese Card
+            const vnCard = document.createElement("div");
+            vnCard.className = "word-card";
+            vnCard.dataset.word = data.vn;
+            vnCard.dataset.originalCh = data.originalCh; // Link back to the original Chinese word
+            vnCard.dataset.index = index; // Keep index for selection
+            vnCard.dataset.type = 'vn';
+            vnCard.textContent = data.vn;
+            if ((gameState.weakWords.get(data.originalCh) || 0) < 0) {
+                vnCard.classList.add("mastered");
+            }
+            vnCard.addEventListener("click", () => {
+                if (!gameState.isAutoplayActive) {
+                    selectCard(vnCard, "vn", index);
+                }
+            });
+            elements.vietnameseColumn.appendChild(vnCard);
+        });
+        updatePhoneticDisplay(); // Ensure pinyin toggle is disabled
+    }
+
     function renderFlashcards() {
       elements.chineseColumn.style.display = 'none';
       elements.vietnameseColumn.style.display = 'none';
+      elements.pinyinColumn.style.display = 'none'; // Ensure pinyin column is hidden
 
       const existingFlashcards = elements.gameArea.querySelectorAll('.flashcard-container');
       existingFlashcards.forEach(card => card.remove());
@@ -2877,9 +2911,11 @@
       gameState.flashcardIndex = 0; // Reset flashcard index for new display
     }
 
+    // MODIFIED: selectCard to handle 2 or 3 columns and different selection states
     function selectCard(card, type, index) {
       clearHint();
       clearIdleTimer();
+
       if (
         card.classList.contains("hidden") ||
         card.classList.contains("correct-animation") ||
@@ -2887,54 +2923,130 @@
       ) {
         return;
       }
-      if (type === "ch") {
-        if (gameState.selectedCh === index) {
-          card.classList.remove("selected");
-          resetSelection();
-          resetTimeoutMechanismForSelectedChineseWord();
-          startIdleTimer();
-        } else {
-          if (gameState.selectedCh !== null) {
-            elements.chineseColumn.children[gameState.selectedCh].classList.remove("selected");
+
+      if (gameState.currentMode === 'card-matching') {
+        // Handle selection for card-matching mode (using index)
+        if (type === "ch") {
+          if (gameState.selectedCh && gameState.selectedCh.card === card) {
+            gameState.selectedCh.card.classList.remove("selected");
+            gameState.selectedCh = null;
+            resetTimeoutMechanismForSelectedChineseWord();
+            startIdleTimer();
+          } else {
+            if (gameState.selectedCh !== null) {
+              gameState.selectedCh.card.classList.remove("selected");
+            }
+            gameState.selectedCh = { card: card, originalCh: card.dataset.originalCh };
+            card.classList.add("selected");
+            startTimeoutMechanismForSelectedChineseWord(card.dataset.originalCh);
           }
-          gameState.selectedCh = index;
-          card.classList.add("selected");
-          startTimeoutMechanismForSelectedChineseWord(card.dataset.word);
-        }
-      } else {
-        if (gameState.selectedVn === index) {
-          card.classList.remove("selected");
-          resetSelection();
-          startIdleTimer();
-        } else {
-          if (gameState.selectedVn !== null) {
-            elements.vietnameseColumn.children[gameState.selectedVn].classList.remove("selected");
+        } else if (type === "vn") {
+          if (gameState.selectedVn && gameState.selectedVn.card === card) {
+            card.classList.remove("selected");
+            gameState.selectedVn = null;
+            startIdleTimer();
+          } else {
+            if (gameState.selectedVn !== null) {
+              gameState.selectedVn.card.classList.remove("selected");
+            }
+            gameState.selectedVn = { card: card, originalCh: card.dataset.originalCh };
+            card.classList.add("selected");
           }
-          gameState.selectedVn = index;
-          card.classList.add("selected");
         }
-      }
-      if (gameState.selectedCh !== null && gameState.selectedVn !== null) {
-        checkPair();
+
+        if (gameState.selectedCh !== null && gameState.selectedVn !== null) {
+          checkPair();
+        }
+
+      } else if (gameState.currentMode === 'advanced-card-matching') {
+        // Handle selection for advanced-card-matching mode (using originalCh)
+        if (type === "ch") {
+          if (gameState.selectedCh && gameState.selectedCh.card === card) {
+            gameState.selectedCh.card.classList.remove("selected");
+            gameState.selectedCh = null;
+            resetTimeoutMechanismForSelectedChineseWord();
+            startIdleTimer();
+          } else {
+            if (gameState.selectedCh !== null) {
+              gameState.selectedCh.card.classList.remove("selected");
+            }
+            gameState.selectedCh = { card: card, originalCh: card.dataset.originalCh };
+            card.classList.add("selected");
+            startTimeoutMechanismForSelectedChineseWord(card.dataset.originalCh);
+          }
+        } else if (type === "pinyin") {
+          if (gameState.selectedPinyin && gameState.selectedPinyin.card === card) {
+            gameState.selectedPinyin.card.classList.remove("selected");
+            gameState.selectedPinyin = null;
+            startIdleTimer();
+          } else {
+            if (gameState.selectedPinyin !== null) {
+              gameState.selectedPinyin.card.classList.remove("selected");
+            }
+            gameState.selectedPinyin = { card: card, originalCh: card.dataset.originalCh };
+            card.classList.add("selected");
+          }
+        } else { // type === "vn"
+          if (gameState.selectedVn && gameState.selectedVn.card === card) {
+            card.classList.remove("selected");
+            gameState.selectedVn = null;
+            startIdleTimer();
+          } else {
+            if (gameState.selectedVn !== null) {
+              gameState.selectedVn.card.classList.remove("selected");
+            }
+            gameState.selectedVn = { card: card, originalCh: card.dataset.originalCh };
+            card.classList.add("selected");
+          }
+        }
+
+        if (gameState.selectedCh !== null && gameState.selectedPinyin !== null && gameState.selectedVn !== null) {
+          checkPair();
+        }
       }
     }
 
-    // MODIFIED: checkPair logic for scoring
-    function checkPair() {
-      const chineseCard = elements.chineseColumn.children[gameState.selectedCh];
-      const vietnameseCard = elements.vietnameseColumn.children[gameState.selectedVn];
 
-      const chineseWord = chineseCard.dataset.word;
-      const vietnameseOriginalCh = vietnameseCard.dataset.originalCh;
+    // MODIFIED: checkPair logic for scoring (now handles 2 or 3 columns)
+    function checkPair() {
+      let isCorrectMatch = false;
+      let chineseWord = null;
+      let chineseCard = null;
+      let vietnameseCard = null;
+      let pinyinCard = null; // NEW
 
       resetTimeoutMechanismForSelectedChineseWord();
       clearIdleTimer(); // Clear idle timer immediately when interaction occurs
 
-      if (chineseWord === vietnameseOriginalCh) {
+      if (gameState.currentMode === 'card-matching') {
+        // In card-matching, selectedCh and selectedVn are objects {card, originalCh}
+        chineseCard = gameState.selectedCh.card;
+        vietnameseCard = gameState.selectedVn.card;
+
+        chineseWord = chineseCard.dataset.originalCh; // Use originalCh for comparison
+        const vietnameseOriginalCh = vietnameseCard.dataset.originalCh;
+
+        isCorrectMatch = (chineseWord === vietnameseOriginalCh);
+
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW: 3-way match logic
+        // In advanced-card-matching, selectedCh, selectedPinyin, selectedVn are objects with card and originalCh
+        chineseCard = gameState.selectedCh.card;
+        pinyinCard = gameState.selectedPinyin.card;
+        vietnameseCard = gameState.selectedVn.card;
+
+        chineseWord = chineseCard.dataset.originalCh; // Use originalCh from the card itself
+        const pinyinOriginalCh = pinyinCard.dataset.originalCh;
+        const vietnameseOriginalCh = vietnameseCard.dataset.originalCh;
+
+        isCorrectMatch = (chineseWord === pinyinOriginalCh && chineseWord === vietnameseOriginalCh);
+      }
+
+      if (isCorrectMatch) {
         gameState.correct++;
         updateScores('correct');
 
         chineseCard.classList.add("correct-animation");
+        if (pinyinCard) pinyinCard.classList.add("correct-animation"); // NEW
         vietnameseCard.classList.add("correct-animation");
 
         let currentMistakes = gameState.weakWords.get(chineseWord) || 0;
@@ -2945,6 +3057,7 @@
         if ((gameState.weakWords.get(chineseWord) || 0) < 0) {
           gameState.masteredWords.add(chineseWord);
           chineseCard.classList.add("mastered");
+          if (pinyinCard) pinyinCard.classList.add("mastered"); // NEW
           vietnameseCard.classList.add("mastered");
           const checkmark = document.createElement("span");
           checkmark.className = "mastered-check";
@@ -2954,6 +3067,7 @@
             // If still >= 0, ensure it's not in masteredWords and remove checkmark
             gameState.masteredWords.delete(chineseWord);
             chineseCard.classList.remove("mastered");
+            if (pinyinCard) pinyinCard.classList.remove("mastered"); // NEW
             vietnameseCard.classList.remove("mastered");
             const checkmark = chineseCard.querySelector(".mastered-check");
             if (checkmark) checkmark.remove();
@@ -2969,11 +3083,15 @@
             playWordPairAudio(chineseWord, vocabulary[gameState.currentLevel].find(p => p.ch === chineseWord).vn, false);
         }
 
-        resetSelection(); // Reset selection immediately after pair is confirmed
+        // Call resetSelection IMMEDIATELY after determining correct match
+        resetSelection();
+
         setTimeout(() => {
           chineseCard.classList.add("hidden");
+          if (pinyinCard) pinyinCard.classList.add("hidden");
           vietnameseCard.classList.add("hidden");
-          chineseCard.classList.remove("selected", "correct-animation");
+          chineseCard.classList.remove("selected", "correct-animation"); // Ensure selected is removed here too
+          if (pinyinCard) pinyinCard.classList.remove("selected", "correct-animation");
           vietnameseCard.classList.remove("selected", "correct-animation");
           checkRoundCompletion(); // Check if all current active pairs are handled
           startIdleTimer(); // Restart idle timer after completion check and potential new round
@@ -2983,6 +3101,7 @@
         updateScores('incorrect');
 
         chineseCard.classList.add("incorrect-animation");
+        if (pinyinCard) pinyinCard.classList.add("incorrect-animation");
         vietnameseCard.classList.add("incorrect-animation");
 
         const currentMistakes = gameState.weakWords.get(chineseWord) || 0;
@@ -2999,14 +3118,14 @@
         // Add to roundIncorrectWords for later re-presentation
         gameState.roundIncorrectWords.add(chineseWord);
 
-        resetSelection(); // Reset selection immediately after incorrect match
+        // This is already called immediately for incorrect matches, which is good.
+        resetSelection();
 
         setTimeout(() => {
           chineseCard.classList.remove("incorrect-animation");
+          if (pinyinCard) pinyinCard.classList.remove("incorrect-animation");
           vietnameseCard.classList.remove("incorrect-animation");
-          // Cards remain in place, they are not moved to the end visually here.
-          // The re-presentation logic for incorrect words is handled by checkRoundCompletion
-          startIdleTimer(); // Restart idle timer after animations
+          startIdleTimer();
         }, 500);
       }
     }
@@ -3024,7 +3143,7 @@
       }
 
       // The rest of the logic only applies if not all words in the session are mastered yet.
-      if (gameState.currentMode !== 'card-matching') {
+      if (gameState.currentMode === 'flashcards') {
         const allFlashcardsHidden = [...elements.gameArea.querySelectorAll('.flashcard-container')].every(
             (card) => card.classList.contains("hidden")
         );
@@ -3036,10 +3155,10 @@
         return;
       }
 
-      // For Card Matching mode
+      // For Card Matching and Advanced Card Matching modes
       // Check if all currently active (displayed) pairs have been matched/hidden
       const allActivePairsMatched = gameState.activePairs.every(pair => {
-          const chCard = elements.chineseColumn.querySelector(`[data-word="${pair.ch}"]`);
+          const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${pair.ch}"]`); // Use originalCh for lookup
           return chCard && chCard.classList.contains("hidden");
       });
 
@@ -3061,7 +3180,7 @@
                   );
                   gameState.isRetryingIncorrectWords = true;
                   gameState.roundIncorrectWords.clear(); // Clear for the *next* retry phase
-                  setTimeout(renderCardMatching, 1000);
+                  setTimeout(renderGameArea, 1000); // Call renderGameArea to re-render based on current mode
               } else {
                   console.log("No incorrect words in this phase. Starting new major round.");
                   // If not all session words are mastered, start a new major round
@@ -3072,7 +3191,7 @@
     }
 
     function startTimeoutMechanismForSelectedChineseWord(chineseWord) {
-      if (gameState.currentMode !== 'card-matching') return;
+      if (gameState.currentMode === 'flashcards') return; // Only for card matching modes
 
       resetTimeoutMechanismForSelectedChineseWord();
       gameState.currentChineseTimeoutWord = chineseWord;
@@ -3085,7 +3204,7 @@
             // If it was mastered, it's not anymore due to timeout
             if (gameState.masteredWords.has(chineseWord)) {
                 gameState.masteredWords.delete(chineseWord);
-                const chCard = elements.chineseColumn.querySelector(`[data-word="${chineseWord}"]`);
+                const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${chineseWord}"]`); // Use originalCh for lookup
                 if(chCard) {
                     chCard.classList.remove("mastered");
                     const checkmark = chCard.querySelector(".mastered-check");
@@ -3109,7 +3228,7 @@
     }
 
     function startIdleTimer() {
-      if (gameState.selectedCh === null && !gameState.isAutoplayActive && gameState.currentMode === 'card-matching') {
+      if (gameState.selectedCh === null && gameState.selectedPinyin === null && gameState.selectedVn === null && !gameState.isAutoplayActive && (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching')) {
         clearIdleTimer();
         gameState.idleTimer = setTimeout(() => {
           showHint();
@@ -3128,12 +3247,13 @@
       }
     }
 
+    // MODIFIED: showHint to handle 2 or 3 columns
     function showHint() {
-      if (gameState.currentMode !== 'card-matching') return;
+      if (gameState.currentMode === 'flashcards') return; // Hints only for card matching modes
 
       clearHint();
       const availablePairs = gameState.activePairs.filter(pair => {
-        const chCard = elements.chineseColumn.querySelector(`[data-word="${pair.ch}"]`);
+        const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${pair.ch}"]`); // Use originalCh for lookup
         // Hint only words that are currently displayed and not hidden, and not mastered
         return chCard && !chCard.classList.contains('hidden') && (gameState.weakWords.get(pair.ch) || 0) >= 0;
       });
@@ -3148,26 +3268,34 @@
             hintPair = shuffleArray(availablePairs)[0];
         }
 
-        const chCard = elements.chineseColumn.querySelector(`[data-word="${hintPair.ch}"]`);
+        const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${hintPair.ch}"]`);
         const vnCard = elements.vietnameseColumn.querySelector(`[data-original-ch="${hintPair.ch}"]`);
+        const pinyinCard = elements.pinyinColumn.querySelector(`[data-original-ch="${hintPair.ch}"]`); // NEW
 
-        if (chCard && vnCard) {
+        if (chCard && vnCard) { // Always need Chinese and Vietnamese
           chCard.classList.add('hint-glow-green');
           vnCard.classList.add('hint-glow-green');
+          if (pinyinCard) pinyinCard.classList.add('hint-glow-green'); // NEW: If pinyin card exists
           gameState.currentHintPair = hintPair;
         }
       }
     }
 
+    // MODIFIED: clearHint to handle 2 or 3 columns
     function clearHint() {
       if (gameState.currentHintPair) {
-        const chCard = elements.chineseColumn.querySelector(`[data-word="${gameState.currentHintPair.ch}"]`);
+        const chCard = elements.chineseColumn.querySelector(`[data-original-ch="${gameState.currentHintPair.ch}"]`);
         const vnCard = elements.vietnameseColumn.querySelector(`[data-original-ch="${gameState.currentHintPair.ch}"]`);
+        const pinyinCard = elements.pinyinColumn.querySelector(`[data-original-ch="${gameState.currentHintPair.ch}"]`); // NEW
+
         if (chCard) {
           chCard.classList.remove('hint-glow-green');
         }
         if (vnCard) {
           vnCard.classList.remove('hint-glow-green');
+        }
+        if (pinyinCard) { // NEW
+          pinyinCard.classList.remove('hint-glow-green');
         }
         gameState.currentHintPair = null;
       }
@@ -3183,10 +3311,10 @@
     async function autoPlayNextPair() {
       if (!gameState.isAutoplayActive) return;
 
-      if (gameState.currentMode === 'card-matching') {
+      if (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching') { // Apply to both card matching modes
         const availableCards = [...elements.chineseColumn.children].filter(
           // Only select unhidden cards that are not yet mastered (mistake count >= 0)
-          (card) => !card.classList.contains("hidden") && (gameState.weakWords.get(card.dataset.word) || 0) >= 0
+          (card) => !card.classList.contains("hidden") && (gameState.weakWords.get(card.dataset.originalCh || card.dataset.word) || 0) >= 0 // Use originalCh or word for lookup
         );
 
         if (availableCards.length === 0) {
@@ -3196,12 +3324,14 @@
         }
 
         const randomChCard = shuffleArray(availableCards)[0];
-        const chineseWord = randomChCard.dataset.word;
+        const chineseWord = randomChCard.dataset.originalCh || randomChCard.dataset.word; // Get the Chinese word
         const pairToPlay = gameState.sessionWordsPool.find(p => p.ch === chineseWord); // Find from session pool
         const vnCard = elements.vietnameseColumn.querySelector(`[data-original-ch="${pairToPlay.ch}"]`);
+        const pinyinCard = elements.pinyinColumn.querySelector(`[data-original-ch="${pairToPlay.ch}"]`); // NEW
 
-        if (randomChCard && vnCard) {
+        if (randomChCard && vnCard && (gameState.currentMode === 'card-matching' || (gameState.currentMode === 'advanced-card-matching' && pinyinCard))) {
           randomChCard.classList.add("selected");
+          if (pinyinCard) pinyinCard.classList.add("selected"); // NEW
           vnCard.classList.add("selected");
           document.querySelectorAll(".word-card").forEach(
             (card) => (card.style.pointerEvents = "none") // Disable clicks during autoplay
@@ -3216,6 +3346,7 @@
           if ((gameState.weakWords.get(chineseWord) || 0) < 0) { // New mastery condition
             gameState.masteredWords.add(chineseWord);
             randomChCard.classList.add("mastered");
+            if (pinyinCard) pinyinCard.classList.add("mastered"); // NEW
             vnCard.classList.add("mastered");
             const checkmark = document.createElement("span");
             checkmark.className = "mastered-check";
@@ -3224,6 +3355,7 @@
           } else {
               gameState.masteredWords.delete(chineseWord); // Remove if not yet mastered
               randomChCard.classList.remove("mastered");
+              if (pinyinCard) pinyinCard.classList.remove("mastered"); // NEW
               vnCard.classList.remove("mastered");
               const checkmark = randomChCard.querySelector(".mastered-check");
               if (checkmark) checkmark.remove();
@@ -3238,8 +3370,10 @@
 
           setTimeout(() => {
               randomChCard.classList.add("hidden");
+              if (pinyinCard) pinyinCard.classList.add("hidden"); // NEW
               vnCard.classList.add("hidden");
               randomChCard.classList.remove("selected", "correct-animation");
+              if (pinyinCard) pinyinCard.classList.remove("selected", "correct-animation"); // NEW
               vnCard.classList.remove("selected", "incorrect-animation"); // Ensure incorrect is removed too
               resetSelection();
               document.querySelectorAll(".word-card").forEach(
@@ -3314,7 +3448,7 @@
             gameState.masteredWords.add(chineseWord);
             currentCardContainer.classList.add("hidden"); // Hide mastered flashcards in autoplay
         } else {
-            gameState.masteredWords.delete(chineseWord);
+            gameState.masteredWords.remove(chineseWord); // Ensure it's not in masteredWords if not mastered
             currentCardContainer.classList.remove("hidden"); // Ensure it's not hidden if not mastered
         }
         updateProgress();
@@ -3375,27 +3509,34 @@
       elements.progressDetails.textContent = `Đã thuộc: ${gameState.currentMastered}/${totalWordsForSession} (Từ lỗi: ${wordsWithMistakes})`;
     }
 
+    // MODIFIED: resetSelection to handle 2 or 3 columns and different selection states
     function resetSelection() {
+      // If selectedCh, selectedPinyin, selectedVn are objects, access their card property
       if (gameState.selectedCh !== null) {
-        // Ensure card element exists before attempting to remove class
-        const chineseCard = elements.chineseColumn.children[gameState.selectedCh];
-        if (chineseCard) {
-            chineseCard.classList.remove("selected");
+        if (gameState.selectedCh.card) { // Check if it's an object with a card property
+          gameState.selectedCh.card.classList.remove("selected");
+        }
+      }
+      if (gameState.selectedPinyin !== null) {
+        if (gameState.selectedPinyin.card) {
+          gameState.selectedPinyin.card.classList.remove("selected");
         }
       }
       if (gameState.selectedVn !== null) {
-        const vietnameseCard = elements.vietnameseColumn.children[gameState.selectedVn];
-        if (vietnameseCard) {
-            vietnameseCard.classList.remove("selected");
+        if (gameState.selectedVn.card) {
+          gameState.selectedVn.card.classList.remove("selected");
         }
       }
+
       gameState.selectedCh = null;
+      gameState.selectedPinyin = null;
       gameState.selectedVn = null;
       // Ensure any ongoing speech is cancelled when selection is reset
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
     }
+
 
     function updateScores(type = null) {
       elements.scoreCorrect.textContent = gameState.correct;
@@ -3420,16 +3561,28 @@
       elements.timer.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     }
 
+    // MODIFIED: updatePhoneticDisplay to handle pinyin column
     function updatePhoneticDisplay() {
       const show = elements.togglePhonetic.checked;
       if (gameState.currentMode === 'card-matching') {
         document.querySelectorAll(".word-card .phonetic").forEach((phoneticSpan) => {
           phoneticSpan.style.display = show ? 'block' : 'none';
         });
+        elements.togglePhonetic.disabled = false; // Enable toggle for regular matching
       } else if (gameState.currentMode === 'flashcards') {
         document.querySelectorAll(".flashcard-back .pinyin-text").forEach((pinyinSpan) => {
           pinyinSpan.style.display = show ? 'block' : 'none';
         });
+        elements.togglePhonetic.disabled = false; // Enable toggle for flashcards
+      } else if (gameState.currentMode === 'advanced-card-matching') { // NEW: Disable for advanced mode
+        document.querySelectorAll(".word-card .phonetic").forEach((phoneticSpan) => {
+          phoneticSpan.style.display = 'none'; // Always hide phonetic span in Chinese cards
+        });
+        document.querySelectorAll(".flashcard-back .pinyin-text").forEach((pinyinSpan) => {
+          pinyinSpan.style.display = 'none'; // Also hide for flashcard elements if they somehow exist
+        });
+        elements.togglePhonetic.checked = false; // Uncheck it
+        elements.togglePhonetic.disabled = true; // Disable the toggle
       }
     }
 
@@ -3629,7 +3782,7 @@
     }
 
     function toggleMistakeBadges(show) {
-      if (gameState.currentMode === 'card-matching') {
+      if (gameState.currentMode === 'card-matching' || gameState.currentMode === 'advanced-card-matching') {
         const badges = document.querySelectorAll('.mistake-badge');
         badges.forEach(badge => {
           badge.style.display = show ? 'flex' : 'none';
@@ -3647,6 +3800,7 @@
         // Initialize elements object here to ensure DOM is ready
         elements = {
             chineseColumn: document.getElementById('chinese-column'),
+            pinyinColumn: document.getElementById('pinyin-column'), // NEW
             vietnameseColumn: document.getElementById('vietnamese-column'),
             scoreCorrect: document.getElementById('score-correct'),
             scoreIncorrect: document.getElementById('score-incorrect'),
@@ -3672,6 +3826,7 @@
             settingVietnameseRepetitions: document.getElementById('setting-vietnamese-repetitions'),
             gameArea: document.getElementById('game-area'),
             btnCardMatching: document.getElementById('btn-card-matching'),
+            btnAdvancedCardMatching: document.getElementById('btn-advanced-card-matching'), // NEW
             btnFlashcards: document.getElementById('btn-flashcards'),
             btnWordSelection: document.getElementById('btn-word-selection'),
             btnLevel: document.getElementById('btn-level'),
@@ -3702,6 +3857,13 @@
           gameState.currentMode = 'card-matching';
           stopAutoplay();
           initGame(gameState.currentLevel, gameState.currentWordCount); // Re-initialize game to apply mode and restart round logic
+        });
+        elements.btnAdvancedCardMatching.addEventListener("click", () => { // NEW mode event listener
+            elements.modeModal.style.display = "none";
+            toggleMistakeBadges(true);
+            gameState.currentMode = 'advanced-card-matching';
+            stopAutoplay();
+            initGame(gameState.currentLevel, gameState.currentWordCount);
         });
         elements.btnFlashcards.addEventListener("click", () => {
           elements.modeModal.style.display = "none";
@@ -3815,7 +3977,7 @@
         // Set initial game state based on new defaults
         gameState.currentLevel = Object.keys(vocabulary)[0]; // First level
         gameState.currentWordCount = 'Tất cả'; // All words
-        gameState.currentMode = 'card-matching'; // Default mode
+        // gameState.currentMode = 'card-matching'; // Default mode - already set in gameState declaration
         initGame(gameState.currentLevel, gameState.currentWordCount); // Initial game setup with default word count and mode
     });
 
