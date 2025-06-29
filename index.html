@@ -2,186 +2,1853 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Info VanhoaiPC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Profile VanHoaiPC</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Orbitron for futuristic look -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* General body settings */
+        /* Base styles for the AI/futuristic theme */
         body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background-color: #1a1a1a; /* Default dark background */
-            color: #f0f0f0; /* Light text color */
-            min-height: 100vh; /* Minimum height equals viewport height */
-            background-image: url('background.jpg'); /* Background image, replace with your background.jpg */
-            background-size: cover; /* Ensure background image covers the entire area */
-            background-position: center; /* Center the background image */
-            background-repeat: no-repeat; /* Do not repeat the background image */
-            position: relative; /* Important: for .container to be absolutely positioned relative to body */
+            font-family: 'Orbitron', sans-serif; /* Futuristic font */
+            background-color: #050d17; /* Very dark blue for deep space feel */
+            color: #00e5ff; /* Bright cyan for digital glow */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centered by default for larger screens */
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Hide overflow from animations */
+            position: relative;
+            text-shadow: 0 0 5px rgba(0, 229, 255, 0.4); /* Subtle text glow */
         }
 
-        /* Dark overlay on background image */
-        body::before {
-            content: '';
+        /* Animated background grid/circuit lines */
+        .background-grid {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6); /* Transparent black overlay */
-            z-index: 1; /* Ensure overlay is below main content */
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(to right, rgba(0, 229, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 229, 255, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px; /* Adjust grid size */
+            opacity: 0.2;
+            animation: pan-background 30s linear infinite; /* Subtle slow movement */
         }
 
-        /* Main container for content */
-        .container {
-            background-color: rgba(26, 26, 26, 0.8); /* Slightly transparent container background */
-            padding: 30px;
-            border-radius: 15px; /* Rounded corners */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Box shadow */
-            text-align: center; /* Center text content */
-            max-width: 400px; /* Maximum width */
-            width: 90%; /* Flexible width */
-            z-index: 2; /* Ensure container is above overlay */
-            box-sizing: border-box; /* Include padding and border in size calculation */
-
-            /* Properties to move the menu down and create 35% top spacing */
-            position: absolute; /* Absolute positioning */
-            top: 35vh; /* Place top edge of container 35% from viewport top */
-            left: 50%; /* Place left edge of container at viewport center */
-            transform: translateX(-50%); /* Shift container left by 50% of its width for perfect centering */
+        @keyframes pan-background {
+            from { background-position: 0 0; }
+            to { background-position: 50px 50px; }
         }
 
-        /* Profile header section */
-        .profile-header {
-            margin-bottom: 30px; /* Adjusted margin */
+        /* Animated pulsating circles/auras (These are separate from the canvas animation) */
+        .animated-aura {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            animation: scale-fade 10s infinite ease-out;
+            pointer-events: none; /* Allow clicks through */
+        }
+        .aura-1 { width: 400px; height: 400px; animation-delay: 0s; }
+        .aura-2 { width: 500px; height: 500px; animation-delay: 2s; }
+        .aura-3 { width: 600px; height: 600px; animation-delay: 4s; }
+
+        @keyframes scale-fade {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.5); opacity: 0; }
         }
 
-        /* H1 title */
-        h1 {
-            font-size: 2.0em; /* Adjusted font size for "Đoàn Văn Hoài" */
-            margin: 0;
-            color: #ffffff; /* White text color */
-            text-transform: uppercase; /* Uppercase text */
-            letter-spacing: 2px; /* Letter spacing */
-            /* Light orange neon glow effect for VANHOAIPC text */
-            text-shadow: 0 0 5px rgba(255, 165, 0, 0.7),
-                         0 0 10px rgba(255, 165, 0, 0.5),
-                         0 0 15px rgba(255, 165, 0, 0.3);
-            transition: transform 0.3s ease; /* Smooth transition for zoom effect */
+        /* Header styling */
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 10;
+            color: #ffffff; /* White for stronger contrast */
+            text-shadow: 0 0 20px #00e5ff, 0 0 30px #00e5ff; /* Intense glow */
+            /* Ensure no wrapping for the new shorter title */
+            white-space: nowrap;
         }
 
-        /* Zoom effect on hover for H1 title */
-        h1:hover {
-            transform: scale(1.05); /* Zoom in by 5% */
-        }
-
-        /* Button group */
-        .button-group {
+        /* Central hub styling */
+        .central-hub {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #0a141d;
+            border: 4px solid #00e5ff;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.8), inset 0 0 15px rgba(0, 229, 255, 0.6);
             display: flex;
-            flex-direction: column; /* Stack buttons vertically */
-            gap: 15px; /* Consistent spacing between buttons */
+            justify-content: center;
+            align-items: center;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            z-index: 20;
+            animation: pulse-glow 2s infinite alternate;
+            cursor: pointer; /* Indicate it's clickable */
         }
 
-        /* General button styling */
-        .btn {
-            display: block; /* Display as block element */
-            width: 80%; /* Occupy 80% of container width */
-            padding: 15px 20px;
-            margin: 0 auto; /* Center the button */
-            background-color: #333; /* Button background color */
-            color: #f0f0f0; /* Button text color */
-            text-decoration: none; /* Remove link underline */
-            border-radius: 10px; /* Rounded button corners */
-            font-size: 1.1em; /* Button font size */
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions for properties */
-            /* Default light blue neon glow (increased by 100% from previous state) */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
-                        0 0 6px rgba(0, 255, 255, 0.45), /* Increased blur and alpha */
-                        0 0 12px rgba(0, 255, 255, 0.33); /* Increased blur and alpha */
-            box-sizing: border-box; /* Include padding and border in size calculation */
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 30px rgba(0, 229, 255, 0.8), inset 0 0 15px rgba(0, 229, 255, 0.6); }
+            to { box-shadow: 0 0 50px rgba(0, 229, 255, 1), inset 0 0 25px rgba(0, 229, 255, 0.8); }
         }
 
-        /* Hover effect for buttons */
-        .btn:hover {
-            background-color: #555; /* Change background color on hover */
-            transform: translateY(-2px); /* Slight upward shift on hover */
-            /* Orange neon glow on hover (increased by 100% from previous state) */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
-                        0 0 15px rgba(255, 165, 0, 0.51), /* Increased blur and alpha */
-                        0 0 30px rgba(255, 165, 0, 0.39); /* Increased blur and alpha */
+        .central-hub i {
+            font-size: 4rem;
+            color: #00e5ff; /* Initial color */
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.9);
+            transition: color 0.3s ease-in-out; /* Smooth color transition */
         }
 
-        /* Active (click) effect for buttons */
-        .btn:active {
-            background-color: #666; /* Change background color when active */
-            transform: translateY(0); /* Ensure button doesn't shift */
-            /* Orange neon glow when clicked (increased by 100% from previous state) */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
-                        0 0 15px rgba(255, 165, 0, 0.51), /* Increased blur and alpha */
-                        0 0 30px rgba(255, 165, 0, 0.39); /* Increased blur and alpha */
+        /* Profile grid container */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns for general layout */
+            gap: 1.5rem; /* More spacing */
+            max-width: 800px; /* Increased max-width */
+            width: 95%;
+            padding: 1.5rem;
+            z-index: 10;
         }
 
-        /* Social media buttons group (Toptop, Phở Bò) */
-        .social-buttons {
+        /* Profile item styling */
+        .profile-item {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.08), rgba(0, 229, 255, 0.03));
+            border: 2px solid #00e5ff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
             display: flex;
-            justify-content: space-between; /* Distribute space evenly between buttons */
-            gap: 15px; /* Spacing between the two social buttons */
-            width: 80%; /* Occupy 80% of button container width */
-            margin: 0 auto; /* Center the social button group */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(12px); /* Stronger frosted glass */
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden; /* For inner glow effect */
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); /* Initial subtle glow */
         }
 
-        /* Styling for individual social media buttons */
-        .social-btn {
-            flex-grow: 1; /* Allow button to grow and fill available space */
-            flex-basis: 0; /* Allow flex-grow to work effectively */
-            padding: 15px 10px;
-            font-size: 1em;
-            white-space: nowrap; /* Prevent text from wrapping */
-            overflow: hidden; /* Hide overflowing text */
-            text-overflow: ellipsis; /* Display ellipsis for overflowing text */
-            text-align: center; /* Center text content */
+        .profile-item::before { /* Inner glow border */
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            z-index: 0;
+            transition: border-color 0.3s ease;
         }
 
-        /* Responsive adjustments for small screens */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px; /* Reduce overall container padding */
-                width: 85%; /* Reduce container width on mobile devices */
+        .profile-item:hover {
+            transform: translateY(-0.5rem) scale(1.03);
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.08));
+            box-shadow: 0 0 35px rgba(0, 229, 255, 1); /* Intense hover glow */
+            border-color: #00ffff; /* Brighter border on hover */
+        }
+        .profile-item:hover::before {
+             border-color: #00e5ff; /* Inner glow color */
+        }
+
+
+        .profile-item-icon {
+            font-size: 3rem; /* Even larger icons */
+            margin-bottom: 1rem;
+            color: #00e5ff;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.8);
+        }
+
+        .profile-item-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            color: #ffffff; /* White text for clarity */
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+            /* Ensure text doesn't wrap inside the item for phone view */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis if text is too long */
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) { /* Tablet and smaller */
+            header h1 {
+                font-size: 1.5rem; /* 2rem * 0.75 = 1.5rem */
+                margin-bottom: 1.5rem; /* 2rem * 0.75 = 1.5rem */
+            }
+            .central-hub {
+                width: 75px; /* 100px * 0.75 = 75px */
+                height: 75px; /* 100px * 0.75 = 75px */
+                margin-top: 1.5rem; /* 2rem * 0.75 = 1.5rem */
+                margin-bottom: 1.5rem; /* 2rem * 0.75 = 1.5rem */
+            }
+            .central-hub i {
+                font-size: 2.625rem; /* 3.5rem * 0.75 = 2.625rem */
+            }
+            .profile-grid {
+                grid-template-columns: 1fr 1fr; /* Keep two columns for better use of space */
+                gap: 0.75rem; /* 1rem * 0.75 = 0.75rem */
+                padding: 0.75rem; /* 1rem * 0.75 = 0.75rem */
+            }
+            .profile-item {
+                padding: 0.75rem; /* 1rem * 0.75 = 0.75rem */
+            }
+            .profile-item-icon {
+                font-size: 1.875rem; /* 2.5rem * 0.75 = 1.875rem */
+                margin-bottom: 0.6rem; /* 0.8rem * 0.75 = 0.6rem */
+            }
+            .profile-item-text {
+                font-size: 0.675rem; /* 0.9rem * 0.75 = 0.675rem */
+                white-space: nowrap; /* Prevent wrapping */
+            }
+        }
+
+        @media (max-width: 480px) { /* Mobile phones */
+            body {
+                /* Change justification for mobile to move content higher */
+                justify-content: flex-start;
+                padding-top: 1rem; /* Add some top padding to avoid content touching top edge */
+                padding-bottom: 2rem; /* Increased padding-bottom to ensure footer visibility */
+                min-height: auto; /* Allow height to adjust based on content */
+            }
+            header h1 {
+                font-size: 1.3125rem;
+                letter-spacing: 1.5px;
+                white-space: nowrap;
+                margin-bottom: 0.75rem; /* Reduced margin to bring elements closer */
+            }
+            .central-hub {
+                width: 60px;
+                height: 60px;
+                margin-top: 0.75rem; /* Reduced margin */
+                margin-bottom: 0.75rem; /* Reduced margin */
+            }
+            .profile-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5625rem;
+                padding: 0.5625rem;
+            }
+            .profile-item {
+                padding: 0.5625rem;
+            }
+            .profile-item-icon {
+                font-size: 1.5rem;
+                margin-bottom: 0.375rem;
+            }
+            .profile-item-text {
+                font-size: 0.6rem;
+                white-space: nowrap;
+            }
+            footer p {
+                font-size: 0.525rem;
+                margin-top: 1.5rem; /* Increased margin-top for footer on mobile */
             }
 
-            /* Adjust font size for H1 on mobile */
-            h1 {
-                font-size: 1.8em; /* Smaller font size for H1 on mobile */
+            /* Adjust message box for mobile */
+            #messageBoxContent {
+                max-width: 70%; /* Reduced from 90% to 70% for smaller appearance */
+                min-width: unset; /* Remove fixed min-width */
+                padding: 0.75rem; /* Further reduced padding for mobile */
+                max-height: 80vh; /* Set max height to 80% of viewport height */
+                overflow: hidden; /* Hide overflow on the container to prevent double scrollbars */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between; /* Distribute space between title, body, button */
             }
+            #messageBoxTitle {
+                font-size: 1rem; /* Further reduced title font for mobile */
+            }
+            #messageBoxBody {
+                font-size: 0.75rem; /* Further reduced body font for mobile */
+                flex-grow: 1; /* Allow body to take available space and push button down */
+                overflow-y: auto; /* Enable vertical scrolling for the content itself if it overflows */
+                padding-bottom: 0.5rem; /* Small padding between body and button */
+            }
+        }
 
-            .btn {
-                width: 90%; /* Increase button width on small screens */
-                padding: 12px 15px; /* Reduce button height on mobile devices */
-            }
+        /* Canvas for dynamic effects */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow interaction with elements beneath */
+            z-index: 5; /* Below content, above static background */
+        }
 
-            .social-buttons {
-                width: 90%; /* Adjust social button group width to align with other buttons */
-            }
+        /* Custom Message Box Styles */
+        #messageBoxOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #messageBoxOverlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #messageBoxContent {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.08));
+            border: 2px solid #00e5ff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            max-width: 80%; /* Adjusted max-width for larger screens */
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.8);
+            color: #ffffff;
+            text-align: center;
+            position: relative; /* Keep relative, no absolute positioning needed here with flex parent */
+            animation: fadeInScale 0.3s ease-out;
+            /* No need for translate here if parent is flex-centered */
+        }
+
+        @keyframes fadeInScale {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        #messageBoxTitle {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00e5ff;
+        }
+
+        #messageBoxBody {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            color: #e0f7fa;
+        }
+
+        /* Styles for the new dynamic buttons */
+        .message-box-button {
+            background-color: #00e5ff;
+            color: #050d17;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+            /* Add margin for spacing between buttons */
+            margin: 0.5rem;
+        }
+
+        .message-box-button:hover {
+            background-color: #00ffff;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="profile-header">
-            <h1>Đoàn Văn Hoài</h1>
+<body class="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
+
+    <!-- Animated Background Grid -->
+    <div class="background-grid"></div>
+
+    <!-- Animated Aura/Circles (Static CSS animation) -->
+    <div class="animated-aura aura-1"></div>
+    <div class="animated-aura aura-2"></div>
+    <div class="animated-aura aura-3"></div>
+
+    <!-- Canvas for dynamic radiating circles, spark effects, and current flow -->
+    <canvas id="dynamicCanvas"></canvas>
+
+    <!-- Header -->
+    <header>
+        <h1>VanHoaiPC</h1>
+    </header>
+
+    <!-- Central Hub -->
+    <div class="central-hub" id="centralHub">
+        <i class="fas fa-microchip" id="chipIcon"></i> <!-- Added ID for easy access -->
+    </div>
+
+    <!-- Profile Grid -->
+    <main class="profile-grid">
+        <!-- Mail -->
+        <a href="mailto:doanvanhoai07@mail.com" class="profile-item" rel="noopener noreferrer">
+            <div class="profile-item-icon"><i class="fas fa-envelope"></i></div>
+            <div class="profile-item-text">Email</div>
+        </a>
+        <!-- Website -->
+        <a href="#" id="websiteLink" class="profile-item">
+            <div class="profile-item-icon"><i class="fas fa-globe"></i></div>
+            <div class="profile-item-text">Website</div>
+        </a>
+        <!-- Phone Number -->
+        <a href="tel:+84977269357" class="profile-item" rel="noopener noreferrer">
+            <div class="profile-item-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="profile-item-text">ĐIỆN THOẠI</div>
+        </a>
+        <!-- Facebook (Phở Bò) -->
+        <a href="https://www.facebook.com/your.facebook.profile" target="_blank" class="profile-item" rel="noopener noreferrer">
+            <div class="profile-item-icon"><i class="fab fa-facebook-f"></i></div>
+            <div class="profile-item-text">FACEBOOK</div>
+        </a>
+        <!-- TikTok -->
+        <a href="https://www.tiktok.com/@vanhoaipc09" target="_blank" class="profile-item" rel="noopener noreferrer">
+            <div class="profile-item-icon"><i class="fab fa-tiktok"></i></div>
+            <div class="profile-item-text">TikTok</div>
+        </a>
+        <!-- Zalo -->
+        <a href="https://zalo.me/0977269357" target="_blank" class="profile-item" rel="noopener noreferrer">
+            <div class="profile-item-icon"><i class="fas fa-comment-dots"></i></div>
+            <div class="profile-item-text">Zalo</div>
+        </a>
+        <!-- YouTube -->
+        <a href="#" id="youtubeLink" class="profile-item">
+            <div class="profile-item-icon"><i class="fab fa-youtube"></i></div>
+            <div class="profile-item-text">YouTube</div>
+        </a>
+        <!-- Placeholder for About Me/General Profile -->
+        <a href="#" id="aboutMeLink" class="profile-item">
+            <div class="profile-item-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="profile-item-text">Giới Thiệu</div>
+        </a>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-sm opacity-75">
+        <p>Tạo bởi VanHoaiPC - Cập nhật lần cuối: 29/06/2025</p>
+    </footer>
+
+    <!-- Custom Message Box HTML -->
+    <div id="messageBoxOverlay">
+        <div id="messageBoxContent">
+            <h3 id="messageBoxTitle"></h3>
+            <p id="messageBoxBody"></p>
+            <div id="messageBoxButtons" class="mt-4 flex flex-wrap justify-center space-x-2"></div>
+        </div>
+    </div>
+
+    <!-- Game UI Overlay -->
+    <div id="gameUI" class="absolute top-4 left-4 right-4 flex items-center justify-between text-xl font-bold text-white z-50 pointer-events-none" style="display: none;">
+        <!-- Score Display -->
+        <div>Điểm: <span id="scoreDisplay">0</span></div>
+
+        <!-- Lives Display -->
+        <div id="livesDisplay" class="flex items-center">
+            <!-- Hearts will be rendered by JS -->
         </div>
 
-        <div class="button-group">
-            <a href="tel:0977269357" class="btn">Zalo: 0977269357</a>
-            <a href="mailto:doanvanhoai07@gmail.com" class="btn">Email: doanvanhoai07@gmail.com</a>
-            <a href="en.html" class="btn">Web học tiếng Anh</a>
-            <a href="cn.html" class="btn">Web học tiếng Trung</a>
-            <a href="cn2.html" class="btn">Luyện nói tiếng Trung</a>
-            <div class="social-buttons">
-                <a href="http://toptop.com" class="btn social-btn">Link Toptop</a>
-                <a href="http://phobo.com" class="btn social-btn">Link Phở Bò</a>
+        <!-- Mana Display -->
+        <div id="manaDisplay" class="flex items-center bg-gray-800 bg-opacity-70 rounded-full px-4 py-2 text-white text-lg z-60">
+            Mana: <span id="manaPercentage" class="ml-2">0%</span>
+            <div id="manaBar" class="w-24 h-3 bg-blue-700 rounded-full ml-3 overflow-hidden">
+                <div id="manaFill" class="h-full bg-purple-500 transition-all duration-300 ease-out" style="width:0%;"></div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Get canvas and drawing context (Lấy canvas và ngữ cảnh vẽ)
+        let canvas;
+        let ctx;
+        let centralHub;
+        let chipIcon; // Get chip element (Lấy element con chip)
+        let header;
+        let mainGrid;
+        let footer;
+
+        // Game UI Elements
+        let gameUI;
+        let scoreDisplay;
+        let livesDisplay;
+        // Removed manaDisplay from top-level global variables as it's now nested within gameUI
+        let manaPercentageDisplay; // Mana percentage text
+        let manaFillBar; // Mana bar fill
+
+        // Game State Variables
+        let currentGameState = 'profile'; // 'profile' or 'game'
+        let player = { x: 0, y: 0, radius: 60, color: '#00e5ff' }; // Player chip properties, radius matched to centralHub
+        let bullets = []; // Player bullets
+        let enemies = [];
+        let enemyBullets = []; // New: Enemy bullets array
+        let gameOver = false;
+        let score = 0;
+        let lives = 3; // New: Lives variable
+        let invulnerabilityTimer = 0; // New: Invulnerability timer (frames)
+
+        let mouseX = 0; // For player movement
+        let mouseY = 0; // For player movement
+        let touchX = 0;
+        let touchY = 0;
+
+        // Mana System Variables
+        let mana = 0; // Current mana (0-100)
+        let isManaActive = false; // Is special weapon (mana) currently active
+        let manaActivationTimeout = null; // Timeout ID for mana duration
+
+        // Game-specific constants
+        const BULLET_SPEED = 8;
+        const ENEMY_BULLET_SPEED = 4; // Enemy bullet speed, slightly slower (Tốc độ đạn địch, chậm hơn một chút)
+        const ENEMY_SHOOT_COOLDOWN = 6000; // Cooldown between enemy shots (ms), equivalent to 6 seconds (Thời gian hồi chiêu giữa các lần bắn của địch (ms), tương đương 6 giây)
+        const ENEMY_SHOOT_CHANCE = 0.05; // 5% chance for an enemy to shoot, reduced from 10% (5% cơ hội cho một kẻ địch có thể bắn, giảm từ 10%)
+        const ENEMY_SPEED_MIN = 1;
+        const ENEMY_SPEED_MAX = 3;
+        const ENEMY_RADIUS = 15;
+        const PLAYER_MAX_SPEED = 5; // To limit player movement speed (Để giới hạn tốc độ di chuyển của người chơi)
+        const AUTO_FIRE_INTERVAL = 150; // ms, automatic bullet fire rate (ms, tần suất đạn tự động bắn)
+        const SPECIAL_WEAPON_HOLD_DURATION = 1000; // ms, hold time to activate special weapon (Changed to 1 second) (ms, thời gian giữ để kích hoạt vũ khí đặc biệt (Đã thay đổi thành 1 giây))
+        const SPECIAL_WEAPON_DURATION = 10000; // ms, duration special weapon is active (10 seconds) (ms, thời gian vũ khí đặc biệt có hiệu lực (10 giây))
+        const INVULNERABILITY_DURATION = 90; // frames, player invulnerability time after being hit (frames, thời gian người chơi bất khả xâm phạm sau khi bị đánh)
+        const ENEMIES_PER_LEVEL_UP = 10; // Number of enemies to shoot down to level up (Số kẻ địch cần bắn hạ để lên cấp)
+
+        // Difficulty variables
+        let gameLevel = 1;
+        const BASE_ENEMY_COUNT = 3; // Initial number of enemies (always at least 3 enemies) (Số lượng kẻ địch khởi đầu (luôn có ít nhất 3 kẻ địch))
+        let enemiesShotInLevel = 0; // Number of enemies shot down in current level (for leveling up) (Số kẻ địch đã bắn hạ trong cấp độ hiện tại (cho việc lên cấp))
+
+        // Global variable to ensure only one shooting enemy appears (Biến toàn cục để đảm bảo chỉ có một kẻ địch bắn được xuất hiện)
+        let hasCurrentShootingEnemy = false;
+        let lastDynamicEnemySpawnTime = 0; // Last enemy spawn time (not used for continuous spawning anymore) (Thời gian sinh kẻ địch cuối cùng (không dùng cho sinh địch liên tục nữa))
+        const ENEMY_SPAWN_INTERVAL = 5000; // Interval to check and add enemies if missing (not used for continuous spawning anymore) (Khoảng thời gian để kiểm tra và thêm địch nếu thiếu (không dùng cho sinh liên tục nữa))
+        let currentEnemySpawnInterval = ENEMY_SPAWN_INTERVAL; // New variable for dynamic interval
+
+        // Particle/Effect arrays
+        let radiatingCircles = [];
+        let sparks = [];
+        let impactRings = [];
+        let shootingStars = [];
+        let spheres = []; // NOTE: Spheres are used for profile background effects
+        let hitItems = new Map();
+        let characterParticles = [];
+
+        // Timers for game and special weapon
+        let autoFireTimer = null;
+        let holdTimerTimeout = null;
+        let specialWeaponActiveTimeout = null;
+
+        // CentralHub original styles for reset
+        let originalCentralHubStyles = {};
+
+        // Custom Message Box Elements
+        let messageBoxOverlay;
+        let messageBoxTitle;
+        let messageBoxBody;
+        let messageBoxButtonsContainer; // New: Container for dynamic buttons
+
+        // Website and About Me links
+        let websiteLink;
+        let aboutMeLink;
+        let youtubeLink; // Add youtubeLink reference
+
+        // CentralHub click counters
+        let colorClickCount = 0; // For color cycling (0 to 6 for 7 colors)
+        let gameTriggerClickCount = 0; // For game activation (0 to 9 for 10 clicks)
+        const colors = ['#00e5ff', '#ff00e5', '#e5ff00', '#ff8c00', '#00ff8c', '#8c00ff', '#ff0000']; // Cyan, Magenta, Yellow, Orange, Green, Purple, Red (7 colors)
+        let resetColorTimeout; // Variable to hold timeout ID (Biến để giữ ID của timeout)
+
+        // Variables for double-tap detection
+        let lastTapTime = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
+        const TAP_DELAY = 300; // milliseconds
+        const TAP_RADIUS = 30; // pixels
+
+        // Ensure DOM is fully loaded before running script (Đảm bảo DOM đã được tải đầy đủ trước khi chạy script)
+        window.onload = function () {
+            canvas = document.getElementById('dynamicCanvas');
+            ctx = canvas.getContext('2d');
+            centralHub = document.getElementById('centralHub');
+            chipIcon = document.getElementById('chipIcon');
+            header = document.querySelector('header');
+            mainGrid = document.querySelector('main.profile-grid');
+            footer = document.querySelector('footer');
+
+            gameUI = document.getElementById('gameUI');
+            scoreDisplay = document.getElementById('scoreDisplay');
+            livesDisplay = document.getElementById('livesDisplay');
+            // manaDisplay is now found within gameUI
+            manaPercentageDisplay = document.getElementById('manaPercentage');
+            manaFillBar = document.getElementById('manaFill');
+
+            messageBoxOverlay = document.getElementById('messageBoxOverlay');
+            messageBoxTitle = document.getElementById('messageBoxTitle');
+            messageBoxBody = document.getElementById('messageBoxBody');
+            messageBoxButtonsContainer = document.getElementById('messageBoxButtons'); // Get the new button container
+
+            // Move the assignment of websiteLink and aboutMeLink here
+            websiteLink = document.getElementById('websiteLink');
+            aboutMeLink = document.getElementById('aboutMeLink');
+            youtubeLink = document.getElementById('youtubeLink'); // Assign youtubeLink
+
+
+            // Calculate these after the DOM is fully loaded and elements are rendered in their initial positions
+            // This ensures we capture the correct computed values.
+            const computeOriginalStyles = () => {
+                const computedStyle = window.getComputedStyle(centralHub);
+                originalCentralHubStyles = {
+                    position: computedStyle.position,
+                    left: computedStyle.left,
+                    top: computedStyle.top,
+                    zIndex: computedStyle.zIndex,
+                    marginTop: computedStyle.marginTop,
+                    marginBottom: computedStyle.marginBottom,
+                    pointerEvents: computedStyle.pointerEvents,
+                };
+            };
+            computeOriginalStyles(); // Call once on load
+
+
+            // --- Custom Message Box Functions ---
+            // Now accepts an array of button configurations
+            function showMessageBox(title, message, buttons = [{ text: 'Đóng', callback: hideMessageBox }]) {
+                messageBoxTitle.innerHTML = title;
+                messageBoxBody.innerHTML = message;
+
+                // Clear previous buttons
+                messageBoxButtonsContainer.innerHTML = '';
+
+                // Create and append new buttons
+                buttons.forEach(btnConfig => {
+                    const button = document.createElement('button');
+                    button.textContent = btnConfig.text;
+                    button.classList.add('message-box-button'); // Use custom CSS class for styling
+                    button.addEventListener('click', () => {
+                        hideMessageBox(); // Hide box on button click
+                        if (btnConfig.callback) {
+                            btnConfig.callback(); // Execute custom callback
+                        }
+                    });
+                    messageBoxButtonsContainer.appendChild(button);
+                });
+
+                messageBoxOverlay.classList.add('show');
+            }
+
+            function hideMessageBox() {
+                messageBoxOverlay.classList.remove('show');
+            }
+
+            // The overlay click should only close if no specific buttons are present or if it's a generic message
+            messageBoxOverlay.addEventListener('click', (e) => {
+                // Only hide if clicked directly on the overlay and there are no custom buttons, or it's a generic message
+                if (e.target === messageBoxOverlay && messageBoxButtonsContainer.children.length === 0) {
+                    hideMessageBox();
+                }
+            });
+            // --- End Custom Message Box Functions ---
+
+
+            // Adjust canvas size to fill window (Điều chỉnh kích thước canvas để lấp đầy cửa sổ)
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                // Update player position if game is active after resize
+                if (currentGameState === 'game') {
+                    // Re-center player relative to new canvas size
+                    player.x = canvas.width / 2;
+                    player.y = canvas.height - player.radius - 20;
+                    mouseX = player.x; // Keep mouse target consistent
+                    mouseY = player.y;
+
+                    // Adjust enemy spawn interval based on screen width
+                    if (canvas.width < 768) { // Assuming 768px is a common tablet breakpoint, smaller for phone
+                        currentEnemySpawnInterval = ENEMY_SPAWN_INTERVAL * 1.5; // 1.5 times slower spawn
+                        console.log("Mobile detected, slowing enemy spawn to: " + currentEnemySpawnInterval + "ms");
+                    } else {
+                        currentEnemySpawnInterval = ENEMY_SPAWN_INTERVAL;
+                    }
+                }
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas(); // Initial size adjustment (Điều chỉnh kích thước ban đầu)
+
+            // Function to get exact position of an element relative to viewport (Hàm lấy vị trí chính xác của một phần tử so với viewport)
+            function getElementRect(element) {
+                const rect = element.getBoundingClientRect();
+                return {
+                    x: rect.left,
+                    y: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                    right: rect.right,
+                    bottom: rect.bottom
+                };
+            }
+
+            // RadiatingCircle Class (Vòng tròn phát ra)
+            class RadiatingCircle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = 0;
+                    this.maxRadius = Math.max(canvas.width, canvas.height) / 2 * 1.2;
+                    this.speed = 0.3;
+                    this.alpha = 1;
+                    this.fadeSpeed = 0.001;
+                    this.id = Date.now() + Math.random(); // Unique ID to track collisions (ID duy nhất để theo dõi va chạm)
+                    this.initialLineWidth = 2; // Initial border width (Độ rộng đường viền ban đầu)
+                    this.maxWidthIncrease = 8; // Maximum additional width increase when expanding (Độ tăng thêm tối đa của độ rộng đường viền khi mở rộng)
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(0, 229, 255, ${this.alpha})`;
+                    let currentLineWidth = this.initialLineWidth + (this.radius / this.maxRadius) * this.maxWidthIncrease * this.alpha;
+                    ctx.lineWidth = Math.max(0.5, currentLineWidth);
+
+                    ctx.shadowBlur = 10 * this.alpha;
+                    ctx.shadowColor = `rgba(0, 229, 255, ${this.alpha * 0.8})`;
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    this.radius += this.speed;
+                    this.alpha -= this.fadeSpeed;
+                    if (this.alpha < 0) this.alpha = 0;
+
+                    // Check for collisions with profile items (Kiểm tra va chạm với các mục hồ sơ)
+                    const profileItems = document.querySelectorAll('.profile-item');
+                    profileItems.forEach(item => {
+                        const itemRect = getElementRect(item);
+                        const closestX = Math.max(itemRect.x, Math.min(this.x, itemRect.right));
+                        const closestY = Math.max(itemRect.y, Math.min(this.y, itemRect.bottom));
+
+                        const distanceX = this.x - closestX;
+                        const distanceY = this.y - closestY;
+                        const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+                        if (distanceSquared < ((this.radius + 5) * (this.radius + 5)) && !hitItems.has(`${this.id}-${item.id || item.className}`)) {
+                            createSparksAndCharacters(closestX, closestY);
+                            createImpactRing(closestX, closestY);
+                            hitItems.set(`${this.id}-${item.id || item.className}`, true);
+                        }
+                    });
+                }
+            }
+
+            // Spark Class (Hạt tia lửa) for "short circuit" effect
+            class Spark {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = Math.random() * 5 + 3;
+                    this.life = Math.random() * 80 + 60;
+                    this.alpha = 1;
+                    this.speed = Math.random() * 6 + 3;
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.vx = Math.cos(this.angle) * this.speed;
+                    this.vy = Math.sin(this.angle) * this.speed;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 229, 255, ${this.alpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = `rgba(0, 229, 255, ${this.alpha * 0.8})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life--;
+                    this.alpha = this.life / (Math.random() * 80 + 60);
+                }
+            }
+
+            // CharacterParticle Class (Ký tự phát nổ)
+            class CharacterParticle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = Math.random() * 10 + 10;
+                    this.life = Math.random() * 100 + 80;
+                    this.alpha = 1;
+                    this.speed = Math.random() * 3 + 2;
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.vx = Math.cos(this.angle) * this.speed;
+                    this.vy = Math.sin(this.angle) * this.speed;
+
+                    const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
+                    this.character = charSet[Math.floor(Math.random() * charSet.length)];
+                }
+
+                draw() {
+                    ctx.font = `${this.size}px Orbitron`;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                    ctx.shadowBlur = 5 * this.alpha;
+                    ctx.shadowColor = `rgba(0, 229, 255, ${this.alpha * 0.8})`;
+                    ctx.fillText(this.character, this.x, this.y);
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life--;
+                    this.alpha = this.life / (Math.random() * 100 + 80);
+                }
+            }
+
+            // ImpactRing Class (Vòng tròn va chạm) for distorted shockwave effect
+            class ImpactRing {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = 0;
+                    this.maxRadius = Math.random() * 40 + 30;
+                    this.speed = Math.random() * 10 + 5;
+                    this.alpha = 1;
+                    this.fadeSpeed = 0.05 + Math.random() * 0.03;
+                    this.life = this.maxRadius / this.speed;
+                    this.initialLineWidth = Math.random() * 3 + 1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    const numSegments = 5 + Math.floor(Math.random() * 5);
+                    const angleStep = (Math.PI * 2) / numSegments;
+
+                    for (let i = 0; i < numSegments; i++) {
+                        const startAngle = i * angleStep + Math.random() * 0.2;
+                        const endAngle = startAngle + angleStep - Math.random() * 0.1;
+
+                        ctx.arc(this.x, this.y, this.radius + Math.random() * 5, startAngle, endAngle);
+                    }
+
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${this.alpha})`;
+                    ctx.lineWidth = this.initialLineWidth * this.alpha;
+                    ctx.shadowBlur = 15 * this.alpha;
+                    ctx.shadowColor = `rgba(0, 255, 255, ${this.alpha * 0.8})`;
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    this.radius += this.speed;
+                    this.alpha -= this.fadeSpeed;
+                }
+            }
+
+            // ShootingStar Class (Sao băng)
+            class ShootingStar {
+                constructor() {
+                    const edge = Math.floor(Math.random() * 4);
+                    let startX, startY;
+
+                    if (edge === 0) { // Top edge (Cạnh trên)
+                        startX = Math.random() * canvas.width;
+                        startY = -20;
+                    } else if (edge === 1) { // Right edge (Cạnh phải)
+                        startX = canvas.width + 20;
+                        startY = Math.random() * canvas.height;
+                    } else { // Bottom edge (or left, chosen randomly) (Cạnh dưới (or left, chosen randomly))
+                        startX = Math.random() * canvas.width;
+                        startY = canvas.height + 20;
+                    }
+
+                    this.x = startX;
+                    this.y = startY;
+                    this.size = Math.random() * 6 + 5;
+                    this.speed = Math.random() * 5 + 3;
+                    this.life = 1;
+                    this.alpha = 1;
+                    this.trailLength = 50 + Math.random() * 50;
+                    this.isDead = false;
+
+                    let targetX, targetY;
+                    const availableTargets = [...radiatingCircles, ...spheres];
+
+                    if (availableTargets.length > 0) {
+                        const target = availableTargets[Math.floor(Math.random() * availableTargets.length)];
+                        targetX = target.x;
+                        targetY = target.y;
+                    } else {
+                        const centralHubRect = getElementRect(centralHub);
+                        targetX = centralHubRect.x + centralHubRect.width / 2;
+                        targetY = centralHubRect.y + centralHubRect.height / 2;
+                    }
+
+                    const angle = Math.atan2(targetY - this.y, targetX - this.x);
+                    this.vx = Math.cos(angle) * this.speed;
+                    this.vy = Math.sin(angle) * this.speed;
+                }
+
+                draw() {
+                    if (this.isDead) return;
+
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = `rgba(0, 229, 255, ${this.alpha * 0.9})`;
+                    ctx.fill();
+
+                    ctx.lineCap = 'round';
+                    ctx.lineWidth = this.size;
+                    ctx.strokeStyle = `rgba(0, 229, 255, ${this.alpha * 0.7})`;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x - this.vx * this.trailLength / this.speed, this.y - this.vy * this.trailLength / this.speed);
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    if (this.isDead) return;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    this.life -= 0.01;
+                    this.alpha = this.life;
+                    if (this.alpha < 0) this.alpha = 0;
+
+                    for (let i = 0; i < radiatingCircles.length; i++) {
+                        const circle = radiatingCircles[i];
+                        const dist = Math.hypot(this.x - circle.x, this.y - circle.y);
+                        const collisionTolerance = this.size / 2 + 5;
+                        if (Math.abs(dist - circle.radius) < collisionTolerance) {
+                            createSparksAndCharacters(this.x, this.y);
+                            createImpactRing(this.x, this.y);
+                            this.isDead = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Sphere Class (Quả bóng hình cầu)
+            class Sphere {
+                constructor() {
+                    const centralHubRect = getElementRect(centralHub);
+                    this.x = centralHubRect.x + centralHubRect.width / 2;
+                    this.y = centralHubRect.y + centralHubRect.height / 2;
+
+                    this.initialRadius = Math.random() * 15 + 15;
+                    this.radius = this.initialRadius;
+
+                    const angle = Math.random() * Math.PI * 2;
+                    const initialSpeed = Math.random() * 0.7 + 0.7;
+                    this.vx = Math.cos(angle) * initialSpeed;
+                    this.vy = Math.sin(angle) * initialSpeed;
+
+                    this.gravity = 0;
+                    this.bounceCount = 0;
+                    this.maxBounces = 3;
+                    this.alpha = 1;
+                    this.isDead = false;
+                    this.isExploding = false;
+                    this.explosionFadeSpeed = 0.05;
+                    this.bounceFactor = 0.7;
+                    this.uniqueId = Date.now() + Math.random();
+                }
+
+                draw() {
+                    if (this.isDead) return;
+
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 255, 255, ${this.alpha})`;
+                    ctx.shadowBlur = 20 * this.alpha;
+                    ctx.shadowColor = `rgba(0, 255, 255, ${this.alpha * 0.8})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    if (this.isDead) return;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    let bounced = false;
+                    if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                        this.vx *= -this.bounceFactor;
+                        this.x = Math.max(this.radius, Math.min(this.x, canvas.width - this.radius));
+                        bounced = true;
+                    }
+                    if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+                        this.vy *= -this.bounceFactor;
+                        this.y = Math.max(this.radius, Math.min(this.y, canvas.height - this.radius));
+                        bounced = true;
+                    }
+
+                    if (bounced) {
+                        this.bounceCount++;
+                        this.radius *= 0.9;
+                        if (this.bounceCount >= this.maxBounces && !this.isExploding) {
+                            this.isExploding = true;
+                            this.alpha = 1;
+                            createSparksAndCharacters(this.x, this.y);
+                            createImpactRing(this.x, this.y);
+                        }
+                    }
+
+                    radiatingCircles.forEach(circle => {
+                        const distBetweenCenters = Math.hypot(this.x - circle.x, this.y - circle.y);
+                        const collisionRangeStart = circle.radius - this.radius;
+                        const collisionRangeEnd = circle.radius + this.radius;
+
+                        if (distBetweenCenters >= collisionRangeStart && distBetweenCenters <= collisionRangeEnd) {
+                            if (!hitItems.has(`sphere-${this.uniqueId}-circle-${circle.id}`)) {
+                                this.bounceCount++;
+                                this.radius *= 0.9;
+
+                                const nx = (this.x - circle.x) / distBetweenCenters;
+                                const ny = (this.y - circle.y) / distBetweenCenters;
+
+                                const dotProduct = this.vx * nx + this.vy * ny;
+                                this.vx = (this.vx - 2 * dotProduct * nx) * this.bounceFactor;
+                                this.vy = (this.vy - 2 * dotProduct * ny) * this.bounceFactor;
+
+                                const overlap = (this.radius + circle.radius) - distBetweenCenters;
+                                if (overlap > 0) {
+                                    this.x += nx * overlap;
+                                    this.y += ny * overlap;
+                                }
+
+                                hitItems.set(`sphere-${this.uniqueId}-circle-${circle.id}`, true);
+
+                                if (this.bounceCount >= this.maxBounces && !this.isExploding) {
+                                    this.isExploding = true;
+                                    this.alpha = 1;
+                                    createSparksAndCharacters(this.x, this.y);
+                                    createImpactRing(this.x, this.y);
+                                }
+                            }
+                        } else {
+                            hitItems.delete(`sphere-${this.uniqueId}-circle-${circle.id}`);
+                        }
+                    });
+
+                    if (this.isExploding) {
+                        this.alpha -= this.explosionFadeSpeed;
+                        if (this.alpha <= 0) {
+                            this.isDead = true;
+                            // This part moved to mainAnimationLoop for controlled spawning
+                        }
+                    }
+                }
+            }
+
+            // --- Game Object Classes ---
+            class GameBullet {
+                constructor(x, y, angle, isSpecial = false) { // Added isSpecial flag
+                    this.x = x;
+                    this.y = y;
+                    this.radius = 5;
+                    this.color = isSpecial ? '#ff00ff' : '#fff000'; // Magenta for special, Yellow for normal
+                    this.vx = Math.cos(angle) * BULLET_SPEED;
+                    this.vy = Math.sin(angle) * BULLET_SPEED;
+                    this.life = 120; // Frames until disappears
+                    this.alpha = 1;
+                    this.isSpecial = isSpecial; // Store special flag
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.isSpecial ? '255, 0, 255' : '255, 240, 0'}, ${this.alpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = `rgba(${this.isSpecial ? '255, 0, 255' : '255, 240, 0'}, ${this.alpha * 0.8})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life--;
+                    this.alpha = this.life / 120; // Fade out
+                }
+            }
+
+            // New: GameEnemyBullet class
+            class GameEnemyBullet {
+                constructor(x, y, targetX, targetY) {
+                    this.x = x;
+                    this.y = y;
+                    this.radius = 6;
+                    this.color = '#ff0000'; // Red glowing bullet
+                    const angle = Math.atan2(targetY - y, targetX - x);
+                    this.vx = Math.cos(angle) * ENEMY_BULLET_SPEED;
+                    this.vy = Math.sin(angle) * ENEMY_BULLET_SPEED;
+                    this.life = 200; // Longer life as they travel
+                    this.alpha = 1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 0, 0, ${this.alpha})`; // Red
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = `rgba(255, 0, 0, ${this.alpha * 0.8})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life--;
+                    this.alpha = this.life / 200; // Fade out
+                }
+            }
+
+            class GameEnemy {
+                constructor() {
+                    this.radius = ENEMY_RADIUS;
+                    this.x = this.radius + Math.random() * (canvas.width - 2 * this.radius);
+                    // Start from above the canvas (bắt đầu từ phía trên canvas)
+                    this.y = -this.radius;
+                    this.baseColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    this.color = this.baseColor;
+                    // Ensure vertical speed is always downwards (đảm bảo tốc độ dọc luôn hướng xuống)
+                    this.speed = ENEMY_SPEED_MIN + Math.random() * (ENEMY_SPEED_MAX - ENEMY_SPEED_MIN);
+                    this.vy = this.speed;
+                    // Add a slight horizontal movement (thêm chuyển động ngang nhẹ)
+                    this.vx = (Math.random() - 0.5) * (this.speed * 0.5); // Random horizontal drift (lạc ngang ngẫu nhiên)
+                    this.canShoot = false;
+                    this.lastShotTime = Date.now();
+                }
+
+                makeShooter() {
+                    this.canShoot = true;
+                    this.color = '#ff0000'; // Make it red
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    // If this enemy can shoot, draw a small indicator (e.g., a dot)
+                    if (this.canShoot) {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius * 0.3, 0, Math.PI * 2);
+                        ctx.fillStyle = '#ffffff'; // White dot for red enemies
+                        ctx.fill();
+                    }
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Bounce off horizontal walls (bật lại khỏi các bức tường ngang)
+                    if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                        this.vx *= -1;
+                        this.x = Math.max(this.radius, Math.min(this.x, canvas.width - this.radius));
+                    }
+
+                    // If enemy goes off screen at the bottom, reset it to the top (Nếu địch đi ra khỏi màn hình ở phía dưới, đặt lại nó về phía trên)
+                    if (this.y - this.radius > canvas.height) {
+                        this.y = -this.radius; // Reset to top
+                        this.x = this.radius + Math.random() * (canvas.width - 2 * this.radius); // New random X (X ngẫu nhiên mới)
+                        this.vy = ENEMY_SPEED_MIN + Math.random() * (ENEMY_SPEED_MAX - ENEMY_SPEED_MIN); // New random speed (tốc độ ngẫu nhiên mới)
+                        this.vx = (Math.random() - 0.5) * (this.vy * 0.5); // New random horizontal drift (lạc ngang ngẫu nhiên mới)
+                    }
+
+                    // Enemy shooting logic (Chỉ bắn nếu ở 60% phía trên màn hình)
+                    // Only shoot if in the top 60% of the screen
+                    if (this.canShoot && this.y < canvas.height * 0.6 && Date.now() - this.lastShotTime > ENEMY_SHOOT_COOLDOWN) {
+                        this.shoot();
+                        this.lastShotTime = Date.now();
+                    }
+                }
+
+                // Enemy shoot method
+                shoot() {
+                    // Create a bullet targeting the player's current position
+                    enemyBullets.push(new GameEnemyBullet(this.x, this.y, player.x, player.y));
+                }
+            }
+
+            // Function to create sparks and characters at a given position (Hàm tạo tia lửa và ký tự tại một vị trí nhất định)
+            function createSparksAndCharacters(x, y) {
+                const numSparks = Math.floor(Math.random() * 15) + 10;
+                for (let i = 0; i < numSparks; i++) {
+                    sparks.push(new Spark(x, y));
+                }
+                const numCharacters = Math.floor(Math.random() * 8) + 5;
+                for (let i = 0; i < numCharacters; i++) {
+                    characterParticles.push(new CharacterParticle(x, y));
+                }
+            }
+
+            // Function to create an impact ring at a given position (Hàm tạo một vòng tròn va chạm tại một vị trí nhất định)
+            function createImpactRing(x, y) {
+                impactRings.push(new ImpactRing(x, y));
+            }
+
+            // Function to create a new sphere (for background effects) (Hàm tạo một quả bóng mới (cho hiệu ứng background))
+            function spawnNewSphere() {
+                spheres.push(new Sphere());
+            }
+
+            // Function to update Mana UI
+            function updateManaUI() {
+                manaPercentageDisplay.textContent = `${Math.floor(mana)}%`;
+                manaFillBar.style.width = `${mana}%`;
+
+                // Visual feedback for full mana
+                if (mana >= 100) {
+                    manaFillBar.style.backgroundColor = '#ff00ff'; // Bright pink/magenta
+                    // Only change chip icon glow if not already in mana mode (red)
+                    if (chipIcon.style.color !== 'rgb(255, 0, 0)') { // Check for red color
+                        chipIcon.style.textShadow = '0 0 15px #ff00ff, 0 0 25px #ff00ff';
+                    }
+                } else {
+                    manaFillBar.style.backgroundColor = '#8b5cf6'; // Default purple
+                    // Only reset chip glow if not currently in mana mode
+                    if (!isManaActive) {
+                        chipIcon.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.9)'; // Original glow
+                    }
+                }
+            }
+
+            // --- Game Logic Functions ---
+
+            // New function to calculate desired enemy count based on game level
+            function getDesiredEnemyCount() {
+                // Starts with BASE_ENEMY_COUNT (3), then 5 (level 2), 7 (level 3), etc.
+                // Bắt đầu với BASE_ENEMY_COUNT (3), sau đó 5 (cấp 2), 7 (cấp 3), v.v.
+                return BASE_ENEMY_COUNT + (gameLevel - 1) * 2;
+            }
+
+            function initGame() {
+                gameOver = false;
+                score = 0;
+                lives = 3; // Reset lives for new game
+                gameLevel = 1; // Reset game level
+                bullets = [];
+                enemies = [];
+                enemyBullets = []; // Reset enemy bullets
+                hasCurrentShootingEnemy = false; // Reset shooting enemy flag
+                mana = 0; // Reset mana
+                enemiesShotInLevel = 0; // Reset enemies shot for level up
+                isManaActive = false; // Reset mana active state
+                updateManaUI(); // Update mana UI on game start
+                chipIcon.style.color = '#00e5ff'; // Reset chip color
+
+                // Set player position to current centralHub position for smooth transition
+                const currentHubRect = getElementRect(centralHub);
+                player.x = currentHubRect.x + currentHubRect.width / 2;
+                player.y = currentHubRect.y + currentHubRect.height / 2;
+
+                // Make sure mouse/touch target is set to player's current position
+                mouseX = player.x;
+                mouseY = player.y;
+
+                // Spawn initial enemies up to BASE_ENEMY_COUNT
+                // (Sinh các quân địch ban đầu lên đến BASE_ENEMY_COUNT)
+                for (let i = 0; i < getDesiredEnemyCount(); i++) { // Spawn up to initial level's desired count
+                    enemies.push(new GameEnemy());
+                }
+                // Randomly assign one enemy to be a shooter after all are spawned
+                // (Chỉ định ngẫu nhiên một quân địch làm kẻ bắn sau khi tất cả đã được sinh ra)
+                if (enemies.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * enemies.length);
+                    enemies[randomIndex].makeShooter();
+                    hasCurrentShootingEnemy = true;
+                }
+                lastDynamicEnemySpawnTime = Date.now(); // Still good for tracking time, but spawning is now based on target count
+
+                toggleGameUI(true); // Hide profile, prepare chip for game
+                updateGameUI(); // Initial update of score and lives display
+
+                // Start auto-firing
+                autoFireTimer = setInterval(shootBullet, AUTO_FIRE_INTERVAL);
+
+                // Adjust enemy spawn interval based on current canvas width for game start
+                if (canvas.width < 768) {
+                    currentEnemySpawnInterval = ENEMY_SPAWN_INTERVAL * 1.5;
+                } else {
+                    currentEnemySpawnInterval = ENEMY_SPAWN_INTERVAL;
+                }
+            }
+
+            function endGame() {
+                gameOver = true;
+                clearInterval(autoFireTimer); // Stop auto-firing
+                clearTimeout(holdTimerTimeout); // Clear any pending special weapon timer
+                clearTimeout(specialWeaponActiveTimeout); // Clear active special weapon timer
+                isManaActive = false; // Reset special weapon state
+                chipIcon.style.color = '#00e5ff'; // Reset chip color on game end
+                updateManaUI(); // Ensure mana UI resets
+
+                // Trigger all existing spheres to explode and disappear
+                spheres.forEach(sphere => {
+                    if (!sphere.isExploding) {
+                        sphere.isExploding = true;
+                        sphere.alpha = 1; // Ensure it starts fading from visible
+                        createSparksAndCharacters(sphere.x, sphere.y);
+                        createImpactRing(sphere.x, sphere.y);
+                    }
+                });
+
+                toggleGameUI(false); // Hide game UI elements, show profile elements
+
+                // Show game over message with options
+                showMessageBox(
+                    'Game Over!',
+                    `Điểm của bạn: ${score}<br>`,
+                    [
+                        { text: 'Chơi Lại', callback: () => {
+                            initGame(); // Re-initialize and start game
+                        }},
+                        { text: 'Về Trang Chủ', callback: () => {
+                            location.reload(); // Reloads page to go back to profile
+                        }}
+                    ]
+                );
+            }
+
+            // This function handles showing/hiding UI elements based on game state
+            function toggleGameUI(showGame) {
+                if (showGame) {
+                    header.style.display = 'none';
+                    mainGrid.style.display = 'none';
+                    footer.style.display = 'none';
+                    // Removed manaDisplay.style.display = 'flex'; as it's now part of gameUI visibility
+
+                    centralHub.style.position = 'absolute'; // For game movement
+                    centralHub.style.zIndex = '50';
+                    centralHub.style.margin = '0'; // Remove existing margins
+                    // Make centralHub not capture pointer events itself, so events fall through to canvas
+                    centralHub.style.pointerEvents = 'none';
+                    // Make canvas capture pointer events
+                    canvas.style.pointerEvents = 'auto';
+                    gameUI.style.display = 'flex'; // Show game UI
+                } else {
+                    header.style.display = 'block';
+                    mainGrid.style.display = 'grid'; // Revert to grid
+                    footer.style.display = 'block';
+                    // Removed manaDisplay.style.display = 'none'; as it's now part of gameUI visibility
+
+                    // Crucial fix: Reset centralHub styles to default profile state
+                    // Restore original styles explicitly
+                    centralHub.style.position = originalCentralHubStyles.position;
+                    centralHub.style.left = originalCentralHubStyles.left;
+                    centralHub.style.top = originalCentralHubStyles.top;
+                    centralHub.style.zIndex = originalCentralHubStyles.zIndex;
+                    centralHub.style.marginTop = originalCentralHubStyles.marginTop;
+                    centralHub.style.marginBottom = originalCentralHubStyles.marginBottom;
+                    centralHub.style.pointerEvents = originalCentralHubStyles.pointerEvents;
+
+                    canvas.style.pointerEvents = 'none'; // Revert canvas pointer events for profile mode
+                    gameUI.style.display = 'none'; // Hide game UI
+                }
+            }
+
+            // Function to shoot a bullet (now handles normal and special shots)
+            function shootBullet() {
+                if (isManaActive) {
+                    // 360-degree fan shot
+                    const numFanBullets = 20; // More bullets for full circle
+                    for (let i = 0; i < numFanBullets; i++) {
+                        const angle = (Math.PI * 2 / numFanBullets) * i; // Distribute evenly around 360 degrees
+                        bullets.push(new GameBullet(player.x, player.y, angle, true)); // Pass true for isSpecial
+                    }
+                } else {
+                    // Normal straight shot
+                    const bulletAngle = -Math.PI / 2; // Straight up
+                    bullets.push(new GameBullet(player.x, player.y, bulletAngle, false)); // Pass false for isSpecial
+                }
+            }
+
+            // Function to update Score and Lives display
+            function updateGameUI() {
+                scoreDisplay.textContent = score;
+                livesDisplay.innerHTML = ''; // Clear existing hearts
+                for (let i = 0; i < lives; i++) {
+                    const heartIcon = document.createElement('i');
+                    heartIcon.classList.add('fas', 'fa-heart', 'text-red-500', 'mx-1');
+                    livesDisplay.appendChild(heartIcon);
+                }
+                // If no lives left, display specific icon
+                if (lives <= 0) {
+                    livesDisplay.innerHTML = '<i class="fas fa-heart-broken text-gray-500"></i>';
+                }
+            }
+
+            // Global variables for radiating circle spawn tracking
+            let lastRadiatingCircleSpawnTime = 0;
+            const RADIATING_CIRCLE_SPAWN_INTERVAL = 10000; // 10 seconds
+
+            // Flag to ensure only one sphere spawn is scheduled at a time in profile mode
+            let sphereSpawnScheduled = false;
+
+            // The main animation loop that handles both profile and game states
+            function mainAnimationLoop(currentTime) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear once per frame
+
+                if (currentGameState === 'profile') {
+                    // Update and draw profile particles
+                    radiatingCircles = radiatingCircles.filter(circle => {
+                        circle.update();
+                        circle.draw();
+                        return circle.alpha > 0 && circle.radius < circle.maxRadius;
+                    });
+
+                    // Handle spawning of radiating circles for profile mode
+                    if (currentTime - lastRadiatingCircleSpawnTime > RADIATING_CIRCLE_SPAWN_INTERVAL) {
+                        const centralHubRect = getElementRect(centralHub);
+                        const centerX = centralHubRect.x + centralHubRect.width / 2;
+                        const centerY = centralHubRect.y + centralHubRect.height / 2;
+                        radiatingCircles.push(new RadiatingCircle(centerX, centerY));
+                        lastRadiatingCircleSpawnTime = currentTime;
+                        if (radiatingCircles.length > 5) { // Limit number of circles
+                            hitItems.clear();
+                        }
+                    }
+
+                    shootingStars = shootingStars.filter(star => {
+                        star.update();
+                        star.draw();
+                        return !star.isDead && star.alpha > 0 &&
+                               star.x > -star.trailLength && star.x < canvas.width + star.trailLength &&
+                               star.y > -star.trailLength && star.y < canvas.height + star.trailLength;
+                    });
+
+                    // Filter and update spheres. Then, check if a new one needs to be spawned.
+                    spheres = spheres.filter(sphere => {
+                        sphere.update();
+                        sphere.draw();
+                        return !sphere.isDead;
+                    });
+
+                    // Ensure only one sphere exists at a time in profile mode
+                    if (spheres.length === 0 && !sphereSpawnScheduled) {
+                        sphereSpawnScheduled = true;
+                        setTimeout(() => {
+                            spawnNewSphere();
+                            sphereSpawnScheduled = false;
+                        }, 1000); // Spawn new sphere 1 second after the previous one is gone
+                    }
+
+                } else if (currentGameState === 'game') {
+                    // Decrement invulnerability timer
+                    if (invulnerabilityTimer > 0) {
+                        invulnerabilityTimer--;
+                    }
+
+                    // Player movement based on mouseX, mouseY
+                    const dx = mouseX - player.x;
+                    const dy = mouseY - player.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance > 1) { // Only move if not already very close
+                        const angle = Math.atan2(dy, dx);
+                        let speed = Math.min(PLAYER_MAX_SPEED, distance / 5); // Faster if further away
+                        player.x += Math.cos(angle) * speed;
+                        player.y += Math.sin(angle) * speed;
+                    }
+
+                    // Cap player position within canvas bounds (no game over for wall collision in game mode)
+                    player.x = Math.max(player.radius, Math.min(player.x, canvas.width - player.radius));
+                    player.y = Math.max(player.radius, Math.min(player.y, canvas.height - player.radius));
+
+                    // Update chip element position (its visual representation)
+                    centralHub.style.left = `${player.x - centralHub.offsetWidth / 2}px`;
+                    centralHub.style.top = `${player.y - centralHub.offsetHeight / 2}px`;
+
+                    // Update and draw bullets (player)
+                    bullets = bullets.filter(bullet => {
+                        bullet.update();
+                        bullet.draw();
+                        // Remove if off screen or life is 0
+                        return bullet.life > 0 &&
+                               bullet.x + bullet.radius > 0 && bullet.x - bullet.radius < canvas.width &&
+                               bullet.y + bullet.radius > 0 && bullet.y - bullet.radius < canvas.height;
+                    });
+
+                    // Update and draw enemies
+                    enemies.forEach(enemy => {
+                        enemy.update();
+                        enemy.draw();
+                    });
+
+                    // Update and draw enemy bullets
+                    enemyBullets = enemyBullets.filter(bullet => {
+                        bullet.update();
+                        bullet.draw();
+                        return bullet.life > 0 &&
+                               bullet.x + bullet.radius > 0 && bullet.x - bullet.radius < canvas.width &&
+                               bullet.y + bullet.radius > 0 && bullet.y - bullet.radius < canvas.height;
+                    });
+
+                    // Handle collisions: bullets (player) vs enemies
+                    for (let i = bullets.length - 1; i >= 0; i--) {
+                        for (let j = enemies.length - 1; j >= 0; j--) {
+                            const bullet = bullets[i];
+                            const enemy = enemies[j];
+
+                            const dist = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
+                            if (dist < bullet.radius + enemy.radius) {
+                                // Collision!
+                                createSparksAndCharacters(enemy.x, enemy.y); // Explosion effect
+                                createImpactRing(enemy.x, enemy.y);
+                                bullets.splice(i, 1); // Remove bullet
+
+                                // If the removed enemy was a shooter, set flag to false
+                                if (enemies[j].canShoot) {
+                                    hasCurrentShootingEnemy = false;
+                                }
+                                enemies.splice(j, 1); // Remove enemy
+                                score += 100; // Increment score
+
+                                // Mana Gain: Only from normal shots
+                                if (!bullet.isSpecial) {
+                                    mana = Math.min(100, mana + 10); // Increase mana by 10%, cap at 100
+                                    enemiesShotInLevel++; // Increment count for level up
+                                }
+                                updateManaUI(); // Update mana display
+
+                                updateGameUI(); // Update score display
+                                break; // Exit inner loop, bullet is gone
+                            }
+                        }
+                    }
+
+                    // Handle collisions: player vs enemies (lose life)
+                    if (invulnerabilityTimer === 0) { // Only check if not invulnerable
+                        for (let j = enemies.length - 1; j >= 0; j--) {
+                            const enemy = enemies[j];
+                            const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                            if (dist < player.radius + enemy.radius) {
+                                // Player hit by enemy!
+                                lives--; // Lose a life
+                                invulnerabilityTimer = INVULNERABILITY_DURATION; // Set invulnerability
+                                createSparksAndCharacters(player.x, player.y); // Explosion effect at player
+                                createImpactRing(player.x, player.y);
+
+                                // If the hit enemy was a shooter, set flag to false
+                                if (enemies[j].canShoot) {
+                                    hasCurrentShootingEnemy = false;
+                                }
+                                enemies.splice(j, 1); // Remove the hit enemy
+
+                                updateGameUI(); // Update lives display
+
+                                if (lives <= 0) {
+                                    endGame();
+                                }
+                                break; // Only lose one life per collision event
+                            }
+                        }
+                    }
+
+                    // New: Handle collisions: player vs enemy bullets (lose life)
+                    if (invulnerabilityTimer === 0) { // Only check if not invulnerable
+                        for (let i = enemyBullets.length - 1; i >= 0; i--) {
+                            const enemyBullet = enemyBullets[i];
+                            const dist = Math.hypot(player.x - enemyBullet.x, player.y - enemyBullet.y);
+                            if (dist < player.radius + enemyBullet.radius) {
+                                // Player hit by enemy bullet!
+                                lives--; // Lose a life
+                                invulnerabilityTimer = INVULNERABILITY_DURATION; // Set invulnerability
+                                createSparksAndCharacters(player.x, player.y); // Explosion effect at player
+                                createImpactRing(player.x, player.y);
+
+                                enemyBullets.splice(i, 1); // Remove enemy bullet
+
+                                updateGameUI(); // Update lives display
+
+                                if (lives <= 0) {
+                                    endGame();
+                                }
+                                break; // Only lose one life per collision event
+                            }
+                        }
+                    }
+
+                    // Leveling up: Check if ENEMIES_PER_LEVEL_UP enemies are shot down in current level
+                    // (Lên cấp: Kiểm tra xem ENEMIES_PER_LEVEL_UP quân địch đã bị bắn hạ trong cấp độ hiện tại chưa)
+                    if (enemiesShotInLevel >= ENEMIES_PER_LEVEL_UP) {
+                        gameLevel++;
+                        enemiesShotInLevel = 0; // Reset for next level
+                        console.log(`Level Up! Current level: ${gameLevel}`);
+                    }
+
+                    // Ensure correct number of enemies for the current level
+                    // New enemies will automatically start from the top
+                    // (Đảm bảo số lượng quân địch chính xác cho cấp độ hiện tại. Quân địch mới sẽ tự động bắt đầu từ phía trên)
+                    while (enemies.length < getDesiredEnemyCount()) {
+                        enemies.push(new GameEnemy());
+                    }
+
+                    // Ensure there's always one shooting enemy
+                    // (Đảm bảo luôn có một quân địch có khả năng bắn)
+                    if (!hasCurrentShootingEnemy && enemies.length > 0) {
+                        // Find a random non-shooter enemy to make a shooter
+                        // (Tìm một quân địch ngẫu nhiên không phải là kẻ bắn để biến nó thành kẻ bắn)
+                        const nonShooters = enemies.filter(e => !e.canShoot);
+                        if (nonShooters.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * nonShooters.length);
+                            nonShooters[randomIndex].makeShooter();
+                            hasCurrentShootingEnemy = true;
+                        } else if (enemies.length > 0) {
+                            // Fallback: If all existing enemies are already shooters (unlikely, but fallback)
+                            // (Trường hợp dự phòng: Nếu tất cả các quân địch hiện có đã là kẻ bắn (không chắc, nhưng là dự phòng))
+                            enemies[0].makeShooter(); // Fallback to making the first enemy a shooter (Dự phòng: biến quân địch đầu tiên thành kẻ bắn)
+                            hasCurrentShooterEnemy = true;
+                        }
+                    }
+                }
+
+                // Always update and draw global particle effects that persist across states
+                // This is crucial for smooth transitions of explosions etc.
+                // (Luôn cập nhật và vẽ các hiệu ứng hạt toàn cục tồn tại trên các trạng thái. Điều này rất quan trọng để chuyển tiếp mượt mà các vụ nổ, v.v.)
+                sparks = sparks.filter(spark => { spark.update(); spark.draw(); return spark.life > 0; });
+                characterParticles = characterParticles.filter(particle => { particle.update(); particle.draw(); return particle.life > 0; });
+                impactRings = impactRings.filter(ring => { ring.update(); ring.draw(); return ring.alpha > 0; });
+
+                requestAnimationFrame(mainAnimationLoop);
+            }
+
+            // --- Event Listeners for Game Input (Mouse/Touch) ---
+            canvas.addEventListener('mousemove', (e) => {
+                if (currentGameState === 'game') {
+                    const rect = canvas.getBoundingClientRect();
+                    mouseX = e.clientX - rect.left;
+                    mouseY = e.clientY - rect.top;
+                }
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (currentGameState === 'game' && e.touches.length > 0) {
+                    e.preventDefault(); // Prevent scrolling
+                    const rect = canvas.getBoundingClientRect();
+                    touchX = e.touches[0].clientX - rect.left;
+                    touchY = e.touches[0].clientY - rect.top;
+                    mouseX = touchX; // Use touch coordinates for player movement
+                    mouseY = touchY;
+                }
+            }, { passive: false });
+
+            // Handle hold for special weapon (mousedown on canvas for desktop)
+            canvas.addEventListener('mousedown', (e) => {
+                if (currentGameState === 'game') {
+                    // Start hold timer only if mana is full and special weapon is not already active
+                    if (mana >= 100 && !isManaActive) {
+                        holdTimerTimeout = setTimeout(() => {
+                            isManaActive = true;
+                            mana = 0; // Consume mana
+                            updateManaUI(); // Update mana display immediately
+                            chipIcon.style.color = '#ff0000'; // Change chip color to red
+                            chipIcon.style.textShadow = '0 0 15px #ff0000, 0 0 25px #ff0000'; // Red glow
+                            specialWeaponActiveTimeout = setTimeout(() => {
+                                isManaActive = false; // Deactivate after duration
+                                chipIcon.style.color = '#00e5ff'; // Reset chip color
+                                updateManaUI(); // Ensure mana UI is correct after deactivation
+                            }, SPECIAL_WEAPON_DURATION);
+                        }, SPECIAL_WEAPON_HOLD_DURATION);
+                    }
+                } else {
+                    // Existing behavior for radiating circles on profile screen
+                    const rect = canvas.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const clickY = e.clientY - rect.top;
+                    radiatingCircles.push(new RadiatingCircle(clickX, clickY));
+                }
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                if (currentGameState === 'game') {
+                    clearTimeout(holdTimerTimeout); // Clear hold timer if mouse released early
+                }
+            });
+
+            // Double-tap for special weapon (touchstart on canvas for mobile)
+            canvas.addEventListener('touchstart', (e) => {
+                if (currentGameState === 'game') {
+                    e.preventDefault(); // Prevent default touch behavior like scrolling or zooming
+
+                    const currentTime = Date.now();
+                    const touch = e.touches[0];
+                    const rect = canvas.getBoundingClientRect();
+                    const currentTapX = touch.clientX - rect.left;
+                    const currentTapY = touch.clientY - rect.top;
+
+                    // Double tap detection for mana
+                    if (currentTime - lastTapTime < TAP_DELAY) {
+                        const dist = Math.hypot(currentTapX - lastTapX, currentTapY - lastTapY);
+                        if (dist < TAP_RADIUS) {
+                            // This is a double tap
+                            if (mana >= 100 && !isManaActive) {
+                                // Activate special weapon
+                                isManaActive = true;
+                                mana = 0; // Consume mana
+                                updateManaUI();
+                                chipIcon.style.color = '#ff0000';
+                                chipIcon.style.textShadow = '0 0 15px #ff0000, 0 0 25px #ff0000';
+                                specialWeaponActiveTimeout = setTimeout(() => {
+                                    isManaActive = false;
+                                    chipIcon.style.color = '#00e5ff';
+                                    updateManaUI();
+                                }, SPECIAL_WEAPON_DURATION);
+                            }
+                            // Reset last tap to prevent accidental triple tap
+                            lastTapTime = 0;
+                        } else {
+                            // Taps were too far apart for a double tap, treat as a new first tap
+                            lastTapTime = currentTime;
+                            lastTapX = currentTapX;
+                            lastTapY = currentTapY;
+                        }
+                    } else {
+                        // First tap, or previous tap was too long ago
+                        lastTapTime = currentTime;
+                        lastTapX = currentTapX;
+                        lastTapY = currentTapY;
+                    }
+                } else { // Profile mode
+                    e.preventDefault(); // Prevent default for radiating circles
+                    const rect = canvas.getBoundingClientRect();
+                    for (let i = 0; i < e.touches.length; i++) {
+                        const touchX = e.touches[i].clientX - rect.left;
+                        const touchY = e.touches[i].clientY - rect.top;
+                        radiatingCircles.push(new RadiatingCircle(touchX, touchY));
+                    }
+                }
+            }, { passive: false }); // passive: false to allow preventDefault
+
+            canvas.addEventListener('touchend', () => {
+                // No specific action on touchend for game mode now, as double tap handles mana.
+                // Movement is handled by touchmove.
+            });
+
+            canvas.addEventListener('touchcancel', () => { // Handle touch being interrupted
+                // No specific action on touchcancel for game mode now.
+            });
+            // --- End Event Listeners for Game Input ---
+
+            // Modify centralHub click listener to trigger game
+            let colorClickCount = 0; // For color cycling (0 to 6 for 7 colors)
+            let gameTriggerClickCount = 0; // For game activation (0 to 9 for 10 clicks)
+            const colors = ['#00e5ff', '#ff00e5', '#e5ff00', '#ff8c00', '#00ff8c', '#8c00ff', '#ff0000']; // Cyan, Magenta, Yellow, Orange, Green, Purple, Red (7 colors)
+            let resetColorTimeout; // Variable to hold timeout ID (Biến để giữ ID của timeout)
+
+            centralHub.addEventListener('click', () => {
+                if (currentGameState === 'profile') {
+                    // Clear existing timeout when clicked (Xóa timeout hiện có mỗi khi nhấp vào)
+                    clearTimeout(resetColorTimeout);
+
+                    // Chip color change logic (using colorClickCount) (Logic đổi màu chip (dùng colorClickCount))
+                    const currentColorIndex = colorClickCount % colors.length;
+                    chipIcon.style.color = colors[currentColorIndex];
+                    chipIcon.style.textShadow = `0 0 15px ${colors[currentColorIndex]}, 0 0 25px ${colors[currentColorIndex]}`;
+
+                    // Activate explosion effect with sparks and characters on each click (Kích hoạt hiệu ứng phát nổ với tia lửa và ký tự trên mỗi lần nhấp)
+                    const centralHubRect = getElementRect(centralHub);
+                    const centerX = centralHubRect.x + centralHubRect.width / 2;
+                    const centerY = centralHub.getBoundingClientRect().top + centralHub.offsetHeight / 2; // Use getBoundingClientRect for accurate Y
+                    createSparksAndCharacters(centerX, centerY);
+                    createImpactRing(centerX, centerY);
+
+                    colorClickCount++; // Increment for next color click (Tăng cho lần nhấp màu tiếp theo)
+                    gameTriggerClickCount++; // Increment for next game activation (Tăng cho lần kích hoạt game tiếp theo)
+
+                    // Reset color and counter if no click within 3 seconds (Thiết lập lại màu về ban đầu và bộ đếm nếu không nhấp trong 3 giây)
+                    resetColorTimeout = setTimeout(() => {
+                        chipIcon.style.color = '#00e5ff'; // Original color (Màu gốc)
+                        chipIcon.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.9)';
+                        colorClickCount = 0; // Reset color counter (Đặt lại bộ đếm màu)
+                        gameTriggerClickCount = 0; // Reset game counter (Đặt lại bộ đếm game)
+                    }, 3000);
+
+                    // Check if game should start after 10 clicks (Kiểm tra xem game có nên bắt đầu sau 10 lần nhấp không)
+                    if (gameTriggerClickCount >= 10) {
+                        currentGameState = 'game'; // Change state to game (Chuyển trạng thái sang game)
+                        initGame(); // Initialize game objects and start game loop (Khởi tạo các đối tượng game và bắt đầu vòng lặp game)
+                        // Reset counters after game starts
+                        gameTriggerClickCount = 0;
+                        colorClickCount = 0;
+                        clearTimeout(resetColorTimeout); // Clear the timeout for profile mode
+                    }
+                }
+            });
+
+            // --- Custom Logic for Website and About Me links ---
+            websiteLink.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                showMessageBox(
+                    'Các Trang Web',
+                    `
+                    <a href="https://vanhoaipc.github.io/cn.html" target="_blank" class="block py-2 text-white hover:text-blue-400">Học tiếng Trung (1)</a>
+                    <a href="https://vanhoaipc.github.io/en.html" target="_blank" class="block py-2 text-white hover:text-blue-400">Học tiếng Anh</a>
+                    <a href="https://vanhoaipc.github.io/cn2.html" target="_blank" class="block py-2 text-white hover:text-blue-400">Học tiếng Trung (2)</a>
+                    `
+                );
+            });
+
+            youtubeLink.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                showMessageBox(
+                    'Đang Cập Nhật',
+                    `Nội dung đang được cập nhật. Vui lòng quay lại sau.`
+                );
+            });
+
+            aboutMeLink.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                showMessageBox(
+                    'Giới Thiệu',
+                    `
+                    Tên: Đoàn Văn Hoài<br>
+                    SĐT: 0977269xxx<br>
+                    Email: doanvanhoai07@gmail.com
+                    `
+                );
+            });
+            // --- End Custom Logic ---
+
+            // Initial setup to start the main animation loop
+            requestAnimationFrame(mainAnimationLoop);
+
+            // Create periodic shooting stars (global particles) (Tạo sao băng định kỳ (hạt toàn cục))
+            setInterval(() => {
+                shootingStars.push(new ShootingStar());
+            }, 5000); // New shooting star every 5 seconds (Mỗi 5 giây một sao băng mới)
+
+            // Create the first sphere after 5 seconds (global particles) (Tạo quả bóng đầu tiên sau 5 giây (hạt toàn cục))
+            setTimeout(spawnNewSphere, 5000);
+
+        }; // End window.onload (Kết thúc window.onload)
+    </script>
 </body>
 </html>
