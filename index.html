@@ -20,10 +20,11 @@
             flex-direction: column;
             justify-content: center; /* Centered by default for larger screens */
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden; /* Hide overflow from animations */
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+            overflow: hidden; /* Prevent scrolling as requested by the user */
             position: relative;
             text-shadow: 0 0 5px rgba(0, 229, 255, 0.4); /* Subtle text glow */
+            padding-bottom: 15rem; /* Increased padding-bottom to ensure footer visibility on desktop */
         }
 
         /* Animated background grid/circuit lines */
@@ -185,47 +186,104 @@
             text-overflow: ellipsis; /* Add ellipsis if text is too long */
         }
 
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 768px) { /* Tablet and smaller */
+        /* Responsive adjustments for desktop screens */
+        @media (min-width: 1024px) {
+            body {
+                font-size: 80%; /* Scale down overall font size */
+                padding-top: 1.5rem;
+                padding-bottom: 15rem; /* Consistent padding-bottom for desktop */
+                transform: scale(0.95); /* Reduce overall size by 5% */
+                transform-origin: top center; /* Scale from the top center */
+            }
             header h1 {
-                font-size: 1.5rem; /* 2rem * 0.75 = 1.5rem */
-                margin-bottom: 1.5rem; /* 2rem * 0.75 = 1.5rem */
+                font-size: 2rem; /* 2.5rem * 0.8 = 2rem */
+                margin-bottom: 2rem; /* 2.5rem * 0.8 = 2rem */
             }
             .central-hub {
-                width: 75px; /* 100px * 0.75 = 75px */
-                height: 75px; /* 100px * 0.75 = 75px */
-                margin-top: 1.5rem; /* 2rem * 0.75 = 1.5rem */
-                margin-bottom: 1.5rem; /* 2rem * 0.75 = 1.5rem */
+                width: 96px; /* 120px * 0.8 = 96px */
+                height: 96px; /* 120px * 0.8 = 96px */
+                margin-top: 2.4rem; /* 3rem * 0.8 = 2.4rem */
+                margin-bottom: 2.4rem; /* 3rem * 0.8 = 2.4rem */
             }
             .central-hub i {
-                font-size: 2.625rem; /* 3.5rem * 0.75 = 2.625rem */
+                font-size: 3.2rem; /* 4rem * 0.8 = 3.2rem */
             }
             .profile-grid {
-                grid-template-columns: 1fr 1fr; /* Keep two columns for better use of space */
-                gap: 0.75rem; /* 1rem * 0.75 = 0.75rem */
-                padding: 0.75rem; /* 1rem * 0.75 = 0.75rem */
+                gap: 1.2rem; /* 1.5rem * 0.8 = 1.2rem */
+                max-width: 640px; /* 800px * 0.8 = 640px */
+                padding: 1.2rem; /* 1.5rem * 0.8 = 1.2rem */
             }
             .profile-item {
-                padding: 0.75rem; /* 1rem * 0.75 = 0.75rem */
+                padding: 1.2rem; /* 1.5rem * 0.8 = 1.2rem */
             }
             .profile-item-icon {
-                font-size: 1.875rem; /* 2.5rem * 0.75 = 1.875rem */
-                margin-bottom: 0.6rem; /* 0.8rem * 0.75 = 0.6rem */
+                font-size: 2.4rem; /* 3rem * 0.8 = 2.4rem */
+                margin-bottom: 0.8rem; /* 1rem * 0.8 = 0.8rem */
             }
             .profile-item-text {
-                font-size: 0.675rem; /* 0.9rem * 0.75 = 0.675rem */
-                white-space: nowrap; /* Prevent wrapping */
+                font-size: 0.88rem; /* 1.1rem * 0.8 = 0.88rem */
+            }
+            /* Adjust message box for desktop */
+            #messageBoxContent {
+                max-width: 64%; /* 80% * 0.8 = 64% */
+                padding: 1.2rem; /* 1.5rem * 0.8 = 1.2rem */
+            }
+            #messageBoxTitle {
+                font-size: 1.2rem; /* 1.5rem * 0.8 = 1.2rem */
+            }
+            #messageBoxBody {
+                font-size: 0.8rem; /* 1rem * 0.8 = 0.8rem */
+            }
+            .message-box-button {
+                padding: 0.6rem 1.2rem; /* 0.75rem * 0.8 = 0.6rem; 1.5rem * 0.8 = 1.2rem */
+                border-radius: 0.4rem; /* 0.5rem * 0.8 = 0.4rem */
+                margin: 0.4rem; /* 0.5rem * 0.8 = 0.4rem */
+            }
+        }
+
+        /* Responsive adjustments for smaller screens (Tablet and smaller) */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            .central-hub {
+                width: 75px;
+                height: 75px;
+                margin-top: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            .central-hub i {
+                font-size: 2.625rem;
+            }
+            .profile-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+                padding: 0.75rem;
+            }
+            .profile-item {
+                padding: 0.75rem;
+            }
+            .profile-item-icon {
+                font-size: 1.875rem;
+                margin-bottom: 0.6rem;
+            }
+            .profile-item-text {
+                font-size: 0.675rem;
+                white-space: nowrap;
             }
         }
 
         @media (max-width: 480px) { /* Mobile phones */
             body {
-                /* Change justification for mobile to move content higher */
-                justify-content: flex-start;
+                /* Removed justify-content: flex-start; to allow default centering */
                 padding-top: 1rem; /* Add some top padding to avoid content touching top edge */
-                padding-bottom: 2rem; /* Increased padding-bottom to ensure footer visibility */
+                /* Adjusted padding-bottom to account for absolutely positioned footer */
+                padding-bottom: 8rem; /* Increased padding-bottom for mobile to ensure footer visibility */
                 min-height: auto; /* Allow height to adjust based on content */
             }
+            /* Removed footer styling here as footer is now removed from HTML */
+
             header h1 {
                 font-size: 1.3125rem;
                 letter-spacing: 1.5px;
@@ -235,8 +293,8 @@
             .central-hub {
                 width: 60px;
                 height: 60px;
-                margin-top: 0.75rem; /* Reduced margin */
-                margin-bottom: 0.75rem; /* Reduced margin */
+                margin-top: 0.75rem;
+                margin-bottom: 0.75rem;
             }
             .profile-grid {
                 grid-template-columns: 1fr 1fr;
@@ -254,11 +312,6 @@
                 font-size: 0.6rem;
                 white-space: nowrap;
             }
-            footer p {
-                font-size: 0.525rem;
-                margin-top: 1.5rem; /* Increased margin-top for footer on mobile */
-            }
-
             /* Adjust message box for mobile */
             #messageBoxContent {
                 max-width: 70%; /* Reduced from 90% to 70% for smaller appearance */
@@ -371,7 +424,7 @@
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
+<body class="flex flex-col items-center justify-center min-h-screen relative">
 
     <!-- Animated Background Grid -->
     <div class="background-grid"></div>
@@ -438,10 +491,10 @@
         </a>
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-8 text-sm opacity-75">
+    <!-- Removed Footer -->
+    <!-- <footer class="mt-8 text-sm opacity-75">
         <p>Tạo bởi VanHoaiPC - Cập nhật lần cuối: 29/06/2025</p>
-    </footer>
+    </footer> -->
 
     <!-- Custom Message Box HTML -->
     <div id="messageBoxOverlay">
@@ -479,7 +532,7 @@
         let chipIcon; // Get chip element (Lấy element con chip)
         let header;
         let mainGrid;
-        let footer;
+        let footer; // Still reference it, but it's now removed from HTML. Be careful not to use it.
 
         // Game UI Elements
         let gameUI;
@@ -585,7 +638,8 @@
             chipIcon = document.getElementById('chipIcon');
             header = document.querySelector('header');
             mainGrid = document.querySelector('main.profile-grid');
-            footer = document.querySelector('footer');
+            // No longer querying the footer as it's removed from HTML
+            // footer = document.querySelector('footer');
 
             gameUI = document.getElementById('gameUI');
             scoreDisplay = document.getElementById('scoreDisplay');
@@ -1034,6 +1088,9 @@
                                 if (overlap > 0) {
                                     this.x += nx * overlap;
                                     this.y += ny * overlap;
+                                    // Make sure it doesn't get stuck too far inside
+                                    this.x = Math.max(0, Math.min(canvas.width, this.x));
+                                    this.y = Math.max(0, Math.min(canvas.height, this.y));
                                 }
 
                                 hitItems.set(`sphere-${this.uniqueId}-circle-${circle.id}`, true);
@@ -1263,6 +1320,7 @@
                 isManaActive = false; // Reset mana active state
                 updateManaUI(); // Update mana UI on game start
                 chipIcon.style.color = '#00e5ff'; // Reset chip color
+                chipIcon.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.9)'; // Ensure chip glow is reset to original
 
                 // Set player position to current centralHub position for smooth transition
                 const currentHubRect = getElementRect(centralHub);
@@ -1308,6 +1366,7 @@
                 clearTimeout(specialWeaponActiveTimeout); // Clear active special weapon timer
                 isManaActive = false; // Reset special weapon state
                 chipIcon.style.color = '#00e5ff'; // Reset chip color on game end
+                chipIcon.style.textShadow = '0 0 15px rgba(0, 229, 255, 0.9)'; // Reset chip glow on game end
                 updateManaUI(); // Ensure mana UI resets
 
                 // Trigger all existing spheres to explode and disappear
@@ -1342,8 +1401,8 @@
                 if (showGame) {
                     header.style.display = 'none';
                     mainGrid.style.display = 'none';
-                    footer.style.display = 'none';
-                    // Removed manaDisplay.style.display = 'flex'; as it's now part of gameUI visibility
+                    // No longer setting footer display as it's removed
+                    // footer.style.display = 'none';
 
                     centralHub.style.position = 'absolute'; // For game movement
                     centralHub.style.zIndex = '50';
@@ -1356,8 +1415,8 @@
                 } else {
                     header.style.display = 'block';
                     mainGrid.style.display = 'grid'; // Revert to grid
-                    footer.style.display = 'block';
-                    // Removed manaDisplay.style.display = 'none'; as it's now part of gameUI visibility
+                    // No longer setting footer display as it's removed
+                    // footer.style.display = 'block';
 
                     // Crucial fix: Reset centralHub styles to default profile state
                     // Restore original styles explicitly
@@ -1831,7 +1890,8 @@
                     `
                     Tên: Đoàn Văn Hoài<br>
                     SĐT: 0977269xxx<br>
-                    Email: doanvanhoai07@gmail.com
+                    Email: doanvanhoai07@gmail.com<br><br>
+                    Tạo bởi VanHoaiPC - Cập nhật lần cuối: 29/06/2025
                     `
                 );
             });
