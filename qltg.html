@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tài Khoản</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .input-group label {
+            font-weight: 500;
+            color: #4b5563;
+        }
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-delete {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+        .btn-edit {
+            background-color: #f59e0b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .btn-edit:hover {
+            background-color: #d97706;
+        }
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .account-item:hover {
+            background-color: #f3f4f6;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        .google-signin-btn {
+            background-color: white;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .google-signin-btn:hover {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="container mt-8">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Quản Lý Tài Khoản</h1>
+
+        <!-- Khu vực đăng nhập/hiển thị người dùng -->
+        <div id="authSection" class="flex flex-col items-center mb-6 space-y-4">
+            <!-- Sẽ hiển thị các nút/thông tin người dùng ở đây -->
+        </div>
+
+        <!-- Form nhập liệu -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Thêm Tài Khoản Mới</h2>
+            <form id="accountForm" class="space-y-4">
+                <div class="input-group">
+                    <label for="accountType" class="block text-sm">Loại tài khoản</label>
+                    <select id="accountType" class="mt-1 block w-full rounded-lg border-gray-300">
+                        <option value="Google">Google</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="Zalo">Zalo</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="username" class="block text-sm">Tên đăng nhập</label>
+                    <input type="text" id="username" placeholder="Tên đăng nhập" class="rounded-lg border-gray-300" required>
+                </div>
+                <div class="input-group">
+                    <label for="password" class="block text-sm">Mật khẩu</label>
+                    <input type="password" id="password" placeholder="Mật khẩu gợi ý" class="rounded-lg border-gray-300" required>
+                </div>
+                <div class="input-group">
+                    <label for="credit" class="block text-sm">Credit</label>
+                    <input type="text" id="credit" placeholder="Ví dụ: 100,000 VNĐ" class="rounded-lg border-gray-300">
+                </div>
+                <div class="input-group">
+                    <label for="vip" class="block text-sm">Thời hạn VIP</label>
+                    <input type="date" id="vip" class="rounded-lg border-gray-300">
+                </div>
+                <div class="input-group">
+                    <label for="features" class="block text-sm">Tính năng đặc biệt</label>
+                    <textarea id="features" rows="2" placeholder="Ví dụ: Có gói premium" class="rounded-lg border-gray-300"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="link" class="block text-sm">Link web hoặc app</label>
+                    <input type="url" id="link" placeholder="https://example.com" class="rounded-lg border-gray-300">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn-primary w-full">Thêm Tài Khoản</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Danh sách tài khoản -->
+        <div class="card">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Danh Sách Tài Khoản</h2>
+            <div class="flex items-center mb-4 space-x-2">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm tài khoản..." class="flex-grow rounded-lg border-gray-300">
+                <select id="sortSelect" class="rounded-lg border-gray-300">
+                    <option value="default">Sắp xếp mặc định</option>
+                    <option value="accountType">Theo Loại tài khoản</option>
+                    <option value="username">Theo Tên đăng nhập</option>
+                </select>
+            </div>
+            <div id="accountList" class="space-y-3">
+                <!-- Tài khoản sẽ được thêm vào đây bằng JavaScript -->
+            </div>
+            <p id="noAccountsMessage" class="text-center text-gray-500 mt-4 hidden">
+                Chưa có tài khoản nào được lưu.
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal chi tiết tài khoản -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close-btn">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4" id="modalTitle">Chi Tiết Tài Khoản</h2>
+            <div id="modalContent" class="space-y-3 text-gray-700">
+                <!-- Chi tiết tài khoản sẽ được hiển thị ở đây -->
+            </div>
+            <div class="mt-6 flex justify-end gap-2">
+                <button id="closeModalBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">Đóng</button>
+                <button id="editAccountBtn" class="btn-edit px-4 py-2 rounded-lg font-medium">Chỉnh Sửa</button>
+                <button id="deleteAccountBtn" class="btn-delete px-4 py-2 rounded-lg font-medium">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chỉnh sửa tài khoản -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close-btn">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Chỉnh Sửa Tài Khoản</h2>
+            <form id="editForm" class="space-y-4">
+                <div class="input-group">
+                    <label for="editAccountType" class="block text-sm">Loại tài khoản</label>
+                    <select id="editAccountType" class="mt-1 block w-full rounded-lg border-gray-300">
+                        <option value="Google">Google</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="Zalo">Zalo</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="editUsername" class="block text-sm">Tên đăng nhập</label>
+                    <input type="text" id="editUsername" required class="rounded-lg border-gray-300">
+                </div>
+                <div class="input-group">
+                    <label for="editPassword" class="block text-sm">Mật khẩu</label>
+                    <input type="password" id="editPassword" required class="rounded-lg border-gray-300">
+                </div>
+                <div class="input-group">
+                    <label for="editCredit" class="block text-sm">Credit</label>
+                    <input type="text" id="editCredit" class="rounded-lg border-gray-300">
+                </div>
+                <div class="input-group">
+                    <label for="editVip" class="block text-sm">Thời hạn VIP</label>
+                    <input type="date" id="editVip" class="rounded-lg border-gray-300">
+                </div>
+                <div class="input-group">
+                    <label for="editFeatures" class="block text-sm">Tính năng đặc biệt</label>
+                    <textarea id="editFeatures" rows="2" class="rounded-lg border-gray-300"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="editLink" class="block text-sm">Link web hoặc app</label>
+                    <input type="url" id="editLink" class="rounded-lg border-gray-300">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn-primary w-full">Lưu Thay Đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal xác nhận xóa -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Xác Nhận Xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa tài khoản này không?</p>
+            <div class="mt-6 flex justify-end gap-2">
+                <button id="cancelDeleteBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">Hủy</button>
+                <button id="confirmDeleteBtn" class="btn-delete px-4 py-2 rounded-lg font-medium">Xóa</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal lỗi -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Lỗi Đăng Nhập</h2>
+            <p id="errorMessage"></p>
+            <div class="mt-6 flex justify-end gap-2">
+                <button id="closeErrorModalBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            addDoc, 
+            updateDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            query
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        
+        // Cấp độ log để debug
+        setLogLevel('debug');
+        
+        // Biến môi trường Canvas (được giữ lại cho môi trường này)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // --- Cấu hình Firebase ---
+        // Cấu hình này được nhúng trực tiếp để ứng dụng chạy độc lập ở bất kỳ đâu.
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKPlRFQuY7C5YyZBsnYyIcuUspicOuMN8",
+            authDomain: "quan-ly-tai-khoan-20db8.firebaseapp.com",
+            projectId: "quan-ly-tai-khoan-20db8",
+            storageBucket: "quan-ly-tai-khoan-20db8.firebasestorage.app",
+            messagingSenderId: "450908286117",
+            appId: "1:450908286117:web:c4407fe99091c99df8714c",
+            measurementId: "G-J29RNHG8GZ"
+        };
+
+        // --- Khởi tạo và Xác thực Firebase ---
+        let app, db, auth;
+        let userId = null;
+        let accounts = [];
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            console.log("Firebase initialized successfully.");
+
+        } catch (error) {
+            console.error("Lỗi khi khởi tạo Firebase:", error);
+            document.getElementById('errorMessage').innerText = "Không thể kết nối với dịch vụ Firebase. Vui lòng thử lại sau.";
+            errorModal.classList.remove('hidden');
+        }
+
+        // UI elements
+        const authSection = document.getElementById('authSection');
+        const form = document.getElementById('accountForm');
+        const accountList = document.getElementById('accountList');
+        const noAccountsMessage = document.getElementById('noAccountsMessage');
+        const detailsModal = document.getElementById('detailsModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const editAccountBtn = document.getElementById('editAccountBtn');
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        const modalCloseBtn = document.querySelector('#detailsModal .modal-close-btn');
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
+        const editModalCloseBtn = document.querySelector('#editModal .modal-close-btn');
+        const confirmModal = document.getElementById('confirmModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const errorModal = document.getElementById('errorModal');
+        const errorMessage = document.getElementById('errorMessage');
+        const closeErrorModalBtn = document.getElementById('closeErrorModalBtn');
+        let currentAccountId = null;
+        
+        // Đăng nhập với Google - Đây là phương thức đăng nhập vĩnh viễn.
+        // Nó cung cấp một ID duy nhất có thể sử dụng trên mọi thiết bị.
+        const signInWithGoogle = async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Lỗi đăng nhập:", error);
+                document.getElementById('errorMessage').innerText = "Không thể đăng nhập với Google. Vui lòng thử lại.";
+                errorModal.classList.remove('hidden');
+            }
+        };
+
+        // Quản lý trạng thái xác thực
+        onAuthStateChanged(auth, (user) => {
+            authSection.innerHTML = '';
+            if (user) {
+                userId = user.uid;
+                authSection.innerHTML = `
+                    <p class="text-center text-gray-500 mb-2">
+                        Đã đăng nhập với: <span class="font-semibold text-gray-800">${user.displayName || user.email || "Người dùng ẩn danh"}</span>
+                    </p>
+                    <!-- User ID là duy nhất và được sử dụng để đồng bộ dữ liệu trên các thiết bị khác nhau -->
+                    <p class="text-center text-sm text-gray-500">
+                        ID người dùng: <span class="font-bold text-gray-800">${userId}</span>
+                    </p>
+                `;
+
+                // Lắng nghe thay đổi dữ liệu trên Firestore
+                const accountsRef = collection(db, `/artifacts/${appId}/public/data/accounts`);
+                onSnapshot(accountsRef, (snapshot) => {
+                    accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderFilteredAccounts();
+                }, (error) => {
+                    console.error("Lỗi khi tải tài khoản:", error);
+                    document.getElementById('errorMessage').innerText = "Lỗi khi tải danh sách tài khoản. Vui lòng thử lại.";
+                    errorModal.classList.remove('hidden');
+                });
+            } else {
+                userId = null;
+                authSection.innerHTML = `
+                    <p class="text-center text-sm text-gray-500 mb-2">Vui lòng đăng nhập để sử dụng</p>
+                    <button id="googleSignInBtn" class="google-signin-btn">
+                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22.675 12.001c0-.782-.068-1.536-.188-2.268H12v4.512h6.436a5.597 5.597 0 01-2.43 3.668v2.964h3.834a10.063 10.063 0 003.352-7.876z" fill="#4285F4"/>
+                            <path d="M12 23.999c3.228 0 5.928-1.076 7.904-2.915l-3.834-2.964c-1.066.726-2.43 1.155-4.07 1.155-3.138 0-5.795-2.115-6.727-4.965H1.416v2.963C3.414 21.365 7.425 23.999 12 23.999z" fill="#34A853"/>
+                            <path d="M5.273 14.221c-.256-.726-.402-1.508-.402-2.29s.146-1.564.402-2.29V6.702H1.416c-.957 1.89-1.516 4.026-1.516 6.297s.559 4.406 1.516 6.297L5.273 14.221z" fill="#FBBC05"/>
+                            <path d="M12 4.999c1.769 0 3.328.608 4.568 1.768L19.463 3C17.487 1.14 14.787-.001 12-.001c-4.575 0-8.586 2.634-10.584 6.645l3.857 2.964c.932-2.85 3.59-4.965 6.727-4.965z" fill="#EA4335"/>
+                        </svg>
+                        Đăng nhập với Google
+                    </button>
+                `;
+                document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
+            }
+        });
+
+        // Hàm render danh sách tài khoản đã lọc và sắp xếp
+        function renderFilteredAccounts() {
+            accountList.innerHTML = '';
+            const searchTerm = searchInput.value.toLowerCase();
+            const sortType = sortSelect.value;
+            
+            let filteredAccounts = accounts.filter(account => 
+                (account.username && account.username.toLowerCase().includes(searchTerm)) || 
+                (account.accountType && account.accountType.toLowerCase().includes(searchTerm))
+            );
+
+            if (sortType === 'accountType') {
+                filteredAccounts.sort((a, b) => (a.accountType || '').localeCompare(b.accountType || ''));
+            } else if (sortType === 'username') {
+                filteredAccounts.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+            }
+
+            if (filteredAccounts.length === 0) {
+                noAccountsMessage.classList.remove('hidden');
+            } else {
+                noAccountsMessage.classList.add('hidden');
+                filteredAccounts.forEach(account => {
+                    const accountItem = document.createElement('div');
+                    accountItem.className = 'account-item';
+                    accountItem.innerHTML = `
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">${account.username || 'Không rõ'}</h3>
+                            <p class="text-sm text-gray-500">${account.accountType || 'Không rõ'}</p>
+                        </div>
+                    `;
+                    accountItem.onclick = () => showAccountDetails(account.id);
+                    accountList.appendChild(accountItem);
+                });
+            }
+        }
+
+        // Hàm hiển thị chi tiết tài khoản trong modal
+        function showAccountDetails(id) {
+            const account = accounts.find(acc => acc.id === id);
+            if (!account) return;
+
+            currentAccountId = id;
+            modalContent.innerHTML = `
+                <p><span class="font-semibold">Loại tài khoản:</span> ${account.accountType || 'Không có'}</p>
+                <p><span class="font-semibold">Tên đăng nhập:</span> ${account.username || 'Không có'}</p>
+                <p><span class="font-semibold">Mật khẩu:</span> <span id="passwordText">${'*'.repeat(account.password ? account.password.length : 0)}</span>
+                    <button id="togglePassword" class="ml-2 text-sm text-blue-500 hover:text-blue-700 focus:outline-none">Hiển thị</button>
+                    <button id="copyPassword" class="ml-2 text-sm text-green-500 hover:text-green-700 focus:outline-none">Sao chép</button>
+                </p>
+                <p><span class="font-semibold">Credit:</span> ${account.credit || 'Không có'}</p>
+                <p><span class="font-semibold">Thời hạn VIP:</span> ${account.vip || 'Không có'}</p>
+                <p><span class="font-semibold">Tính năng:</span> ${account.features || 'Không có'}</p>
+                <p><span class="font-semibold">Link web/app:</span> <a href="${account.link}" target="_blank" class="text-blue-500 hover:underline">${account.link || 'Không có'}</a></p>
+            `;
+            
+            // Bật/tắt hiển thị mật khẩu
+            document.getElementById('togglePassword').onclick = () => {
+                const passwordSpan = document.getElementById('passwordText');
+                const toggleBtn = document.getElementById('togglePassword');
+                if (passwordSpan.textContent.includes('*')) {
+                    passwordSpan.textContent = account.password;
+                    toggleBtn.textContent = 'Ẩn';
+                } else {
+                    passwordSpan.textContent = '*'.repeat(account.password.length);
+                    toggleBtn.textContent = 'Hiển thị';
+                }
+            };
+
+            // Sao chép mật khẩu vào clipboard
+            document.getElementById('copyPassword').onclick = () => {
+                const el = document.createElement('textarea');
+                el.value = account.password;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            };
+
+            detailsModal.classList.remove('hidden');
+        }
+
+        // --- Các sự kiện chính ---
+        // Thêm tài khoản mới
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userId) {
+                document.getElementById('errorMessage').innerText = "Vui lòng đăng nhập để thêm tài khoản.";
+                errorModal.classList.remove('hidden');
+                return;
+            }
+
+            const newAccount = {
+                accountType: document.getElementById('accountType').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                credit: document.getElementById('credit').value,
+                vip: document.getElementById('vip').value,
+                features: document.getElementById('features').value,
+                link: document.getElementById('link').value,
+            };
+
+            try {
+                const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/accounts`), newAccount);
+                console.log("Document written with ID: ", docRef.id);
+                form.reset();
+            } catch (e) {
+                console.error("Lỗi khi thêm tài khoản: ", e);
+                document.getElementById('errorMessage').innerText = "Lỗi khi thêm tài khoản. Vui lòng thử lại.";
+                errorModal.classList.remove('hidden');
+            }
+        });
+
+        // Nút chỉnh sửa tài khoản
+        editAccountBtn.addEventListener('click', () => {
+            detailsModal.classList.add('hidden');
+            const account = accounts.find(acc => acc.id === currentAccountId);
+            if (!account) return;
+
+            document.getElementById('editAccountType').value = account.accountType;
+            document.getElementById('editUsername').value = account.username;
+            document.getElementById('editPassword').value = account.password;
+            document.getElementById('editCredit').value = account.credit;
+            document.getElementById('editVip').value = account.vip;
+            document.getElementById('editFeatures').value = account.features;
+            document.getElementById('editLink').value = account.link;
+            
+            editModal.classList.remove('hidden');
+        });
+        
+        // Lưu thay đổi tài khoản
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userId) {
+                document.getElementById('errorMessage').innerText = "Vui lòng đăng nhập để chỉnh sửa tài khoản.";
+                errorModal.classList.remove('hidden');
+                return;
+            }
+
+            const accountRef = doc(db, `/artifacts/${appId}/public/data/accounts`, currentAccountId);
+            const updatedData = {
+                accountType: document.getElementById('editAccountType').value,
+                username: document.getElementById('editUsername').value,
+                password: document.getElementById('editPassword').value,
+                credit: document.getElementById('editCredit').value,
+                vip: document.getElementById('editVip').value,
+                features: document.getElementById('editFeatures').value,
+                link: document.getElementById('editLink').value,
+            };
+
+            try {
+                await updateDoc(accountRef, updatedData);
+                editModal.classList.add('hidden');
+            } catch (e) {
+                console.error("Lỗi khi cập nhật tài khoản:", e);
+                document.getElementById('errorMessage').innerText = "Lỗi khi cập nhật tài khoản. Vui lòng thử lại.";
+                errorModal.classList.remove('hidden');
+            }
+        });
+
+        // Nút xóa tài khoản
+        deleteAccountBtn.addEventListener('click', () => {
+            detailsModal.classList.add('hidden');
+            confirmModal.classList.remove('hidden');
+        });
+        
+        // Xác nhận xóa
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!userId) {
+                document.getElementById('errorMessage').innerText = "Vui lòng đăng nhập để xóa tài khoản.";
+                errorModal.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, `/artifacts/${appId}/public/data/accounts`, currentAccountId));
+                confirmModal.classList.add('hidden');
+            } catch (e) {
+                console.error("Lỗi khi xóa tài khoản:", e);
+                document.getElementById('errorMessage').innerText = "Lỗi khi xóa tài khoản. Vui lòng thử lại.";
+                errorModal.classList.remove('hidden');
+            }
+        });
+
+        // Hủy xóa
+        cancelDeleteBtn.addEventListener('click', () => {
+            confirmModal.classList.add('hidden');
+        });
+
+        // Sự kiện đóng modal
+        closeModalBtn.addEventListener('click', () => detailsModal.classList.add('hidden'));
+        modalCloseBtn.addEventListener('click', () => detailsModal.classList.add('hidden'));
+        editModalCloseBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+        closeErrorModalBtn.addEventListener('click', () => errorModal.classList.add('hidden'));
+        
+        window.onclick = (event) => {
+            if (event.target == detailsModal) {
+                detailsModal.classList.add('hidden');
+            }
+            if (event.target == editModal) {
+                editModal.classList.add('hidden');
+            }
+            if (event.target == confirmModal) {
+                confirmModal.classList.add('hidden');
+            }
+            if (event.target == errorModal) {
+                errorModal.classList.add('hidden');
+            }
+        };
+        
+        // Sự kiện tìm kiếm và sắp xếp
+        searchInput.addEventListener('input', renderFilteredAccounts);
+        sortSelect.addEventListener('change', renderFilteredAccounts);
+    </script>
+</body>
+</html>
