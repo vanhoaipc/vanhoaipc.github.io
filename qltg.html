@@ -290,7 +290,7 @@
             getAuth, 
             onAuthStateChanged,
             GoogleAuthProvider,
-            signInWithPopup
+            signInWithPopup,
         } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { 
             getFirestore, 
@@ -307,11 +307,8 @@
         // Cấp độ log để debug
         setLogLevel('debug');
         
-        // Biến môi trường Canvas (được giữ lại cho môi trường này)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-        // --- Cấu hình Firebase ---
-        // Cấu hình này được nhúng trực tiếp để ứng dụng chạy độc lập ở bất kỳ đâu.
+        // Cấu hình Firebase để chạy độc lập
+        // Đây là thông tin cần thiết để ứng dụng kết nối với Firebase ở bất kỳ đâu
         const firebaseConfig = {
             apiKey: "AIzaSyAKPlRFQuY7C5YyZBsnYyIcuUspicOuMN8",
             authDomain: "quan-ly-tai-khoan-20db8.firebaseapp.com",
@@ -321,8 +318,10 @@
             appId: "1:450908286117:web:c4407fe99091c99df8714c",
             measurementId: "G-J29RNHG8GZ"
         };
+        
+        // Biến môi trường Canvas (được giữ lại cho môi trường này)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        // --- Khởi tạo và Xác thực Firebase ---
         let app, db, auth;
         let userId = null;
         let accounts = [];
@@ -332,7 +331,6 @@
             db = getFirestore(app);
             auth = getAuth(app);
             console.log("Firebase initialized successfully.");
-
         } catch (error) {
             console.error("Lỗi khi khởi tạo Firebase:", error);
             document.getElementById('errorMessage').innerText = "Không thể kết nối với dịch vụ Firebase. Vui lòng thử lại sau.";
@@ -380,22 +378,23 @@
             }
         };
 
-        // Quản lý trạng thái xác thực
+        // Quản lý trạng thái xác thực. 
+        // Hàm này chạy mỗi khi trạng thái đăng nhập thay đổi (khi tải trang, đăng nhập/đăng xuất).
         onAuthStateChanged(auth, (user) => {
             authSection.innerHTML = '';
             if (user) {
                 userId = user.uid;
                 authSection.innerHTML = `
                     <p class="text-center text-gray-500 mb-2">
-                        Đã đăng nhập với: <span class="font-semibold text-gray-800">${user.displayName || user.email || "Người dùng ẩn danh"}</span>
+                        Đã đăng nhập với: <span class="font-semibold text-gray-800">${user.displayName || user.email}</span>
                     </p>
-                    <!-- User ID là duy nhất và được sử dụng để đồng bộ dữ liệu trên các thiết bị khác nhau -->
                     <p class="text-center text-sm text-gray-500">
                         ID người dùng: <span class="font-bold text-gray-800">${userId}</span>
                     </p>
                 `;
 
-                // Lắng nghe thay đổi dữ liệu trên Firestore
+                // Lắng nghe thay đổi dữ liệu trên Firestore ngay sau khi xác thực thành công.
+                // Đây là bước quan trọng để tải và đồng bộ dữ liệu khi tải lại trang.
                 const accountsRef = collection(db, `/artifacts/${appId}/public/data/accounts`);
                 onSnapshot(accountsRef, (snapshot) => {
                     accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
