@@ -371,7 +371,11 @@
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Lỗi đăng nhập:", error);
-                document.getElementById('errorMessage').innerText = "Không thể đăng nhập với Google. Vui lòng thử lại.";
+                if (error.code === 'auth/unauthorized-domain') {
+                    document.getElementById('errorMessage').innerText = "Tên miền này không được cấp phép. Vui lòng truy cập Bảng điều khiển Firebase, vào phần Authentication -> Settings -> Authorized domains và thêm tên miền của bạn (ví dụ: localhost) vào danh sách.";
+                } else {
+                    document.getElementById('errorMessage').innerText = "Không thể đăng nhập với Google. Vui lòng thử lại.";
+                }
                 errorModal.classList.remove('hidden');
             }
         };
