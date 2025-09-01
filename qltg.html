@@ -125,6 +125,17 @@
         .google-signin-btn:hover {
             background-color: #f9fafb;
         }
+        .btn-logout {
+            background-color: #6b7280;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: #4b5563;
+        }
     </style>
 </head>
 <body class="bg-gray-100 p-4">
@@ -291,6 +302,7 @@
             onAuthStateChanged,
             GoogleAuthProvider,
             signInWithPopup,
+            signOut
         } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { 
             getFirestore, 
@@ -362,7 +374,6 @@
         let currentAccountId = null;
         
         // Đăng nhập với Google - Đây là phương thức đăng nhập vĩnh viễn.
-        // Nó cung cấp một ID duy nhất có thể sử dụng trên mọi thiết bị.
         const signInWithGoogle = async () => {
             const provider = new GoogleAuthProvider();
             try {
@@ -375,6 +386,15 @@
                     document.getElementById('errorMessage').innerText = "Không thể đăng nhập với Google. Vui lòng thử lại.";
                 }
                 errorModal.classList.remove('hidden');
+            }
+        };
+
+        const handleLogout = async () => {
+            try {
+                await signOut(auth);
+                console.log("Đã đăng xuất thành công.");
+            } catch (error) {
+                console.error("Lỗi khi đăng xuất:", error);
             }
         };
 
@@ -391,11 +411,13 @@
                     <p class="text-center text-sm text-gray-500">
                         ID người dùng: <span class="font-bold text-gray-800">${userId}</span>
                     </p>
+                    <button id="logoutBtn" class="btn-logout">Đăng xuất</button>
                 `;
+                document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
                 // Lắng nghe thay đổi dữ liệu trên Firestore ngay sau khi xác thực thành công.
-                // Đây là bước quan trọng để tải và đồng bộ dữ liệu khi tải lại trang.
-                const accountsRef = collection(db, `/artifacts/${appId}/public/data/accounts`);
+                // Bây giờ dữ liệu được lưu vào một bộ sưu tập riêng tư, chỉ liên kết với ID người dùng của bạn.
+                const accountsRef = collection(db, `/artifacts/${appId}/users/${userId}/accounts`);
                 onSnapshot(accountsRef, (snapshot) => {
                     accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderFilteredAccounts();
@@ -524,7 +546,8 @@
             };
 
             try {
-                const docRef = await addDoc(collection(db, `/artifacts/${appId}/public/data/accounts`), newAccount);
+                // Lưu dữ liệu vào bộ sưu tập riêng tư của người dùng
+                const docRef = await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/accounts`), newAccount);
                 console.log("Document written with ID: ", docRef.id);
                 form.reset();
             } catch (e) {
@@ -560,7 +583,8 @@
                 return;
             }
 
-            const accountRef = doc(db, `/artifacts/${appId}/public/data/accounts`, currentAccountId);
+            // Cập nhật dữ liệu trong bộ sưu tập riêng tư của người dùng
+            const accountRef = doc(db, `/artifacts/${appId}/users/${userId}/accounts`, currentAccountId);
             const updatedData = {
                 accountType: document.getElementById('editAccountType').value,
                 username: document.getElementById('editUsername').value,
@@ -596,7 +620,8 @@
             }
 
             try {
-                await deleteDoc(doc(db, `/artifacts/${appId}/public/data/accounts`, currentAccountId));
+                // Xóa dữ liệu trong bộ sưu tập riêng tư của người dùng
+                await deleteDoc(doc(db, `/artifacts/${appId}/users/${userId}/accounts`, currentAccountId));
                 confirmModal.classList.add('hidden');
             } catch (e) {
                 console.error("Lỗi khi xóa tài khoản:", e);
