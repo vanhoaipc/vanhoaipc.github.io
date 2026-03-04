@@ -74,7 +74,7 @@
         .product-list-header, .product-item {
             display: flex;
             align-items: center;
-            gap: 10px; /* Khoảng cách giữa các phần tử */
+            gap: 15px; /* Khoảng cách giữa các phần tử */
             flex-wrap: nowrap; /* QUAN TRỌNG: Ngăn chặn xuống dòng trên mọi màn hình */
             overflow-x: auto; /* Cho phép cuộn ngang nếu nội dung tràn */
             -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
@@ -111,7 +111,7 @@
 
         /* Specific widths (proportions) for desktop layout */
         .name-header, .name-field {
-            flex-basis: 35%; /* Tên sản phẩm chiếm khoảng 35% */
+            flex-basis: 30%; /* Tên sản phẩm chiếm khoảng 30% */
         }
 
         .quantity-header, .quantity-field {
@@ -124,12 +124,12 @@
         }
 
         .price-header, .price-field {
-            flex-basis: 25%; /* Đơn giá chiếm khoảng 25% */
-            text-align: right; /* Căn chỉnh giá sang phải */
+            flex-basis: 18%; /* Đơn giá chiếm khoảng 18% (giảm từ 20%) */
+            text-align: center; /* Căn giữa nội dung đơn giá */
         }
         .price-field input {
             width: 100%; /* Input đơn giá lấp đầy vùng chứa */
-            text-align: right; /* Căn chỉnh văn bản nhập sang phải */
+            text-align: center; /* Căn giữa nội dung đơn giá */
         }
 
         .remove-header, .remove-product-button {
@@ -243,7 +243,6 @@
             margin-bottom: 10px;
         }
         .summary-header .contact-info {
-            /* Changed to black and bold */
             color: #000; /* Changed to black */
             font-weight: bold;
             font-size: 0.8em; /* Keeping original size or adjust as needed */
@@ -467,14 +466,14 @@
 
             /* Specific column sizing on mobile: Proportional and shrinkable */
             .name-header, .name-field {
-                flex-basis: 35%; /* Relative proportion */
-                min-width: 60px; /* Practical minimum width */
+                flex-basis: 40%; /* Tăng flex-basis cho tên sản phẩm */
+                min-width: 75px; /* Tăng min-width cho tên sản phẩm */
                 text-align: left;
             }
 
             .quantity-header, .quantity-field {
-                flex-basis: 15%; /* Smaller proportion */
-                min-width: 35px;
+                flex-basis: 15%; /* Vẫn giữ 15% */
+                min-width: 30px;
                 text-align: center;
             }
             .quantity-field input {
@@ -482,22 +481,22 @@
             }
 
             .price-header, .price-field {
-                flex-basis: 25%; /* Medium proportion */
-                min-width: 50px;
-                text-align: right; /* Changed to right for header */
+                flex-basis: 20%; /* Giảm flex-basis cho đơn giá */
+                min-width: 40px; /* Giảm min-width cho đơn giá */
+                text-align: center; /* Căn giữa nội dung đơn giá */
             }
             .price-field input {
-                text-align: right;
+                text-align: center; /* Căn giữa nội dung đơn giá */
             }
 
             .remove-header {
-                flex-basis: 20%; /* Button column */
+                flex-basis: 15%; /* Vẫn giữ 15% */
                 min-width: 30px;
                 text-align: center;
             }
             .remove-product-button {
-                flex-basis: 20%; /* Match header proportion */
-                min-width: 30px;
+                flex-basis: 10%; /* Giảm flex-basis cho nút xóa */
+                min-width: 25px; /* Vẫn giữ 25px */
                 padding: 4px 6px;
                 font-size: 0.65em;
             }
@@ -609,12 +608,12 @@
             <p>NHÀ PHÂN PHỐI KHẨU TRANG</p>
             <p class="company-name">KHÁNH AN 5D NAM ANH</p>
             <p class="branch-info">CHUYÊN PHÂN PHỐI KHẨU TRANG SỐ LƯỢNG LỚN</p>
-            <p class="contact-info">Vietcombank - 0281000270009 - Luân Văn Phong ** Zalo: 0372.427.609 **</p>
+            <p class="contact-info">Vietcombank - 0281000270009 - Luân Văn Phong **Zalo: 0372.427.609**</p>
             <p class="doc-title">PHIẾU XUẤT KHO</p>
             <!-- Combined customer name and date details -->
             <div class="customer-and-date-details">
                 <div>Tên khách hàng: <span id="summaryCustomerName"></span></div>
-                <div>Ngày: <span id="summarySaleDate" style="color: #000; font-weight: normal; font-size: 1em;"></span></div>
+                <div>Ngày: <span id="summarySaleDate"></span></div>
             </div>
         </div>
 
@@ -684,10 +683,10 @@
                     <input type="text" class="product-name-input" placeholder="Nhập tên sản phẩm" id="productName_${productRowCounter}">
                 </div>
                 <div class="product-field quantity-field">
-                    <input type="number" class="quantity-input" value="0" min="0" id="productQuantity_${productRowCounter}">
+                    <input type="number" class="quantity-input" value="0" min="0" id="productQuantity_${productRowCounter}" onfocus="if(this.value === '0') this.value = '';">
                 </div>
                 <div class="product-field price-field">
-                    <input type="number" class="product-price-input" placeholder="Nhập đơn giá" value="0" min="0" id="productPrice_${productRowCounter}">
+                    <input type="number" class="product-price-input" placeholder="Nhập đơn giá" value="0" min="0" id="productPrice_${productRowCounter}" onfocus="if(this.value === '0') this.value = '';">
                 </div>
                 <button class="remove-product-button" onclick="removeProductRow(this)">Xóa</button>
             `;
@@ -806,7 +805,7 @@
         /**
          * Formats an amount with 'VNĐ' currency unit.
          * @param {number} amount - The amount to format.
-         * @returns {string} The formatted currency string.
+         * @returns {string} Chuỗi tiền đã định dạng.
          */
         function formatCurrencyWithVND(amount) {
             return amount.toLocaleString('vi-VN') + ' VNĐ';
@@ -815,7 +814,7 @@
         /**
          * Formats an amount without 'VNĐ' currency unit.
          * @param {number} amount - The amount to format.
-         * @returns {string} The formatted currency string.
+         * @returns {string} Chuỗi tiền đã định dạng.
          */
         function formatCurrencyWithoutVND(amount) {
             return amount.toLocaleString('vi-VN');
