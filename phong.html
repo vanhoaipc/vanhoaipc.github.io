@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chọn Sản Phẩm & Thanh toán</title>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0; /* Loại bỏ margin mặc định của body */
+            padding: 0; /* Loại bỏ padding mặc định của body */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex-grow: 1; /* Cho phép container giãn nở theo chiều cao */
+            width: calc(100% - 40px); /* 100% chiều rộng trừ đi 20px padding mỗi bên trên desktop */
+            box-sizing: border-box; /* Bao gồm padding trong tính toán chiều rộng */
+        }
+        h1, h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        /* Customer Info Input Fields */
+        .customer-input-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .customer-input-section div { /* Each div contains a label and an input (Name or Date) */
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+            flex-wrap: wrap; /* Allow wrapping of label/input pairs on very small screens if necessary */
+        }
+        .customer-input-section label {
+            font-weight: bold;
+            color: #555;
+            min-width: 100px; /* Align labels */
+            flex-shrink: 0;
+        }
+        .customer-input-section input[type="text"],
+        .customer-input-section input[type="date"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            outline: none;
+            min-width: 180px; /* Ensure input fields don't get too small on larger screens */
+        }
+        .customer-input-section input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* Product List Styling */
+        .product-list-header, .product-item {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Khoảng cách giữa các phần tử */
+            flex-wrap: nowrap; /* QUAN TRỌNG: Ngăn chặn xuống dòng trên mọi màn hình */
+            overflow-x: auto; /* Cho phép cuộn ngang nếu nội dung tràn */
+            -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+            padding-bottom: 5px; /* Thêm padding cho thanh cuộn tiềm năng */
+            justify-content: space-between; /* Phân phối không gian đều giữa các mục */
+            width: 100%; /* Đảm bảo nó chiếm toàn bộ chiều rộng khả dụng */
+            box-sizing: border-box;
+        }
+
+        .product-list-header {
+            padding: 10px 0;
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .product-item {
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+            margin-bottom: 10px;
+        }
+        .product-item:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Base styles for header labels and product fields */
+        .header-label, .product-field {
+            flex-grow: 1; /* Cho phép các trường giãn nở */
+            flex-shrink: 1; /* Cho phép các trường co lại */
+            min-width: 80px; /* Chiều rộng tối thiểu mặc định */
+            text-align: left; /* Căn chỉnh văn bản mặc định */
+        }
+
+        /* Specific widths (proportions) for desktop layout */
+        .name-header, .name-field {
+            flex-basis: 35%; /* Tên sản phẩm chiếm khoảng 35% */
+        }
+
+        .quantity-header, .quantity-field {
+            flex-basis: 15%; /* Số lượng chiếm khoảng 15% */
+            text-align: center;
+        }
+        .quantity-field input {
+            width: 100%; /* Input số lượng lấp đầy vùng chứa */
+            text-align: center;
+        }
+
+        .price-header, .price-field {
+            flex-basis: 25%; /* Đơn giá chiếm khoảng 25% */
+            text-align: right; /* Căn chỉnh giá sang phải */
+        }
+        .price-field input {
+            width: 100%; /* Input đơn giá lấp đầy vùng chứa */
+            text-align: right; /* Căn chỉnh văn bản nhập sang phải */
+        }
+
+        .remove-header, .remove-product-button {
+            flex-basis: 50px; /* Chiều rộng cố định cho nút và placeholder tiêu đề */
+            flex-shrink: 0; /* Ngăn chặn co lại */
+        }
+
+        .product-field input {
+            width: 100%; /* Input lấp đầy chiều rộng của product-field */
+            padding: 10px; /* Tăng nhẹ padding cho input */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            outline: none;
+        }
+        .product-field input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .remove-product-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px; /* Tăng nhẹ padding cho nút */
+            font-size: 0.9em;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            flex-shrink: 0;
+            flex-basis: 50px; /* Chiều rộng cố định cho nút Xóa */
+            min-width: 50px;
+            max-width: 50px;
+            outline: none;
+        }
+        .remove-product-button:hover {
+            background-color: #c82333;
+        }
+
+        .add-product-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+        .add-product-button:hover {
+            background-color: #e0a800;
+        }
+
+        .calculate-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+        .calculate-button:hover {
+            background-color: #218838;
+        }
+
+        /* Summary Section Styling */
+        .summary-section {
+            display: none; /* Hidden by default */
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .summary-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .summary-header p {
+            margin: 0;
+            padding: 2px 0;
+        }
+        .summary-header .company-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc3545; /* Red color */
+        }
+        .summary-header .branch-info {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .summary-header .moto {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .summary-header .contact-info {
+            /* Changed to black and bold */
+            color: #000; /* Changed to black */
+            font-weight: bold;
+            font-size: 0.8em; /* Keeping original size or adjust as needed */
+        }
+        .summary-header .doc-title {
+            font-size: 2.1em; /* Increased font size for 'PHIẾU XUẤT KHO' */
+            font-weight: bold;
+            margin-top: 15px;
+            color: #007bff;
+        }
+
+        /* Combined customer name and date info for horizontal display */
+        .customer-and-date-details {
+            display: flex;
+            justify-content: space-between; /* Trải đều nội dung ra hai bên */
+            align-items: baseline; /* Căn chỉnh các đường cơ sở của văn bản */
+            font-size: 0.9em;
+            margin-top: 15px;
+            flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+            gap: 10px; /* Khoảng cách giữa hai div */
+        }
+        .customer-and-date-details div {
+            min-width: 180px; /* Đảm bảo chúng không quá nhỏ */
+        }
+        /* Style for the 'Ngày:' label text in summary */
+        .summary-date-label {
+            color: #000; /* Changed to black */
+            font-size: 0.9em; /* Adjusted back to original or slightly larger than default */
+            font-weight: normal; /* Normal weight */
+        }
+        /* Style for the actual summary date value */
+        #summarySaleDate {
+            color: #000; /* Changed to black */
+            font-size: 0.9em; /* Adjusted back to original or slightly larger than default */
+            font-weight: normal; /* Normal weight */
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .summary-table th, .summary-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            word-wrap: break-word; /* Cho phép chữ dài tự động xuống dòng */
+        }
+        .summary-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .summary-table .col-stt {
+            width: 5%;
+            text-align: center;
+        }
+        .summary-table .col-name {
+            width: 40%;
+        }
+        .summary-table .col-qty {
+            width: 10%;
+            text-align: center;
+        }
+        .summary-table .col-price, .summary-table .col-subtotal {
+            width: 22.5%;
+            text-align: right;
+        }
+
+        .summary-total {
+            font-size: 1.4em;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #eee;
+        }
+
+        /* New styling for "Giới thiệu khách đơn 4 thùng sẽ được 50k" and "Cảm ơn quý khách" */
+        .summary-closing-remarks {
+            margin-top: 20px;
+            text-align: center;
+            color: #dc3545; /* Changed to red */
+            font-size: 1.1em; /* Increased font size */
+            font-weight: bold; /* Made bold */
+        }
+        .summary-closing-remarks p {
+            margin: 5px 0;
+        }
+
+        /* Back button styling when inside summary section */
+        .summary-buttons {
+            display: flex;
+            justify-content: flex-end; /* Đẩy các nút sang phải */
+            gap: 10px; /* Khoảng cách giữa các nút */
+            margin-top: 15px;
+        }
+        .back-button, .print-button { /* Apply styles to both buttons in summary */
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 12px; /* Smaller padding */
+            font-size: 0.9em; /* Smaller font size */
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+        .back-button:hover, .print-button:hover {
+            background-color: #5a6268;
+        }
+        /* Specific color for print button */
+        .print-button {
+            background-color: #007bff; /* Blue color for print button */
+        }
+        .print-button:hover {
+            background-color: #0056b3;
+        }
+
+
+        /* Custom Message Box */
+        .message-box-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .message-box {
+            background-color: #fff;
+            border: 1px solid #ff0000;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+        .message-box p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: #d32f2f; /* Màu đỏ cho thông báo lỗi */
+            font-weight: bold;
+        }
+        .message-box button {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .message-box button:hover {
+            background-color: #d32f2f;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            /* Main container for overall mobile responsiveness */
+            .container {
+                margin: 10px; /* Reduced outer margin */
+                padding: 15px; /* Slightly reduced padding */
+                width: calc(100% - 20px); /* Adjust width to account for new margin */
+            }
+
+            /* Customer Input Section: Make each label+input pair responsive */
+            .customer-input-section div {
+                flex-direction: row; /* Keep label and input on the same row */
+                flex-wrap: nowrap; /* Prevent label and input from wrapping each other */
+                align-items: center;
+                gap: 5px; /* Reduced gap within each field */
+                width: 100%; /* Each field group takes full width */
+                overflow-x: hidden; /* Hide horizontal overflow within each field group */
+            }
+            .customer-input-section label {
+                min-width: 70px; /* Give label a fixed small width for alignment */
+                flex-shrink: 0; /* Prevent label from shrinking */
+                text-align: left;
+                font-size: 0.9em; /* Smaller font for labels */
+            }
+            .customer-input-section input[type="text"],
+            .customer-input-section input[type="date"] {
+                flex-grow: 1; /* Allow input to take remaining space */
+                flex-shrink: 1; /* Allow input to shrink */
+                min-width: 40px; /* Allow input to shrink aggressively */
+                padding: 8px 5px; /* Slightly less padding */
+                font-size: 0.9em; /* Slightly smaller font */
+            }
+
+            /* Product List Header and Items: Force horizontal layout with shrinking */
+            .product-list-header, .product-item {
+                flex-wrap: nowrap; /* PREVENT WRAPPING */
+                overflow-x: auto; /* Allow horizontal scroll if content overflows */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+                padding-bottom: 5px; /* Add some padding if scrollbar appears */
+                gap: 5px; /* Minimum spacing between columns */
+                width: 100%; /* Ensure they try to fill available width */
+            }
+
+            /* General field styling for mobile: Allow aggressive shrinking */
+            .header-label, .product-field {
+                flex-grow: 0; /* Do not allow growing */
+                flex-shrink: 1; /* Allow shrinking */
+                flex-basis: auto; /* Let content determine initial size, then shrink */
+                min-width: 0; /* Allow elements to shrink to minimal size to prevent overflow */
+                padding: 0 2px; /* Minimal internal padding */
+            }
+            
+            .product-field input {
+                padding: 6px 4px; /* Reduced input padding */
+                font-size: 0.8em; /* Smaller font for inputs */
+            }
+
+            /* Specific column sizing on mobile: Proportional and shrinkable */
+            .name-header, .name-field {
+                flex-basis: 35%; /* Relative proportion */
+                min-width: 60px; /* Practical minimum width */
+                text-align: left;
+            }
+
+            .quantity-header, .quantity-field {
+                flex-basis: 15%; /* Smaller proportion */
+                min-width: 35px;
+                text-align: center;
+            }
+            .quantity-field input {
+                text-align: center;
+            }
+
+            .price-header, .price-field {
+                flex-basis: 25%; /* Medium proportion */
+                min-width: 50px;
+                text-align: right; /* Changed to right for header */
+            }
+            .price-field input {
+                text-align: right;
+            }
+
+            .remove-header {
+                flex-basis: 20%; /* Button column */
+                min-width: 30px;
+                text-align: center;
+            }
+            .remove-product-button {
+                flex-basis: 20%; /* Match header proportion */
+                min-width: 30px;
+                padding: 4px 6px;
+                font-size: 0.65em;
+            }
+
+            /* Summary Table adjustments: make text smaller to fit more */
+            .summary-table th, .summary-table td {
+                padding: 4px; /* Even smaller padding */
+                font-size: 0.7em; /* Smallest font size */
+            }
+            .summary-table .col-stt,
+            .summary-table .col-qty,
+            .summary-table .col-price,
+            .summary-table .col-subtotal,
+            .summary-table .col-name {
+                width: auto; /* Allow columns to auto-adjust width */
+                min-width: unset; /* Remove any previous min-width constraints */
+            }
+
+            /* Customer and date details in summary */
+            .customer-and-date-details {
+                flex-direction: column; /* Stack vertically in summary on mobile */
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .customer-and-date-details div {
+                flex-basis: 100%;
+                min-width: unset;
+            }
+        }
+        /* Styles for print output */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #fff; /* White background for print */
+            }
+            .container {
+                box-shadow: none; /* Remove shadow in print */
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+            /* Hide elements not needed in print */
+            .product-list-section, .customer-input-section,
+            .add-product-button, .calculate-button,
+            .summary-buttons, .message-box-overlay {
+                display: none !important;
+            }
+            .summary-section {
+                display: block !important; /* Ensure summary is visible */
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+            .summary-table th, .summary-table td {
+                border: 1px solid #000; /* Darker borders for print visibility */
+                padding: 8px; /* Standard padding for print */
+            }
+            .summary-table {
+                font-size: 12px; /* Standard font size for print table */
+            }
+            .summary-header {
+                border-bottom: 1px solid #000;
+            }
+            .summary-total {
+                border-top: 2px solid #000;
+                font-size: 1.2em;
+            }
+            .summary-closing-remarks {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="productListSection">
+        <h1>Chọn Sản Phẩm</h1>
+
+        <div class="customer-input-section">
+            <div>
+                <label for="customerNameInput">Tên khách hàng:</label>
+                <input type="text" id="customerNameInput" placeholder="Nhập tên khách hàng">
+            </div>
+            <div>
+                <label for="saleDateInput">Ngày bán:</label>
+                <input type="date" id="saleDateInput">
+            </div>
+        </div>
+
+        <div class="product-list-header">
+            <div class="header-label name-header">Tên Sản Phẩm</div>
+            <div class="header-label quantity-header">Số lượng</div>
+            <div class="header-label price-header">Đơn giá</div>
+            <div class="header-label remove-header"></div> <!-- Space for Delete button -->
+        </div>
+        <div id="dynamicProductList">
+            <!-- Product rows will be dynamically added here by JavaScript -->
+        </div>
+
+        <button class="add-product-button" onclick="addProductRow()">Thêm sản phẩm</button>
+        <button class="calculate-button" onclick="calculateTotal()">Thành tiền</button>
+    </div>
+
+    <div class="container summary-section" id="summarySection">
+        <div class="summary-header">
+            <p>NHÀ PHÂN PHỐI KHẨU TRANG</p>
+            <p class="company-name">KHÁNH AN 5D NAM ANH</p>
+            <p class="branch-info">CHUYÊN PHÂN PHỐI KHẨU TRANG SỐ LƯỢNG LỚN</p>
+            <p class="contact-info">Vietcombank - 0281000270009 - Luân Văn Phong ** Zalo: 0372.427.609 **</p>
+            <p class="doc-title">PHIẾU XUẤT KHO</p>
+            <!-- Combined customer name and date details -->
+            <div class="customer-and-date-details">
+                <div>Tên khách hàng: <span id="summaryCustomerName"></span></div>
+                <div>Ngày: <span id="summarySaleDate" style="color: #000; font-weight: normal; font-size: 1em;"></span></div>
+            </div>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th class="col-stt">STT</th>
+                    <th class="col-name">Sản phẩm</th>
+                    <th class="col-qty">SL</th>
+                    <th class="col-price">Đơn giá</th>
+                    <th class="col-subtotal">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody id="summaryDetails">
+                <!-- Product summary rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+        <div class="summary-total">
+            Tổng tiền: <span id="totalAmount">0 VNĐ</span>
+        </div>
+        <!-- Moved closing remarks inside summary section -->
+        <div class="summary-closing-remarks">
+            <p>Giới thiệu khách đơn 4 thùng sẽ được 50k</p>
+            <p>Cảm ơn quý khách!</p>
+        </div>
+        <div class="summary-buttons">
+            <button class="back-button" id="backButton" onclick="goBackToProductList()">Quay lại</button>
+            <button class="print-button" id="printButton" onclick="printSummary()">In</button>
+        </div>
+    </div>
+
+    <!-- Custom Message Box HTML -->
+    <div class="message-box-overlay" id="messageBoxOverlay">
+        <div class="message-box">
+            <p id="messageText"></p>
+            <button onclick="hideMessageBox()">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        let productRowCounter = 0; // Counter to create unique IDs for each product row
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Set current date as default for sale date input
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('saleDateInput').value = `${year}-${month}-${day}`;
+
+            // Add one default product row when the page loads
+            addProductRow();
+        });
+
+        /**
+         * Creates a new product row with input fields.
+         * @returns {HTMLElement} The div element representing a product row.
+         */
+        function createProductRow() {
+            productRowCounter++; // Increment counter for unique ID
+            const productItem = document.createElement('div');
+            productItem.classList.add('product-item');
+            productItem.setAttribute('data-id', productRowCounter); // Assign unique ID to the row
+
+            productItem.innerHTML = `
+                <div class="product-field name-field">
+                    <input type="text" class="product-name-input" placeholder="Nhập tên sản phẩm" id="productName_${productRowCounter}">
+                </div>
+                <div class="product-field quantity-field">
+                    <input type="number" class="quantity-input" value="0" min="0" id="productQuantity_${productRowCounter}">
+                </div>
+                <div class="product-field price-field">
+                    <input type="number" class="product-price-input" placeholder="Nhập đơn giá" value="0" min="0" id="productPrice_${productRowCounter}">
+                </div>
+                <button class="remove-product-button" onclick="removeProductRow(this)">Xóa</button>
+            `;
+            return productItem;
+        }
+
+        /**
+         * Adds a new product row to the list.
+         */
+        function addProductRow() {
+            const dynamicProductList = document.getElementById('dynamicProductList');
+            dynamicProductList.appendChild(createProductRow());
+        }
+
+        /**
+         * Removes a product row from the list.
+         * If only one row remains, it resets its content instead of removing it.
+         * @param {HTMLElement} button - The 'Xóa' button that was clicked.
+         */
+        function removeProductRow(button) {
+            const productItem = button.closest('.product-item');
+            if (productItem) {
+                const dynamicProductList = document.getElementById('dynamicProductList');
+                // Ensure not to delete the last row if only one remains
+                if (dynamicProductList.children.length > 1) {
+                    productItem.remove();
+                } else {
+                    // If only one row remains, reset its content instead of removing
+                    const productNameInput = productItem.querySelector('.product-name-input');
+                    const productPriceInput = productItem.querySelector('.product-price-input');
+                    const quantityInput = productItem.querySelector('.quantity-input');
+
+                    if (productNameInput) productNameInput.value = '';
+                    if (productPriceInput) productPriceInput.value = '0';
+                    if (quantityInput) quantityInput.value = '0';
+                }
+            }
+        }
+
+        /**
+         * Shows the custom message box with a given message.
+         * @param {string} message - The message to display.
+         */
+        function showMessageBox(message) {
+            document.getElementById('messageText').textContent = message;
+            document.getElementById('messageBoxOverlay').style.display = 'flex';
+        }
+
+        /**
+         * Hides the custom message box.
+         */
+        function hideMessageBox() {
+            document.getElementById('messageBoxOverlay').style.display = 'none';
+        }
+
+        /**
+         * Triggers the browser's print dialog for the summary section.
+         */
+        function printSummary() {
+            window.print();
+        }
+
+        /**
+         * Calculates the total amount and displays the summary table.
+         */
+        function calculateTotal() {
+            const productItems = document.querySelectorAll('#dynamicProductList .product-item');
+            const summaryDetails = document.getElementById('summaryDetails');
+            let totalAmount = 0;
+            let summaryHtml = '';
+            let sttCounter = 1;
+
+            // Get customer name and sale date from input fields
+            const customerName = document.getElementById('customerNameInput').value.trim();
+            const saleDate = document.getElementById('saleDateInput').value;
+
+            // Update customer name and sale date in the summary section
+            document.getElementById('summaryCustomerName').textContent = customerName || '.................................................';
+            if (saleDate) {
+                const [year, month, day] = saleDate.split('-');
+                document.getElementById('summarySaleDate').textContent = `${day}/${month}/${year}`;
+            } else {
+                document.getElementById('summarySaleDate').textContent = '....................';
+            }
+
+
+            for (const item of productItems) {
+                const productName = item.querySelector('.product-name-input').value.trim();
+                const productPrice = parseFloat(item.querySelector('.product-price-input').value) || 0;
+                const quantity = parseInt(item.querySelector('.quantity-input').value) || 0;
+
+                // Only add to summary table if product has a name and quantity > 0
+                if (productName && quantity > 0) {
+                    const subtotal = productPrice * quantity;
+                    totalAmount += subtotal;
+                    summaryHtml += `
+                        <tr>
+                            <td class="col-stt">${sttCounter++}</td>
+                            <td class="col-name">${productName}</td>
+                            <td class="col-qty">${quantity}</td>
+                            <td class="col-price">${formatCurrencyWithoutVND(productPrice)}</td>
+                            <td class="col-subtotal">${formatCurrencyWithoutVND(subtotal)}</td>
+                        </tr>
+                    `;
+                }
+            }
+
+            summaryDetails.innerHTML = summaryHtml; // Update summary table content
+            document.getElementById('totalAmount').textContent = formatCurrencyWithVND(totalAmount); // Display final total amount
+
+            // Switch between sections
+            document.getElementById('productListSection').style.display = 'none';
+            document.getElementById('summarySection').style.display = 'block';
+        }
+
+        /**
+         * Formats an amount with 'VNĐ' currency unit.
+         * @param {number} amount - The amount to format.
+         * @returns {string} The formatted currency string.
+         */
+        function formatCurrencyWithVND(amount) {
+            return amount.toLocaleString('vi-VN') + ' VNĐ';
+        }
+
+        /**
+         * Formats an amount without 'VNĐ' currency unit.
+         * @param {number} amount - The amount to format.
+         * @returns {string} The formatted currency string.
+         */
+        function formatCurrencyWithoutVND(amount) {
+            return amount.toLocaleString('vi-VN');
+        }
+
+        /**
+         * Returns to the product list section without clearing the entered data.
+         */
+        function goBackToProductList() {
+            document.getElementById('summarySection').style.display = 'none';
+            document.getElementById('productListSection').style.display = 'block';
+            // No data clearing here, as per user's request.
+        }
+    </script>
+
+</body>
+</html>
