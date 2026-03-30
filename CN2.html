@@ -2,367 +2,386 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chọn Sản Phẩm & Thanh toán</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Chọn Sản Phẩm & Thanh toán - Phiếu xuất kho</title>
+    <!-- html2canvas library for screenshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0; /* Loại bỏ margin mặc định của body */
-            padding: 0; /* Loại bỏ padding mặc định của body */
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-        }
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            flex-grow: 1; /* Cho phép container giãn nở theo chiều cao */
-            width: calc(100% - 40px); /* 100% chiều rộng trừ đi 20px padding mỗi bên trên desktop */
-            box-sizing: border-box; /* Bao gồm padding trong tính toán chiều rộng */
-        }
-        h1, h2 {
-            text-align: center;
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-
-        /* Customer Info Input Fields */
-        .customer-input-section {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #ddd;
-        }
-        .customer-input-section div { /* Each div contains a label and an input (Name or Date) */
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            gap: 10px;
-            flex-wrap: wrap; /* Allow wrapping of label/input pairs on very small screens if necessary */
-        }
-        .customer-input-section label {
-            font-weight: bold;
-            color: #555;
-            min-width: 100px; /* Align labels */
-            flex-shrink: 0;
-        }
-        .customer-input-section input[type="text"],
-        .customer-input-section input[type="date"] {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1em;
-            outline: none;
-            min-width: 180px; /* Ensure input fields don't get too small on larger screens */
-        }
-        .customer-input-section input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-        }
-
-        /* Product List Styling */
-        .product-list-header, .product-item {
-            display: flex;
-            align-items: center;
-            gap: 15px; /* Khoảng cách giữa các phần tử */
-            flex-wrap: nowrap; /* QUAN TRỌNG: Ngăn chặn xuống dòng trên mọi màn hình */
-            overflow-x: auto; /* Cho phép cuộn ngang nếu nội dung tràn */
-            -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
-            padding-bottom: 5px; /* Thêm padding cho thanh cuộn tiềm năng */
-            justify-content: space-between; /* Phân phối không gian đều giữa các mục */
-            width: 100%; /* Đảm bảo nó chiếm toàn bộ chiều rộng khả dụng */
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+        }
+
+        /* Main container cho phần nhập liệu */
+        .container {
+            max-width: 950px;
+            width: 100%;
+            margin: 0 auto 24px auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 24px 28px;
+            transition: all 0.2s;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #1e466e;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        /* Khu vực thông tin khách hàng */
+        .customer-input-section {
+            background: #f9fafc;
+            padding: 18px 20px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: space-between;
+        }
+        .customer-input-section div {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .customer-input-section label {
+            font-weight: 700;
+            color: #1e3a5f;
+            min-width: 100px;
+            font-size: 1rem;
+        }
+        .customer-input-section input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            background: white;
+            transition: 0.2s;
+        }
+        .customer-input-section input:focus {
+            border-color: #0077b6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,119,182,0.2);
+        }
+
+        /* Product list header & items - giao diện bảng chắc chắn */
+        .product-list-header, .product-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+        }
+
         .product-list-header {
-            padding: 10px 0;
-            border-bottom: 2px solid #007bff;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #007bff;
+            background-color: #eef2ff;
+            padding: 14px 12px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            font-weight: 800;
+            color: #0b2b44;
+            border-bottom: 2px solid #cbdff2;
         }
 
         .product-item {
-            padding: 10px 0;
-            border-bottom: 1px dashed #eee;
-            margin-bottom: 10px;
+            background: white;
+            padding: 12px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.1s;
         }
-        .product-item:last-of-type {
-            border-bottom: none;
-        }
-
-        /* Base styles for header labels and product fields */
-        .header-label, .product-field {
-            flex-grow: 1; /* Cho phép các trường giãn nở */
-            flex-shrink: 1; /* Cho phép các trường co lại */
-            min-width: 80px; /* Chiều rộng tối thiểu mặc định */
-            text-align: left; /* Căn chỉnh văn bản mặc định */
+        .product-item:hover {
+            background-color: #fefce8;
         }
 
-        /* Specific widths (proportions) for desktop layout */
-        .name-header, .name-field {
-            flex-basis: 30%; /* Tên sản phẩm chiếm khoảng 30% */
-        }
-
-        .quantity-header, .quantity-field {
-            flex-basis: 15%; /* Số lượng chiếm khoảng 15% */
-            text-align: center;
-        }
-        .quantity-field input {
-            width: 100%; /* Input số lượng lấp đầy vùng chứa */
-            text-align: center;
-        }
-
-        .price-header, .price-field {
-            flex-basis: 18%; /* Đơn giá chiếm khoảng 18% (giảm từ 20%) */
-            text-align: center; /* Căn giữa nội dung đơn giá */
-        }
-        .price-field input {
-            width: 100%; /* Input đơn giá lấp đầy vùng chứa */
-            text-align: center; /* Căn giữa nội dung đơn giá */
-        }
-
-        .remove-header, .remove-product-button {
-            flex-basis: 50px; /* Chiều rộng cố định cho nút và placeholder tiêu đề */
-            flex-shrink: 0; /* Ngăn chặn co lại */
-        }
+        /* Các cột đồng nhất */
+        .name-header, .name-field { flex: 2.2; min-width: 130px; }
+        .quantity-header, .quantity-field { flex: 0.8; min-width: 85px; text-align: center; }
+        .price-header, .price-field { flex: 1; min-width: 110px; text-align: center; }
+        .remove-header { flex: 0.5; min-width: 60px; text-align: center; }
+        .remove-product-button { flex: 0.5; min-width: 60px; }
 
         .product-field input {
-            width: 100%; /* Input lấp đầy chiều rộng của product-field */
-            padding: 10px; /* Tăng nhẹ padding cho input */
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1em;
-            outline: none;
+            width: 100%;
+            padding: 12px 8px;
+            border: 1px solid #cbd5e6;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            background: white;
+            text-align: center;
+            font-weight: 500;
         }
         .product-field input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            border-color: #2c6e9e;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(44,110,158,0.2);
         }
 
         .remove-product-button {
-            background-color: #dc3545;
+            background-color: #dc2626;
             color: white;
             border: none;
-            padding: 10px 15px; /* Tăng nhẹ padding cho nút */
-            font-size: 0.9em;
+            padding: 10px 0;
+            border-radius: 40px;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-            flex-shrink: 0;
-            flex-basis: 50px; /* Chiều rộng cố định cho nút Xóa */
-            min-width: 50px;
-            max-width: 50px;
-            outline: none;
+            transition: 0.2s;
+            font-size: 0.8rem;
+            width: 100%;
+            text-align: center;
         }
         .remove-product-button:hover {
-            background-color: #c82333;
+            background-color: #b91c1c;
+            transform: scale(0.97);
         }
 
         .add-product-button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            background-color: #ffc107;
-            color: #333;
+            background: #ffb347;
+            background: linear-gradient(95deg, #f59e0b, #f97316);
             border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: white;
+            margin-top: 24px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            outline: none;
+            transition: 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         .add-product-button:hover {
-            background-color: #e0a800;
+            background: linear-gradient(95deg, #e67e22, #fd7e14);
+            transform: translateY(-2px);
         }
 
         .calculate-button {
-            display: block;
+            background: #2b6e4c;
+            background: linear-gradient(95deg, #15803d, #16a34a);
             width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            background-color: #28a745;
+            padding: 16px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.3rem;
             color: white;
+            margin-top: 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 1.3em;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            outline: none;
+            transition: 0.2s;
+            letter-spacing: 1px;
         }
         .calculate-button:hover {
-            background-color: #218838;
+            background: linear-gradient(95deg, #0f5c38, #15803d);
+            transform: translateY(-2px);
         }
 
-        /* Summary Section Styling */
+        /* ========== PHIẾU XUẤT KHO - PHẦN HIỂN THỊ ========== */
         .summary-section {
-            display: none; /* Hidden by default */
-            margin-top: 30px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+            display: none;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            padding: 28px 32px;
         }
+
+        /* Header phiếu */
         .summary-header {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .summary-header p {
-            margin: 0;
-            padding: 2px 0;
+            margin-bottom: 28px;
+            border-bottom: 3px solid #1e293b;
+            padding-bottom: 20px;
         }
         .summary-header .company-name {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #dc3545; /* Red color */
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #b91c1c;
+            letter-spacing: 1px;
         }
         .summary-header .branch-info {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #dc3545;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #b45309;
         }
-        .summary-header .moto {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 10px;
+        .contact-info {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c3e66;
+            margin-top: 6px;
         }
-        .summary-header .contact-info {
-            color: #000; /* Changed to black */
-            font-weight: bold;
-            font-size: 0.8em; /* Keeping original size or adjust as needed */
-        }
-        .summary-header .doc-title {
-            font-size: 2.1em; /* Increased font size for 'PHIẾU XUẤT KHO' */
-            font-weight: bold;
-            margin-top: 15px;
-            color: #007bff;
+        .doc-title {
+            font-size: 2.4rem !important;
+            font-weight: 900 !important;
+            color: #0f3b5c;
+            margin: 16px 0 12px 0;
+            letter-spacing: 2px;
+            border-bottom: 2px dashed #ccc;
+            display: inline-block;
+            padding-bottom: 6px;
         }
 
-        /* Combined customer name and date info for horizontal display */
+        /* Thông tin khách + ngày - font to rõ */
         .customer-and-date-details {
             display: flex;
-            justify-content: space-between; /* Trải đều nội dung ra hai bên */
-            align-items: baseline; /* Căn chỉnh các đường cơ sở của văn bản */
-            font-size: 0.9em;
-            margin-top: 15px;
-            flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
-            gap: 10px; /* Khoảng cách giữa hai div */
+            justify-content: space-between;
+            background: #f1f5f9;
+            padding: 14px 22px;
+            border-radius: 28px;
+            margin: 18px 0 8px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         .customer-and-date-details div {
-            min-width: 180px; /* Đảm bảo chúng không quá nhỏ */
+            font-size: 1.05rem;
         }
-        /* Style for the 'Ngày:' label text in summary */
-        .summary-date-label {
-            color: #000; /* Changed to black */
-            font-size: 0.9em; /* Adjusted back to original or slightly larger than default */
-            font-weight: normal; /* Normal weight */
-        }
-        /* Style for the actual summary date value */
-        #summarySaleDate {
-            color: #000; /* Changed to black */
-            font-size: 0.9em; /* Adjusted back to original or slightly larger than default */
-            font-weight: normal; /* Normal weight */
+        #summaryCustomerName, #summarySaleDate {
+            font-weight: 800;
+            color: #0f172a;
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 30px;
+            display: inline-block;
         }
 
+        /* BẢNG SẢN PHẨM - ĐƯỜNG KẺ ĐẬM, FONT TO */
         .summary-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin: 28px 0;
+            font-size: 1.05rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .summary-table th, .summary-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-            word-wrap: break-word; /* Cho phép chữ dài tự động xuống dòng */
+            border: 2px solid #1e293b !important;  /* Đường kẻ đen đậm */
+            padding: 14px 12px;
+            vertical-align: middle;
         }
         .summary-table th {
-            background-color: #f0f0f0;
-            font-weight: bold;
-        }
-        .summary-table .col-stt {
-            width: 5%;
+            background-color: #e9f0f9;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0c4a6e;
             text-align: center;
         }
-        .summary-table .col-name {
-            width: 40%;
+        .summary-table td {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e293b;
         }
-        .summary-table .col-qty {
-            width: 10%;
+        /* Căn chỉnh nội dung bảng */
+        .col-stt {
             text-align: center;
+            width: 8%;
+            font-weight: 700;
         }
-        .summary-table .col-price, .summary-table .col-subtotal {
-            width: 22.5%;
+        .col-name {
+            text-align: left;
+            font-weight: 600;
+            width: 42%;
+        }
+        .col-qty {
+            text-align: center;
+            font-weight: 600;
+            width: 12%;
+        }
+        .col-price, .col-subtotal {
             text-align: right;
+            font-weight: 600;
+            width: 19%;
         }
-
+        /* Tổng tiền lớn và đậm */
         .summary-total {
-            font-size: 1.4em;
-            font-weight: bold;
+            font-size: 1.7rem;
+            font-weight: 800;
             text-align: right;
             margin-top: 20px;
-            padding-top: 10px;
-            border-top: 2px solid #eee;
+            padding: 16px 20px;
+            background: #fef9e3;
+            border-radius: 28px;
+            border: 2px solid #e2b53c;
+            color: #b45309;
+        }
+        .summary-total span {
+            font-size: 1.8rem;
+            background: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin-left: 12px;
         }
 
-        /* New styling for "Giới thiệu khách đơn 4 thùng sẽ được 50k" and "Cảm ơn quý khách" */
+        /* Dòng cảm ơn và giới thiệu - font to hơn */
         .summary-closing-remarks {
-            margin-top: 20px;
+            margin: 28px 0 20px;
             text-align: center;
-            color: #dc3545; /* Changed to red */
-            font-size: 1.1em; /* Increased font size */
-            font-weight: bold; /* Made bold */
+            background: #fff7e6;
+            padding: 14px;
+            border-radius: 60px;
         }
         .summary-closing-remarks p {
-            margin: 5px 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #c2410c;
+            margin: 6px 0;
         }
 
-        /* Back button styling when inside summary section */
+        /* Nút quay lại & Lưu (chụp màn hình) */
         .summary-buttons {
             display: flex;
-            justify-content: flex-end; /* Đẩy các nút sang phải */
-            gap: 10px; /* Khoảng cách giữa các nút */
-            margin-top: 15px;
+            justify-content: flex-end;
+            gap: 18px;
+            margin-top: 28px;
         }
-        .back-button, .print-button { /* Apply styles to both buttons in summary */
-            background-color: #6c757d;
-            color: white;
+        .back-button, .save-screenshot-btn {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 700;
             border: none;
-            padding: 8px 12px; /* Smaller padding */
-            font-size: 0.9em; /* Smaller font size */
+            border-radius: 44px;
             cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-            outline: none;
+            transition: all 0.2s ease;
+            background-color: #334155;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-        .back-button:hover, .print-button:hover {
-            background-color: #5a6268;
+        .save-screenshot-btn {
+            background-color: #0f6e3f;
+            background: linear-gradient(105deg, #0f6e3f, #2b8c5e);
         }
-        /* Specific color for print button */
-        .print-button {
-            background-color: #007bff; /* Blue color for print button */
+        .save-screenshot-btn:hover {
+            background: #0a5a34;
+            transform: scale(0.97);
         }
-        .print-button:hover {
-            background-color: #0056b3;
+        .back-button:hover {
+            background-color: #1e293b;
+            transform: scale(0.97);
         }
 
-
-        /* Custom Message Box */
+        /* Message box */
         .message-box-overlay {
             display: none;
             position: fixed;
@@ -370,282 +389,143 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
         }
         .message-box {
-            background-color: #fff;
-            border: 1px solid #ff0000;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            background: white;
+            border-radius: 32px;
+            padding: 28px 32px;
             text-align: center;
-            max-width: 400px;
-            width: 90%;
-            position: relative;
+            max-width: 380px;
+            width: 85%;
+            border-top: 8px solid #dc2626;
         }
         .message-box p {
-            margin-bottom: 20px;
-            font-size: 1.1em;
-            color: #d32f2f; /* Màu đỏ cho thông báo lỗi */
+            font-size: 1.2rem;
             font-weight: bold;
+            margin-bottom: 24px;
+            color: #b91c1c;
         }
         .message-box button {
-            padding: 10px 20px;
-            background-color: #f44336;
+            background: #1e293b;
             color: white;
             border: none;
-            border-radius: 5px;
+            padding: 10px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        .message-box button:hover {
-            background-color: #d32f2f;
         }
 
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            /* Main container for overall mobile responsiveness */
-            .container {
-                margin: 10px; /* Reduced outer margin */
-                padding: 15px; /* Slightly reduced padding */
-                width: calc(100% - 20px); /* Adjust width to account for new margin */
-            }
-
-            /* Customer Input Section: Make each label+input pair responsive */
-            .customer-input-section div {
-                flex-direction: row; /* Keep label and input on the same row */
-                flex-wrap: nowrap; /* Prevent label and input from wrapping each other */
-                align-items: center;
-                gap: 5px; /* Reduced gap within each field */
-                width: 100%; /* Each field group takes full width */
-                overflow-x: hidden; /* Hide horizontal overflow within each field group */
-            }
-            .customer-input-section label {
-                min-width: 70px; /* Give label a fixed small width for alignment */
-                flex-shrink: 0; /* Prevent label from shrinking */
-                text-align: left;
-                font-size: 0.9em; /* Smaller font for labels */
-            }
-            .customer-input-section input[type="text"],
-            .customer-input-section input[type="date"] {
-                flex-grow: 1; /* Allow input to take remaining space */
-                flex-shrink: 1; /* Allow input to shrink */
-                min-width: 40px; /* Allow input to shrink aggressively */
-                padding: 8px 5px; /* Slightly less padding */
-                font-size: 0.9em; /* Slightly smaller font */
-            }
-
-            /* Product List Header and Items: Force horizontal layout with shrinking */
-            .product-list-header, .product-item {
-                flex-wrap: nowrap; /* PREVENT WRAPPING */
-                overflow-x: auto; /* Allow horizontal scroll if content overflows */
-                -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-                padding-bottom: 5px; /* Add some padding if scrollbar appears */
-                gap: 5px; /* Minimum spacing between columns */
-                width: 100%; /* Ensure they try to fill available width */
-            }
-
-            /* General field styling for mobile: Allow aggressive shrinking */
-            .header-label, .product-field {
-                flex-grow: 0; /* Do not allow growing */
-                flex-shrink: 1; /* Allow shrinking */
-                flex-basis: auto; /* Let content determine initial size, then shrink */
-                min-width: 0; /* Allow elements to shrink to minimal size to prevent overflow */
-                padding: 0 2px; /* Minimal internal padding */
-            }
-            
-            .product-field input {
-                padding: 6px 4px; /* Reduced input padding */
-                font-size: 0.8em; /* Smaller font for inputs */
-            }
-
-            /* Specific column sizing on mobile: Proportional and shrinkable */
-            .name-header, .name-field {
-                flex-basis: 40%; /* Tăng flex-basis cho tên sản phẩm */
-                min-width: 75px; /* Tăng min-width cho tên sản phẩm */
-                text-align: left;
-            }
-
-            .quantity-header, .quantity-field {
-                flex-basis: 15%; /* Vẫn giữ 15% */
-                min-width: 30px;
-                text-align: center;
-            }
-            .quantity-field input {
-                text-align: center;
-            }
-
-            .price-header, .price-field {
-                flex-basis: 20%; /* Giảm flex-basis cho đơn giá */
-                min-width: 40px; /* Giảm min-width cho đơn giá */
-                text-align: center; /* Căn giữa nội dung đơn giá */
-            }
-            .price-field input {
-                text-align: center; /* Căn giữa nội dung đơn giá */
-            }
-
-            .remove-header {
-                flex-basis: 15%; /* Vẫn giữ 15% */
-                min-width: 30px;
-                text-align: center;
-            }
-            .remove-product-button {
-                flex-basis: 10%; /* Giảm flex-basis cho nút xóa */
-                min-width: 25px; /* Vẫn giữ 25px */
-                padding: 4px 6px;
-                font-size: 0.65em;
-            }
-
-            /* Summary Table adjustments: make text smaller to fit more */
-            .summary-table th, .summary-table td {
-                padding: 4px; /* Even smaller padding */
-                font-size: 0.7em; /* Smallest font size */
-            }
-            .summary-table .col-stt,
-            .summary-table .col-qty,
-            .summary-table .col-price,
-            .summary-table .col-subtotal,
-            .summary-table .col-name {
-                width: auto; /* Allow columns to auto-adjust width */
-                min-width: unset; /* Remove any previous min-width constraints */
-            }
-
-            /* Customer and date details in summary */
-            .customer-and-date-details {
-                flex-direction: column; /* Stack vertically in summary on mobile */
-                align-items: flex-start;
-                gap: 5px;
-            }
-            .customer-and-date-details div {
-                flex-basis: 100%;
-                min-width: unset;
-            }
+        /* Responsive co giãn nhưng vẫn giữ bảng rõ */
+        @media (max-width: 750px) {
+            body { padding: 12px; }
+            .container, .summary-section { padding: 18px; }
+            .product-list-header, .product-item { gap: 8px; }
+            .name-header, .name-field { flex: 1.8; min-width: 100px; }
+            .quantity-header, .quantity-field { flex: 0.9; }
+            .price-header, .price-field { flex: 1.2; }
+            .summary-table th, .summary-table td { padding: 10px 6px; font-size: 0.85rem; }
+            .summary-table th { font-size: 0.9rem; }
+            .doc-title { font-size: 1.8rem !important; }
+            .summary-total { font-size: 1.3rem; }
         }
-        /* Styles for print output */
+
         @media print {
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: #fff; /* White background for print */
+            /* In ấn giữ nguyên kiểu đậm nét */
+            body * {
+                visibility: hidden;
             }
-            .container {
-                box-shadow: none; /* Remove shadow in print */
-                margin: 0;
-                width: 100%;
-                max-width: 100%;
-                padding: 0;
-            }
-            /* Hide elements not needed in print */
-            .product-list-section, .customer-input-section,
-            .add-product-button, .calculate-button,
-            .summary-buttons, .message-box-overlay {
-                display: none !important;
+            .summary-section, .summary-section * {
+                visibility: visible;
             }
             .summary-section {
-                display: block !important; /* Ensure summary is visible */
-                margin: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
                 width: 100%;
-                max-width: 100%;
-                padding: 0;
+                margin: 0;
+                padding: 0.5cm;
+                box-shadow: none;
             }
-            .summary-table th, .summary-table td {
-                border: 1px solid #000; /* Darker borders for print visibility */
-                padding: 8px; /* Standard padding for print */
-            }
-            .summary-table {
-                font-size: 12px; /* Standard font size for print table */
-            }
-            .summary-header {
-                border-bottom: 1px solid #000;
-            }
-            .summary-total {
-                border-top: 2px solid #000;
-                font-size: 1.2em;
-            }
-            .summary-closing-remarks {
-                font-size: 0.8em;
+            .summary-buttons, .back-button, .save-screenshot-btn {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- Phần nhập sản phẩm -->
     <div class="container" id="productListSection">
-        <h1>Chọn Sản Phẩm</h1>
+        <h1>📦 LẬP PHIẾU XUẤT KHO</h1>
 
         <div class="customer-input-section">
             <div>
-                <label for="customerNameInput">Tên khách hàng:</label>
-                <input type="text" id="customerNameInput" placeholder="Nhập tên khách hàng">
+                <label for="customerNameInput">👤 Tên khách hàng:</label>
+                <input type="text" id="customerNameInput" placeholder="Nhập tên khách hàng / đơn vị">
             </div>
             <div>
-                <label for="saleDateInput">Ngày bán:</label>
+                <label for="saleDateInput">📅 Ngày xuất:</label>
                 <input type="date" id="saleDateInput">
             </div>
         </div>
 
+        <!-- Bảng nhập hàng hóa -->
         <div class="product-list-header">
-            <div class="header-label name-header">Tên Sản Phẩm</div>
-            <div class="header-label quantity-header">Số lượng</div>
-            <div class="header-label price-header">Đơn giá</div>
-            <div class="header-label remove-header"></div> <!-- Space for Delete button -->
+            <div class="name-header">📌 Tên sản phẩm</div>
+            <div class="quantity-header">🔢 Số lượng</div>
+            <div class="price-header">💰 Đơn giá (VNĐ)</div>
+            <div class="remove-header"></div>
         </div>
-        <div id="dynamicProductList">
-            <!-- Product rows will be dynamically added here by JavaScript -->
-        </div>
+        <div id="dynamicProductList"></div>
 
-        <button class="add-product-button" onclick="addProductRow()">Thêm sản phẩm</button>
-        <button class="calculate-button" onclick="calculateTotal()">Thành tiền</button>
+        <button class="add-product-button" onclick="addProductRow()">+ Thêm dòng sản phẩm</button>
+        <button class="calculate-button" onclick="calculateTotal()">💵 THÀNH TIỀN & XEM PHIẾU XUẤT</button>
     </div>
 
-    <div class="container summary-section" id="summarySection">
+    <!-- PHIẾU XUẤT KHO - kiểu dáng bảng đậm, font lớn -->
+    <div class="summary-section" id="summarySection">
         <div class="summary-header">
-            <p>NHÀ PHÂN PHỐI KHẨU TRANG</p>
-            <p class="company-name">KHÁNH AN 5D NAM ANH</p>
-            <p class="branch-info">CHUYÊN PHÂN PHỐI KHẨU TRANG SỐ LƯỢNG LỚN</p>
-            <p class="contact-info">Vietcombank - 0281000270009 - Luân Văn Phong **Zalo: 0372.427.609**</p>
-            <p class="doc-title">PHIẾU XUẤT KHO</p>
-            <!-- Combined customer name and date details -->
+            <p>🏪 NHÀ PHÂN PHỐI KHẨU TRANG</p>
+            <p class="company-name">🏭 KHÁNH AN 5D NAM ANH</p>
+            <p class="branch-info">✅ CHUYÊN PHÂN PHỐI KHẨU TRANG SỐ LƯỢNG LỚN</p>
+            <p class="contact-info">💳 Vietcombank - 0281000270009 - Luân Văn Phong 📞 Zalo: 0372.427.609</p>
+            <div class="doc-title">📄 PHIẾU XUẤT KHO</div>
             <div class="customer-and-date-details">
-                <div>Tên khách hàng: <span id="summaryCustomerName"></span></div>
-                <div>Ngày: <span id="summarySaleDate"></span></div>
+                <div>🧾 Tên khách hàng: <span id="summaryCustomerName"></span></div>
+                <div>📆 Ngày xuất: <span id="summarySaleDate"></span></div>
             </div>
         </div>
 
+        <!-- Bảng chi tiết với viền đen đậm, font chữ to rõ -->
         <table class="summary-table">
             <thead>
-                <tr>
-                    <th class="col-stt">STT</th>
-                    <th class="col-name">Sản phẩm</th>
-                    <th class="col-qty">SL</th>
-                    <th class="col-price">Đơn giá</th>
-                    <th class="col-subtotal">Thành tiền</th>
-                </tr>
+                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ (VNĐ)</th><th class="col-subtotal">THÀNH TIỀN (VNĐ)</th></tr>
             </thead>
             <tbody id="summaryDetails">
-                <!-- Product summary rows will be inserted here by JavaScript -->
+                <!-- JS sẽ chèn dòng -->
             </tbody>
         </table>
+
         <div class="summary-total">
-            Tổng tiền: <span id="totalAmount">0 VNĐ</span>
+            💰 TỔNG TIỀN: <span id="totalAmount">0 VNĐ</span>
         </div>
-        <!-- Moved closing remarks inside summary section -->
+
         <div class="summary-closing-remarks">
-            <p>Giới thiệu khách đơn 4 thùng sẽ được 50k</p>
-            <p>Cảm ơn quý khách!</p>
+            <p>✨ Giới thiệu khách đơn 4 thùng sẽ được 50k ✨</p>
+            <p>🙏 Cảm ơn quý khách! Hẹn gặp lại 🙏</p>
         </div>
         <div class="summary-buttons">
-            <button class="back-button" id="backButton" onclick="goBackToProductList()">Quay lại</button>
-            <button class="print-button" id="printButton" onclick="printSummary()">In</button>
+            <button class="back-button" id="backButton" onclick="goBackToProductList()">⬅ Quay lại chỉnh sửa</button>
+            <button class="save-screenshot-btn" id="saveScreenshotBtn">📸 LƯU (chụp ảnh phiếu)</button>
         </div>
     </div>
 
-    <!-- Custom Message Box HTML -->
+    <!-- Message Box thông báo -->
     <div class="message-box-overlay" id="messageBoxOverlay">
         <div class="message-box">
             <p id="messageText"></p>
@@ -654,181 +534,211 @@
     </div>
 
     <script>
-        let productRowCounter = 0; // Counter to create unique IDs for each product row
+        let productRowCounter = 0;
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // Set current date as default for sale date input
+        // DOM ready: set ngày mặc định + thêm 1 dòng sản phẩm
+        document.addEventListener('DOMContentLoaded', () => {
             const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            document.getElementById('saleDateInput').value = `${year}-${month}-${day}`;
-
-            // Add one default product row when the page loads
-            addProductRow();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('saleDateInput').value = `${yyyy}-${mm}-${dd}`;
+            addProductRow(); // khởi tạo 1 dòng
         });
 
-        /**
-         * Creates a new product row with input fields.
-         * @returns {HTMLElement} The div element representing a product row.
-         */
         function createProductRow() {
-            productRowCounter++; // Increment counter for unique ID
-            const productItem = document.createElement('div');
-            productItem.classList.add('product-item');
-            productItem.setAttribute('data-id', productRowCounter); // Assign unique ID to the row
-
-            productItem.innerHTML = `
+            productRowCounter++;
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('product-item');
+            productDiv.setAttribute('data-id', productRowCounter);
+            productDiv.innerHTML = `
                 <div class="product-field name-field">
-                    <input type="text" class="product-name-input" placeholder="Nhập tên sản phẩm" id="productName_${productRowCounter}">
+                    <input type="text" class="product-name-input" placeholder="VD: Khẩu trang KF94" id="prodName_${productRowCounter}">
                 </div>
                 <div class="product-field quantity-field">
-                    <input type="number" class="quantity-input" value="0" min="0" id="productQuantity_${productRowCounter}" onfocus="if(this.value === '0') this.value = '';">
+                    <input type="number" class="quantity-input" value="0" min="0" step="1" id="prodQty_${productRowCounter}">
                 </div>
                 <div class="product-field price-field">
-                    <input type="number" class="product-price-input" placeholder="Nhập đơn giá" value="0" min="0" id="productPrice_${productRowCounter}" onfocus="if(this.value === '0') this.value = '';">
+                    <input type="number" class="product-price-input" value="0" min="0" step="1000" id="prodPrice_${productRowCounter}">
                 </div>
-                <button class="remove-product-button" onclick="removeProductRow(this)">Xóa</button>
+                <button class="remove-product-button" onclick="removeProductRow(this)">🗑 Xóa</button>
             `;
-            return productItem;
+            // Xử lý focus xóa số 0
+            const qtyInput = productDiv.querySelector('.quantity-input');
+            const priceInput = productDiv.querySelector('.product-price-input');
+            if(qtyInput) qtyInput.addEventListener('focus', function() { if(this.value === '0') this.value = ''; });
+            if(priceInput) priceInput.addEventListener('focus', function() { if(this.value === '0') this.value = ''; });
+            return productDiv;
         }
 
-        /**
-         * Adds a new product row to the list.
-         */
         function addProductRow() {
-            const dynamicProductList = document.getElementById('dynamicProductList');
-            dynamicProductList.appendChild(createProductRow());
+            const container = document.getElementById('dynamicProductList');
+            container.appendChild(createProductRow());
         }
 
-        /**
-         * Removes a product row from the list.
-         * If only one row remains, it resets its content instead of removing it.
-         * @param {HTMLElement} button - The 'Xóa' button that was clicked.
-         */
-        function removeProductRow(button) {
-            const productItem = button.closest('.product-item');
-            if (productItem) {
-                const dynamicProductList = document.getElementById('dynamicProductList');
-                // Ensure not to delete the last row if only one remains
-                if (dynamicProductList.children.length > 1) {
-                    productItem.remove();
-                } else {
-                    // If only one row remains, reset its content instead of removing
-                    const productNameInput = productItem.querySelector('.product-name-input');
-                    const productPriceInput = productItem.querySelector('.product-price-input');
-                    const quantityInput = productItem.querySelector('.quantity-input');
-
-                    if (productNameInput) productNameInput.value = '';
-                    if (productPriceInput) productPriceInput.value = '0';
-                    if (quantityInput) quantityInput.value = '0';
-                }
+        function removeProductRow(btn) {
+            const row = btn.closest('.product-item');
+            const parentList = document.getElementById('dynamicProductList');
+            if(parentList.children.length > 1) {
+                row.remove();
+            } else {
+                // reset nội dung dòng cuối cùng
+                const nameInput = row.querySelector('.product-name-input');
+                const qtyInput = row.querySelector('.quantity-input');
+                const priceInput = row.querySelector('.product-price-input');
+                if(nameInput) nameInput.value = '';
+                if(qtyInput) qtyInput.value = '0';
+                if(priceInput) priceInput.value = '0';
+                // hiện thông báo nhẹ (không bắt buộc)
+                showMessageBox("⚠️ Phải có ít nhất một dòng sản phẩm. Đã đặt lại dòng này.");
+                setTimeout(() => hideMessageBox(), 1500);
             }
         }
 
-        /**
-         * Shows the custom message box with a given message.
-         * @param {string} message - The message to display.
-         */
-        function showMessageBox(message) {
-            document.getElementById('messageText').textContent = message;
-            document.getElementById('messageBoxOverlay').style.display = 'flex';
+        function showMessageBox(msg) {
+            const overlay = document.getElementById('messageBoxOverlay');
+            const textEl = document.getElementById('messageText');
+            textEl.innerText = msg;
+            overlay.style.display = 'flex';
         }
-
-        /**
-         * Hides the custom message box.
-         */
         function hideMessageBox() {
             document.getElementById('messageBoxOverlay').style.display = 'none';
         }
 
-        /**
-         * Triggers the browser's print dialog for the summary section.
-         */
-        function printSummary() {
-            window.print();
+        // Format tiền tệ
+        function formatCurrencyWithVND(amount) {
+            return amount.toLocaleString('vi-VN') + ' VNĐ';
+        }
+        function formatCurrencyWithoutVND(amount) {
+            return amount.toLocaleString('vi-VN');
         }
 
-        /**
-         * Calculates the total amount and displays the summary table.
-         */
+        // Hàm tính tổng và tạo phiếu xuất với bảng đậm nét, font lớn
         function calculateTotal() {
-            const productItems = document.querySelectorAll('#dynamicProductList .product-item');
-            const summaryDetails = document.getElementById('summaryDetails');
+            const productRows = document.querySelectorAll('#dynamicProductList .product-item');
+            const summaryTbody = document.getElementById('summaryDetails');
             let totalAmount = 0;
             let summaryHtml = '';
-            let sttCounter = 1;
+            let stt = 1;
 
-            // Get customer name and sale date from input fields
-            const customerName = document.getElementById('customerNameInput').value.trim();
-            const saleDate = document.getElementById('saleDateInput').value;
+            // Lấy tên khách + ngày
+            const rawCustomer = document.getElementById('customerNameInput').value.trim();
+            const saleDateRaw = document.getElementById('saleDateInput').value;
+            const customerDisplay = rawCustomer === "" ? "................................" : rawCustomer;
+            document.getElementById('summaryCustomerName').innerText = customerDisplay;
 
-            // Update customer name and sale date in the summary section
-            document.getElementById('summaryCustomerName').textContent = customerName || '.................................................';
-            if (saleDate) {
-                const [year, month, day] = saleDate.split('-');
-                document.getElementById('summarySaleDate').textContent = `${day}/${month}/${year}`;
+            if(saleDateRaw) {
+                const [year, month, day] = saleDateRaw.split('-');
+                document.getElementById('summarySaleDate').innerText = `${day}/${month}/${year}`;
             } else {
-                document.getElementById('summarySaleDate').textContent = '....................';
+                document.getElementById('summarySaleDate').innerText = "____/____/____";
             }
 
+            // Lặp qua các dòng sản phẩm, chỉ lấy những dòng có tên và số lượng > 0
+            for(let row of productRows) {
+                const productName = row.querySelector('.product-name-input')?.value.trim();
+                let quantity = parseInt(row.querySelector('.quantity-input')?.value) || 0;
+                let unitPrice = parseFloat(row.querySelector('.product-price-input')?.value) || 0;
 
-            for (const item of productItems) {
-                const productName = item.querySelector('.product-name-input').value.trim();
-                const productPrice = parseFloat(item.querySelector('.product-price-input').value) || 0;
-                const quantity = parseInt(item.querySelector('.quantity-input').value) || 0;
-
-                // Only add to summary table if product has a name and quantity > 0
-                if (productName && quantity > 0) {
-                    const subtotal = productPrice * quantity;
+                if(productName && quantity > 0 && unitPrice >= 0) {
+                    const subtotal = quantity * unitPrice;
                     totalAmount += subtotal;
                     summaryHtml += `
                         <tr>
-                            <td class="col-stt">${sttCounter++}</td>
-                            <td class="col-name">${productName}</td>
+                            <td class="col-stt">${stt++}</td>
+                            <td class="col-name"><strong>${escapeHtml(productName)}</strong></td>
                             <td class="col-qty">${quantity}</td>
-                            <td class="col-price">${formatCurrencyWithoutVND(productPrice)}</td>
+                            <td class="col-price">${formatCurrencyWithoutVND(unitPrice)}</td>
                             <td class="col-subtotal">${formatCurrencyWithoutVND(subtotal)}</td>
                         </tr>
                     `;
                 }
             }
 
-            summaryDetails.innerHTML = summaryHtml; // Update summary table content
-            document.getElementById('totalAmount').textContent = formatCurrencyWithVND(totalAmount); // Display final total amount
+            // Nếu không có sản phẩm hợp lệ -> hiển thị thông báo không cho xem phiếu
+            if(summaryHtml === "") {
+                showMessageBox("❌ Vui lòng nhập ít nhất một sản phẩm hợp lệ (có tên và số lượng > 0)");
+                return;
+            }
 
-            // Switch between sections
+            summaryTbody.innerHTML = summaryHtml;
+            document.getElementById('totalAmount').innerHTML = formatCurrencyWithVND(totalAmount);
+
+            // Chuyển giao diện: ẩn form nhập, hiện phiếu xuất kho
             document.getElementById('productListSection').style.display = 'none';
             document.getElementById('summarySection').style.display = 'block';
         }
 
-        /**
-         * Formats an amount with 'VNĐ' currency unit.
-         * @param {number} amount - The amount to format.
-         * @returns {string} Chuỗi tiền đã định dạng.
-         */
-        function formatCurrencyWithVND(amount) {
-            return amount.toLocaleString('vi-VN') + ' VNĐ';
+        // XSS protection đơn giản
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
         }
 
-        /**
-         * Formats an amount without 'VNĐ' currency unit.
-         * @param {number} amount - The amount to format.
-         * @returns {string} Chuỗi tiền đã định dạng.
-         */
-        function formatCurrencyWithoutVND(amount) {
-            return amount.toLocaleString('vi-VN');
-        }
-
-        /**
-         * Returns to the product list section without clearing the entered data.
-         */
+        // Quay lại chỉnh sửa
         function goBackToProductList() {
             document.getElementById('summarySection').style.display = 'none';
             document.getElementById('productListSection').style.display = 'block';
-            // No data clearing here, as per user's request.
         }
-    </script>
 
+        // HÀM CHỤP MÀN HÌNH (LƯU LẠI) thay thế nút in cũ
+        async function captureAndSaveVoucher() {
+            const summaryElement = document.getElementById('summarySection');
+            if (!summaryElement) return;
+
+            // Hiển thị loading nhẹ (tùy chọn)
+            const saveBtn = document.querySelector('.save-screenshot-btn');
+            const originalText = saveBtn.innerText;
+            saveBtn.innerText = '📸 Đang chụp...';
+            saveBtn.disabled = true;
+
+            try {
+                // Đảm bảo phiếu hiển thị đầy đủ, không bị scroll ẩn
+                summaryElement.style.transform = 'translateZ(0)'; // tăng cường render
+                const canvas = await html2canvas(summaryElement, {
+                    scale: 2.5,          // chất lượng cao, chữ rõ
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: false,
+                    allowTaint: false
+                });
+                // Tạo link download
+                const link = document.createElement('a');
+                const timestamp = new Date().toISOString().slice(0,19).replace(/:/g, '-');
+                link.download = `Phieu_Xuat_Kho_${timestamp}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showMessageBox("✅ Đã lưu ảnh phiếu xuất kho thành công!");
+                setTimeout(() => hideMessageBox(), 1800);
+            } catch (err) {
+                console.error(err);
+                showMessageBox("⚠️ Lỗi khi chụp ảnh, vui lòng thử lại.");
+                setTimeout(() => hideMessageBox(), 1800);
+            } finally {
+                saveBtn.innerText = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        // Gắn sự kiện cho nút lưu (chụp ảnh)
+        document.addEventListener('click', function(e) {
+            if(e.target && e.target.id === 'saveScreenshotBtn') {
+                captureAndSaveVoucher();
+            }
+        });
+
+        // Đảm bảo khi bấm nút in cũ không còn, nhưng vẫn giữ tính năng mới
+        window.printSummary = function() {
+            // Giữ lại nhưng không dùng nữa, để tránh lỗi legacy
+            captureAndSaveVoucher();
+        };
+    </script>
 </body>
 </html>
