@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Chọn Sản Phẩm Để Thanh toán</title>
+    <title>Chọn Sản Phẩm & Thanh toán - Phiếu xuất kho</title>
     <!-- html2canvas library for screenshot -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -478,7 +478,7 @@
         <div class="product-list-header">
             <div class="name-header">📌 Tên sản phẩm</div>
             <div class="quantity-header">🔢 Số lượng</div>
-            <div class="price-header">💰 Đơn giá</div>
+            <div class="price-header">💰 Đơn giá (VNĐ)</div>
             <div class="remove-header"></div>
         </div>
         <div id="dynamicProductList"></div>
@@ -503,7 +503,7 @@
         <!-- Bảng chi tiết với viền đen đậm, font chữ to rõ -->
         <table class="summary-table">
             <thead>
-                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ</th><th class="col-subtotal">THÀNH TIỀN</th></tr>
+                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ (VNĐ)</th><th class="col-subtotal">THÀNH TIỀN (VNĐ)</th></tr>
             </thead>
             <tbody id="summaryDetails">
                 <!-- JS sẽ chèn dòng -->
@@ -511,11 +511,11 @@
         </table>
 
         <div class="summary-total">
-            💰 TỔNG TIỀN: <span id="totalAmount">0</span>
+            💰 TỔNG TIỀN: <span id="totalAmount">0 VNĐ</span>
         </div>
 
         <div class="summary-closing-remarks">
-            <p>Cảm ơn quý khách</p>
+            <p>Cảm ơn quý khách!</p>
         </div>
         <div class="summary-buttons">
             <button class="back-button" id="backButton" onclick="goBackToProductList()">⬅ Quay lại chỉnh sửa</button>
@@ -605,7 +605,7 @@
 
         // Format tiền tệ
         function formatCurrencyWithVND(amount) {
-            return amount.toLocaleString('vi-VN');
+            return amount.toLocaleString('vi-VN') + ' VNĐ';
         }
         function formatCurrencyWithoutVND(amount) {
             return amount.toLocaleString('vi-VN');
