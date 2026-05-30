@@ -478,7 +478,7 @@
         <div class="product-list-header">
             <div class="name-header">📌 Tên sản phẩm</div>
             <div class="quantity-header">🔢 Số lượng</div>
-            <div class="price-header">💰 Đơn giá (VNĐ)</div>
+            <div class="price-header">💰 Đơn giá</div>
             <div class="remove-header"></div>
         </div>
         <div id="dynamicProductList"></div>
@@ -503,7 +503,7 @@
         <!-- Bảng chi tiết với viền đen đậm, font chữ to rõ -->
         <table class="summary-table">
             <thead>
-                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ (VNĐ)</th><th class="col-subtotal">THÀNH TIỀN (VNĐ)</th></tr>
+                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ</th><th class="col-subtotal">THÀNH TIỀN</th></tr>
             </thead>
             <tbody id="summaryDetails">
                 <!-- JS sẽ chèn dòng -->
@@ -605,7 +605,7 @@
 
         // Format tiền tệ
         function formatCurrencyWithVND(amount) {
-            return amount.toLocaleString('vi-VN') + ' VNĐ';
+            return amount.toLocaleString('vi-VN');
         }
         function formatCurrencyWithoutVND(amount) {
             return amount.toLocaleString('vi-VN');
