@@ -208,74 +208,74 @@
             padding: 28px 32px;
         }
 
-        /* Header phiếu - Tăng gấp 2 lần */
+        /* Header phiếu - KÍCH THƯỚC NHỎ HƠN */
         .summary-header {
             text-align: center;
-            margin-bottom: 28px;
-            border-bottom: 3px solid #1e293b;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 14px;
         }
         .summary-header .company-name {
-            font-size: 4.8rem;
+            font-size: 2.0rem;
             font-weight: 800;
             color: #b91c1c;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         .summary-header .branch-info {
-            font-size: 2.8rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #b45309;
         }
         .contact-info {
-            font-size: 2.0rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: #2c3e66;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .doc-title {
-            font-size: 5.0rem !important;
+            font-size: 2.4rem !important;
             font-weight: 900 !important;
             color: #0f3b5c;
-            margin: 16px 0 12px 0;
-            letter-spacing: 2px;
+            margin: 10px 0 8px 0;
+            letter-spacing: 1px;
             border-bottom: 2px dashed #ccc;
             display: inline-block;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
 
-        /* Thông tin khách + ngày - Tăng gấp 2 lần */
+        /* Thông tin khách + ngày - KÍCH THƯỚC NHỎ HƠN */
         .customer-and-date-details {
             display: flex;
             justify-content: space-between;
             background: #f1f5f9;
-            padding: 20px 28px;
-            border-radius: 28px;
-            margin: 18px 0 8px 0;
-            font-size: 2.6rem;
+            padding: 12px 18px;
+            border-radius: 20px;
+            margin: 12px 0 6px 0;
+            font-size: 1.2rem;
             font-weight: 600;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 10px;
         }
         .customer-and-date-details div {
-            font-size: 2.4rem;
+            font-size: 1.1rem;
         }
         #summaryCustomerName, #summarySaleDate {
             font-weight: 800;
             color: #0f172a;
             background: #eef2ff;
-            padding: 4px 16px;
-            border-radius: 30px;
+            padding: 2px 12px;
+            border-radius: 20px;
             display: inline-block;
         }
 
         /* ========== DANH SÁCH SẢN PHẨM DẠNG BLOCK ========== */
         .summary-products {
-            margin: 24px 0;
+            margin: 16px 0;
         }
 
         .product-block {
-            border-bottom: 3px solid #1e293b;
-            padding: 28px 0;
+            border-bottom: 2px solid #1e293b;
+            padding: 14px 0;
             margin-bottom: 0;
         }
 
@@ -284,34 +284,36 @@
         }
 
         .product-block .product-name {
-            font-size: 3.6rem;
-            font-weight: 400;
+            font-size: 1.4rem;
+            font-weight: 600;
             color: #0b2b44;
-            padding-bottom: 14px;
-            margin-bottom: 10px;
+            padding-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .product-block .product-details {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
+            padding: 0 6px;
         }
 
         .product-block .product-details .detail-item {
             display: flex;
             align-items: baseline;
-            gap: 6px;
+            gap: 4px;
         }
 
         .product-block .product-details .label {
             font-weight: 400;
             color: #475569;
+            font-size: 1.0rem;
         }
 
         .product-block .product-details .value {
             font-weight: 700;
             color: #0f172a;
+            font-size: 1.1rem;
         }
 
         .product-block .product-details .price-col {
@@ -320,7 +322,7 @@
         }
 
         .product-block .product-details .price-col .value {
-            font-size: 3.3rem;
+            font-size: 1.3rem;
         }
 
         .product-block .product-details .qty-col {
@@ -329,59 +331,68 @@
         }
 
         .product-block .product-details .qty-col .label {
-            font-size: 3.3rem;
+            font-size: 1.2rem;
             font-weight: 400;
             color: #475569;
         }
 
         .product-block .product-details .qty-col .value {
-            font-size: 3.3rem;
+            font-size: 1.3rem;
         }
 
+        /* ===== THÀNH TIỀN - LUÔN CANH PHẢI ===== */
         .product-block .product-details .subtotal-col {
-            text-align: right;
+            text-align: right !important;
             flex: 0 0 30%;
             font-weight: 800;
             color: #b45309;
+            font-size: 1.4rem;
+            justify-content: flex-end;
         }
 
-        .product-block .product-details .subtotal-col {
-            font-size: 3.3rem;
+        /* Đảm bảo canh phải cả trên điện thoại */
+        @media (max-width: 750px) {
+            .product-block .product-details .subtotal-col {
+                text-align: right !important;
+                flex: 0 0 35%;
+                font-size: 0.95rem;
+                justify-content: flex-end;
+            }
         }
 
-        /* Tổng tiền - Tăng 1.2 lần và canh giữa */
+        /* Tổng tiền - NHỎ HƠN */
         .summary-total {
-            font-size: 3.6rem;
+            font-size: 1.6rem;
             font-weight: 800;
             text-align: center;
-            margin-top: 28px;
-            padding: 24px 30px;
+            margin-top: 18px;
+            padding: 14px 20px;
             background: #fef9e3;
-            border-radius: 28px;
-            border: 3px solid #e2b53c;
+            border-radius: 20px;
+            border: 2px solid #e2b53c;
             color: #b45309;
         }
         .summary-total span {
-            font-size: 3.8rem;
+            font-size: 1.8rem;
             background: white;
-            padding: 8px 24px;
-            border-radius: 50px;
-            margin-left: 16px;
+            padding: 4px 18px;
+            border-radius: 40px;
+            margin-left: 12px;
         }
 
-        /* Dòng cảm ơn và giới thiệu - Tăng gấp 2 lần */
+        /* Dòng cảm ơn và giới thiệu - NHỎ HƠN */
         .summary-closing-remarks {
-            margin: 32px 0 20px;
+            margin: 20px 0 14px;
             text-align: center;
             background: #fff7e6;
-            padding: 20px;
-            border-radius: 60px;
+            padding: 12px;
+            border-radius: 40px;
         }
         .summary-closing-remarks p {
-            font-size: 2.6rem;
-            font-weight: 800;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: #c2410c;
-            margin: 6px 0;
+            margin: 4px 0;
         }
 
         /* Nút quay lại & Lưu (chụp màn hình) */
@@ -389,11 +400,11 @@
             display: flex;
             justify-content: flex-end;
             gap: 18px;
-            margin-top: 28px;
+            margin-top: 20px;
         }
         .back-button, .save-screenshot-btn {
-            padding: 12px 28px;
-            font-size: 1rem;
+            padding: 10px 22px;
+            font-size: 0.95rem;
             font-weight: 700;
             border: none;
             border-radius: 44px;
@@ -460,31 +471,62 @@
             cursor: pointer;
         }
 
-        /* Responsive */
+        /* Responsive cho điện thoại */
         @media (max-width: 750px) {
-            body { padding: 12px; }
-            .container, .summary-section { padding: 18px; }
-            .product-list-header, .product-item { gap: 8px; }
-            .name-header, .name-field { flex: 1.8; min-width: 100px; }
-            .quantity-header, .quantity-field { flex: 0.9; }
-            .price-header, .price-field { flex: 1.2; }
-            .summary-header .company-name { font-size: 3.0rem; }
-            .summary-header .branch-info { font-size: 1.8rem; }
-            .contact-info { font-size: 1.2rem; }
-            .doc-title { font-size: 2.8rem !important; }
-            .customer-and-date-details { font-size: 1.6rem; }
-            .customer-and-date-details div { font-size: 1.4rem; }
-            .product-block .product-name { font-size: 2.2rem; }
-            .product-block .product-details { flex-wrap: wrap; }
-            .product-block .product-details .price-col { flex: 0 0 40%; }
-            .product-block .product-details .price-col .value { font-size: 2.0rem; }
+            body { padding: 10px; }
+            .container, .summary-section { padding: 14px; }
+            .product-list-header, .product-item { gap: 6px; flex-wrap: nowrap; }
+            .name-header, .name-field { flex: 1.6; min-width: 80px; font-size: 0.75rem; }
+            .quantity-header, .quantity-field { flex: 0.7; min-width: 60px; font-size: 0.75rem; }
+            .price-header, .price-field { flex: 1; min-width: 70px; font-size: 0.75rem; }
+            .remove-header { flex: 0.4; min-width: 40px; }
+            .remove-product-button { flex: 0.4; min-width: 40px; font-size: 0.6rem; padding: 6px 0; }
+            .product-field input { padding: 8px 4px; font-size: 0.75rem; }
+
+            /* PHIẾU XUẤT - NHỎ GỌN TRÊN ĐIỆN THOẠI */
+            .summary-header .company-name { font-size: 1.4rem; }
+            .summary-header .branch-info { font-size: 0.8rem; }
+            .contact-info { font-size: 0.85rem; }
+            .doc-title { font-size: 1.5rem !important; }
+
+            .customer-and-date-details { 
+                font-size: 0.85rem; 
+                padding: 8px 12px;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+            }
+            .customer-and-date-details div { font-size: 0.85rem; }
+            #summaryCustomerName, #summarySaleDate { 
+                font-size: 0.85rem;
+                padding: 2px 8px;
+            }
+
+            .product-block .product-name { font-size: 1.0rem; }
+            .product-block .product-details { flex-wrap: wrap; gap: 4px; }
+            .product-block .product-details .price-col { flex: 0 0 35%; }
+            .product-block .product-details .price-col .value { font-size: 0.95rem; }
             .product-block .product-details .qty-col { flex: 0 0 20%; }
-            .product-block .product-details .qty-col .label { font-size: 2.0rem; }
-            .product-block .product-details .qty-col .value { font-size: 2.0rem; }
-            .product-block .product-details .subtotal-col { flex: 0 0 35%; font-size: 2.0rem; }
-            .summary-total { font-size: 2.2rem; }
-            .summary-total span { font-size: 2.4rem; }
-            .summary-closing-remarks p { font-size: 1.6rem; }
+            .product-block .product-details .qty-col .label { font-size: 0.85rem; }
+            .product-block .product-details .qty-col .value { font-size: 0.95rem; }
+            /* Thành tiền canh phải trên điện thoại */
+            .product-block .product-details .subtotal-col { 
+                flex: 0 0 35%; 
+                font-size: 0.95rem;
+                text-align: right !important;
+            }
+
+            .summary-total { font-size: 1.2rem; padding: 10px 14px; }
+            .summary-total span { font-size: 1.3rem; padding: 2px 12px; margin-left: 8px; }
+
+            .summary-closing-remarks p { font-size: 0.85rem; }
+            .summary-buttons { flex-direction: column; gap: 10px; }
+            .back-button, .save-screenshot-btn { 
+                padding: 10px 16px; 
+                font-size: 0.85rem;
+                width: 100%;
+                text-align: center;
+            }
         }
 
         @media print {
@@ -513,7 +555,7 @@
 
     <!-- Phần nhập sản phẩm -->
     <div class="container" id="productListSection">
-        <h1>📦 LẬP PHIẾU XUẤT KHO</h1>
+        <h1>PHIẾU XUẤT KHO</h1>
 
         <div class="customer-input-section">
             <div>
@@ -542,10 +584,12 @@
     <!-- PHIẾU XUẤT KHO -->
     <div class="summary-section" id="summarySection">
         <div class="summary-header">
+            
             <p class="company-name">NGỌC HƯƠNG</p>
             <p class="branch-info">Chuyên Sỉ - Lẻ các loại hàng Hóa Mỹ Phẩm</p>
             <p class="contact-info">MB Bank - 0990173529999 - Trần Thị Hương</p>
             <p class="contact-info">DĐ: 0967.750.989 (Hương) - 0705.919.559 (Phước)</p>
+
             <div class="customer-and-date-details">
                 <div>🧾 Tên khách hàng: <span id="summaryCustomerName"></span></div>
                 <div>📆 Ngày xuất: <span id="summarySaleDate"></span></div>
@@ -562,7 +606,8 @@
         </div>
 
         <div class="summary-closing-remarks">
-            <p>Cảm ơn quý khách!</p>
+          
+            <p>Cảm ơn quý khách. Hẹn gặp lại !</p>
         </div>
         <div class="summary-buttons">
             <button class="back-button" id="backButton" onclick="goBackToProductList()">⬅ Quay lại chỉnh sửa</button>
