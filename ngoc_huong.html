@@ -208,7 +208,7 @@
             padding: 28px 32px;
         }
 
-        /* Header phiếu */
+        /* Header phiếu - Tăng gấp 2 lần */
         .summary-header {
             text-align: center;
             margin-bottom: 28px;
@@ -216,24 +216,24 @@
             padding-bottom: 20px;
         }
         .summary-header .company-name {
-            font-size: 1.9rem;
+            font-size: 4.8rem;
             font-weight: 800;
             color: #b91c1c;
             letter-spacing: 1px;
         }
         .summary-header .branch-info {
-            font-size: 1.2rem;
+            font-size: 2.8rem;
             font-weight: 700;
             color: #b45309;
         }
         .contact-info {
-            font-size: 0.85rem;
+            font-size: 2.0rem;
             font-weight: 600;
             color: #2c3e66;
             margin-top: 6px;
         }
         .doc-title {
-            font-size: 2.4rem !important;
+            font-size: 5.0rem !important;
             font-weight: 900 !important;
             color: #0f3b5c;
             margin: 16px 0 12px 0;
@@ -243,107 +243,142 @@
             padding-bottom: 6px;
         }
 
-        /* Thông tin khách + ngày - font to rõ */
+        /* Thông tin khách + ngày - Tăng gấp 2 lần */
         .customer-and-date-details {
             display: flex;
             justify-content: space-between;
             background: #f1f5f9;
-            padding: 14px 22px;
+            padding: 20px 28px;
             border-radius: 28px;
             margin: 18px 0 8px 0;
-            font-size: 1.1rem;
+            font-size: 2.6rem;
             font-weight: 600;
             flex-wrap: wrap;
             gap: 16px;
         }
         .customer-and-date-details div {
-            font-size: 1.05rem;
+            font-size: 2.4rem;
         }
         #summaryCustomerName, #summarySaleDate {
             font-weight: 800;
             color: #0f172a;
             background: #eef2ff;
-            padding: 4px 12px;
+            padding: 4px 16px;
             border-radius: 30px;
             display: inline-block;
         }
 
-        /* BẢNG SẢN PHẨM - ĐƯỜNG KẺ ĐẬM, FONT TO */
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 28px 0;
-            font-size: 1.05rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        /* ========== DANH SÁCH SẢN PHẨM DẠNG BLOCK ========== */
+        .summary-products {
+            margin: 24px 0;
         }
-        .summary-table th, .summary-table td {
-            border: 2px solid #1e293b !important;  /* Đường kẻ đen đậm */
-            padding: 14px 12px;
-            vertical-align: middle;
+
+        .product-block {
+            border-bottom: 3px solid #1e293b;
+            padding: 28px 0;
+            margin-bottom: 0;
         }
-        .summary-table th {
-            background-color: #e9f0f9;
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #0c4a6e;
-            text-align: center;
+
+        .product-block:last-child {
+            border-bottom: none;
         }
-        .summary-table td {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #1e293b;
+
+        .product-block .product-name {
+            font-size: 3.6rem;
+            font-weight: 400;
+            color: #0b2b44;
+            padding-bottom: 14px;
+            margin-bottom: 10px;
         }
-        /* Căn chỉnh nội dung bảng */
-        .col-stt {
-            text-align: center;
-            width: 8%;
+
+        .product-block .product-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .product-block .product-details .detail-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .product-block .product-details .label {
+            font-weight: 400;
+            color: #475569;
+        }
+
+        .product-block .product-details .value {
             font-weight: 700;
+            color: #0f172a;
         }
-        .col-name {
+
+        .product-block .product-details .price-col {
             text-align: left;
-            font-weight: 600;
-            width: 42%;
+            flex: 0 0 30%;
         }
-        .col-qty {
+
+        .product-block .product-details .price-col .value {
+            font-size: 3.3rem;
+        }
+
+        .product-block .product-details .qty-col {
             text-align: center;
-            font-weight: 600;
-            width: 12%;
+            flex: 0 0 20%;
         }
-        .col-price, .col-subtotal {
+
+        .product-block .product-details .qty-col .label {
+            font-size: 3.3rem;
+            font-weight: 400;
+            color: #475569;
+        }
+
+        .product-block .product-details .qty-col .value {
+            font-size: 3.3rem;
+        }
+
+        .product-block .product-details .subtotal-col {
             text-align: right;
-            font-weight: 600;
-            width: 19%;
-        }
-        /* Tổng tiền lớn và đậm */
-        .summary-total {
-            font-size: 1.7rem;
+            flex: 0 0 30%;
             font-weight: 800;
-            text-align: right;
-            margin-top: 20px;
-            padding: 16px 20px;
+            color: #b45309;
+        }
+
+        .product-block .product-details .subtotal-col {
+            font-size: 3.3rem;
+        }
+
+        /* Tổng tiền - Tăng 1.2 lần và canh giữa */
+        .summary-total {
+            font-size: 3.6rem;
+            font-weight: 800;
+            text-align: center;
+            margin-top: 28px;
+            padding: 24px 30px;
             background: #fef9e3;
             border-radius: 28px;
-            border: 2px solid #e2b53c;
+            border: 3px solid #e2b53c;
             color: #b45309;
         }
         .summary-total span {
-            font-size: 1.8rem;
+            font-size: 3.8rem;
             background: white;
-            padding: 6px 16px;
+            padding: 8px 24px;
             border-radius: 50px;
-            margin-left: 12px;
+            margin-left: 16px;
         }
 
-        /* Dòng cảm ơn và giới thiệu - font to hơn */
+        /* Dòng cảm ơn và giới thiệu - Tăng gấp 2 lần */
         .summary-closing-remarks {
-            margin: 28px 0 20px;
+            margin: 32px 0 20px;
             text-align: center;
             background: #fff7e6;
-            padding: 14px;
+            padding: 20px;
             border-radius: 60px;
         }
         .summary-closing-remarks p {
-            font-size: 1.2rem;
+            font-size: 2.6rem;
             font-weight: 800;
             color: #c2410c;
             margin: 6px 0;
@@ -379,6 +414,11 @@
         .back-button:hover {
             background-color: #1e293b;
             transform: scale(0.97);
+        }
+
+        /* Ẩn nút khi chụp ảnh */
+        .summary-section.capturing .summary-buttons {
+            display: none !important;
         }
 
         /* Message box */
@@ -420,7 +460,7 @@
             cursor: pointer;
         }
 
-        /* Responsive co giãn nhưng vẫn giữ bảng rõ */
+        /* Responsive */
         @media (max-width: 750px) {
             body { padding: 12px; }
             .container, .summary-section { padding: 18px; }
@@ -428,14 +468,26 @@
             .name-header, .name-field { flex: 1.8; min-width: 100px; }
             .quantity-header, .quantity-field { flex: 0.9; }
             .price-header, .price-field { flex: 1.2; }
-            .summary-table th, .summary-table td { padding: 10px 6px; font-size: 0.85rem; }
-            .summary-table th { font-size: 0.9rem; }
-            .doc-title { font-size: 1.8rem !important; }
-            .summary-total { font-size: 1.3rem; }
+            .summary-header .company-name { font-size: 3.0rem; }
+            .summary-header .branch-info { font-size: 1.8rem; }
+            .contact-info { font-size: 1.2rem; }
+            .doc-title { font-size: 2.8rem !important; }
+            .customer-and-date-details { font-size: 1.6rem; }
+            .customer-and-date-details div { font-size: 1.4rem; }
+            .product-block .product-name { font-size: 2.2rem; }
+            .product-block .product-details { flex-wrap: wrap; }
+            .product-block .product-details .price-col { flex: 0 0 40%; }
+            .product-block .product-details .price-col .value { font-size: 2.0rem; }
+            .product-block .product-details .qty-col { flex: 0 0 20%; }
+            .product-block .product-details .qty-col .label { font-size: 2.0rem; }
+            .product-block .product-details .qty-col .value { font-size: 2.0rem; }
+            .product-block .product-details .subtotal-col { flex: 0 0 35%; font-size: 2.0rem; }
+            .summary-total { font-size: 2.2rem; }
+            .summary-total span { font-size: 2.4rem; }
+            .summary-closing-remarks p { font-size: 1.6rem; }
         }
 
         @media print {
-            /* In ấn giữ nguyên kiểu đậm nét */
             body * {
                 visibility: hidden;
             }
@@ -452,7 +504,7 @@
                 box-shadow: none;
             }
             .summary-buttons, .back-button, .save-screenshot-btn {
-                display: none;
+                display: none !important;
             }
         }
     </style>
@@ -477,8 +529,8 @@
         <!-- Bảng nhập hàng hóa -->
         <div class="product-list-header">
             <div class="name-header">📌 Tên sản phẩm</div>
-            <div class="quantity-header">🔢 Số lượng</div>
-            <div class="price-header">💰 Đơn giá (VNĐ)</div>
+            <div class="price-header">💰 Đơn giá</div>
+            <div class="quantity-header">🔢 SL</div>
             <div class="remove-header"></div>
         </div>
         <div id="dynamicProductList"></div>
@@ -487,7 +539,7 @@
         <button class="calculate-button" onclick="calculateTotal()">💵 THÀNH TIỀN & XEM PHIẾU XUẤT</button>
     </div>
 
-    <!-- PHIẾU XUẤT KHO - kiểu dáng bảng đậm, font lớn -->
+    <!-- PHIẾU XUẤT KHO -->
     <div class="summary-section" id="summarySection">
         <div class="summary-header">
             <p class="company-name">NGỌC HƯƠNG</p>
@@ -500,18 +552,13 @@
             </div>
         </div>
 
-        <!-- Bảng chi tiết với viền đen đậm, font chữ to rõ -->
-        <table class="summary-table">
-            <thead>
-                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ (VNĐ)</th><th class="col-subtotal">THÀNH TIỀN (VNĐ)</th></tr>
-            </thead>
-            <tbody id="summaryDetails">
-                <!-- JS sẽ chèn dòng -->
-            </tbody>
-        </table>
+        <!-- Danh sách sản phẩm dạng block -->
+        <div class="summary-products" id="summaryProducts">
+            <!-- JS sẽ chèn các block sản phẩm -->
+        </div>
 
         <div class="summary-total">
-            💰 TỔNG TIỀN: <span id="totalAmount">0 VNĐ</span>
+            TỔNG TIỀN: <span id="totalAmount">0</span>
         </div>
 
         <div class="summary-closing-remarks">
@@ -541,7 +588,7 @@
             const mm = String(today.getMonth() + 1).padStart(2, '0');
             const dd = String(today.getDate()).padStart(2, '0');
             document.getElementById('saleDateInput').value = `${yyyy}-${mm}-${dd}`;
-            addProductRow(); // khởi tạo 1 dòng
+            addProductRow();
         });
 
         function createProductRow() {
@@ -553,15 +600,14 @@
                 <div class="product-field name-field">
                     <input type="text" class="product-name-input" placeholder="VD: Khẩu trang KF94" id="prodName_${productRowCounter}">
                 </div>
-                <div class="product-field quantity-field">
-                    <input type="number" class="quantity-input" value="0" min="0" step="1" id="prodQty_${productRowCounter}">
-                </div>
                 <div class="product-field price-field">
                     <input type="number" class="product-price-input" value="0" min="0" step="1000" id="prodPrice_${productRowCounter}">
                 </div>
+                <div class="product-field quantity-field">
+                    <input type="number" class="quantity-input" value="0" min="0" step="1" id="prodQty_${productRowCounter}">
+                </div>
                 <button class="remove-product-button" onclick="removeProductRow(this)">🗑 Xóa</button>
             `;
-            // Xử lý focus xóa số 0
             const qtyInput = productDiv.querySelector('.quantity-input');
             const priceInput = productDiv.querySelector('.product-price-input');
             if(qtyInput) qtyInput.addEventListener('focus', function() { if(this.value === '0') this.value = ''; });
@@ -580,14 +626,12 @@
             if(parentList.children.length > 1) {
                 row.remove();
             } else {
-                // reset nội dung dòng cuối cùng
                 const nameInput = row.querySelector('.product-name-input');
                 const qtyInput = row.querySelector('.quantity-input');
                 const priceInput = row.querySelector('.product-price-input');
                 if(nameInput) nameInput.value = '';
                 if(qtyInput) qtyInput.value = '0';
                 if(priceInput) priceInput.value = '0';
-                // hiện thông báo nhẹ (không bắt buộc)
                 showMessageBox("⚠️ Phải có ít nhất một dòng sản phẩm. Đã đặt lại dòng này.");
                 setTimeout(() => hideMessageBox(), 1500);
             }
@@ -603,23 +647,18 @@
             document.getElementById('messageBoxOverlay').style.display = 'none';
         }
 
-        // Format tiền tệ
-        function formatCurrencyWithVND(amount) {
-            return amount.toLocaleString('vi-VN') + ' VNĐ';
-        }
-        function formatCurrencyWithoutVND(amount) {
+        // Format số
+        function formatNumber(amount) {
             return amount.toLocaleString('vi-VN');
         }
 
-        // Hàm tính tổng và tạo phiếu xuất với bảng đậm nét, font lớn
+        // Hàm tính tổng và tạo phiếu xuất
         function calculateTotal() {
             const productRows = document.querySelectorAll('#dynamicProductList .product-item');
-            const summaryTbody = document.getElementById('summaryDetails');
+            const summaryContainer = document.getElementById('summaryProducts');
             let totalAmount = 0;
             let summaryHtml = '';
-            let stt = 1;
 
-            // Lấy tên khách + ngày
             const rawCustomer = document.getElementById('customerNameInput').value.trim();
             const saleDateRaw = document.getElementById('saleDateInput').value;
             const customerDisplay = rawCustomer === "" ? "................................" : rawCustomer;
@@ -632,7 +671,7 @@
                 document.getElementById('summarySaleDate').innerText = "____/____/____";
             }
 
-            // Lặp qua các dòng sản phẩm, chỉ lấy những dòng có tên và số lượng > 0
+            let stt = 1;
             for(let row of productRows) {
                 const productName = row.querySelector('.product-name-input')?.value.trim();
                 let quantity = parseInt(row.querySelector('.quantity-input')?.value) || 0;
@@ -642,32 +681,30 @@
                     const subtotal = quantity * unitPrice;
                     totalAmount += subtotal;
                     summaryHtml += `
-                        <tr>
-                            <td class="col-stt">${stt++}</td>
-                            <td class="col-name"><strong>${escapeHtml(productName)}</strong></td>
-                            <td class="col-qty">${quantity}</td>
-                            <td class="col-price">${formatCurrencyWithoutVND(unitPrice)}</td>
-                            <td class="col-subtotal">${formatCurrencyWithoutVND(subtotal)}</td>
-                        </tr>
+                        <div class="product-block">
+                            <div class="product-name">${stt++}. ${escapeHtml(productName)}</div>
+                            <div class="product-details">
+                                <span class="detail-item price-col"><span class="label"></span> <span class="value">${formatNumber(unitPrice)}</span></span>
+                                <span class="detail-item qty-col"><span class="label">SL: </span><span class="value">${quantity}</span></span>
+                                <span class="detail-item subtotal-col">${formatNumber(subtotal)}</span>
+                            </div>
+                        </div>
                     `;
                 }
             }
 
-            // Nếu không có sản phẩm hợp lệ -> hiển thị thông báo không cho xem phiếu
             if(summaryHtml === "") {
                 showMessageBox("❌ Vui lòng nhập ít nhất một sản phẩm hợp lệ (có tên và số lượng > 0)");
                 return;
             }
 
-            summaryTbody.innerHTML = summaryHtml;
-            document.getElementById('totalAmount').innerHTML = formatCurrencyWithVND(totalAmount);
+            summaryContainer.innerHTML = summaryHtml;
+            document.getElementById('totalAmount').innerHTML = formatNumber(totalAmount);
 
-            // Chuyển giao diện: ẩn form nhập, hiện phiếu xuất kho
             document.getElementById('productListSection').style.display = 'none';
             document.getElementById('summarySection').style.display = 'block';
         }
 
-        // XSS protection đơn giản
         function escapeHtml(str) {
             if(!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -675,39 +712,45 @@
                 if(m === '<') return '&lt;';
                 if(m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
 
-        // Quay lại chỉnh sửa
         function goBackToProductList() {
             document.getElementById('summarySection').style.display = 'none';
             document.getElementById('productListSection').style.display = 'block';
         }
 
-        // HÀM CHỤP MÀN HÌNH (LƯU LẠI) thay thế nút in cũ
+        // HÀM CHỤP MÀN HÌNH
         async function captureAndSaveVoucher() {
             const summaryElement = document.getElementById('summarySection');
             if (!summaryElement) return;
 
-            // Hiển thị loading nhẹ (tùy chọn)
             const saveBtn = document.querySelector('.save-screenshot-btn');
             const originalText = saveBtn.innerText;
             saveBtn.innerText = '📸 Đang chụp...';
             saveBtn.disabled = true;
 
             try {
-                // Đảm bảo phiếu hiển thị đầy đủ, không bị scroll ẩn
-                summaryElement.style.transform = 'translateZ(0)'; // tăng cường render
+                // Thêm class để ẩn nút
+                summaryElement.classList.add('capturing');
+                
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
                 const canvas = await html2canvas(summaryElement, {
-                    scale: 2.5,          // chất lượng cao, chữ rõ
+                    scale: 4.5,
                     backgroundColor: '#ffffff',
                     logging: false,
                     useCORS: false,
-                    allowTaint: false
+                    allowTaint: false,
+                    width: summaryElement.scrollWidth,
+                    height: summaryElement.scrollHeight,
+                    windowWidth: summaryElement.scrollWidth,
+                    windowHeight: summaryElement.scrollHeight
                 });
-                // Tạo link download
+                
+                // Xóa class để hiện lại nút
+                summaryElement.classList.remove('capturing');
+                
                 const link = document.createElement('a');
                 const timestamp = new Date().toISOString().slice(0,19).replace(/:/g, '-');
                 link.download = `Phieu_Xuat_Kho_${timestamp}.png`;
@@ -717,6 +760,7 @@
                 setTimeout(() => hideMessageBox(), 1800);
             } catch (err) {
                 console.error(err);
+                summaryElement.classList.remove('capturing');
                 showMessageBox("⚠️ Lỗi khi chụp ảnh, vui lòng thử lại.");
                 setTimeout(() => hideMessageBox(), 1800);
             } finally {
@@ -725,16 +769,13 @@
             }
         }
 
-        // Gắn sự kiện cho nút lưu (chụp ảnh)
         document.addEventListener('click', function(e) {
             if(e.target && e.target.id === 'saveScreenshotBtn') {
                 captureAndSaveVoucher();
             }
         });
 
-        // Đảm bảo khi bấm nút in cũ không còn, nhưng vẫn giữ tính năng mới
         window.printSummary = function() {
-            // Giữ lại nhưng không dùng nữa, để tránh lỗi legacy
             captureAndSaveVoucher();
         };
     </script>
