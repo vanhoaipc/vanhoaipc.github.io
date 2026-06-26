@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Chọn Sản Phẩm & Thanh toán</title>
+    <title>Chọn Sản Phẩm & Thanh toán - Phiếu xuất kho</title>
     <!-- html2canvas library for screenshot -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -208,191 +208,148 @@
             padding: 28px 32px;
         }
 
-        /* Header phiếu - KÍCH THƯỚC NHỎ HƠN */
+        /* Header phiếu */
         .summary-header {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #1e293b;
-            padding-bottom: 14px;
+            margin-bottom: 28px;
         }
         .summary-header .company-name {
-            font-size: 2.0rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: #b91c1c;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            white-space: nowrap;
         }
         .summary-header .branch-info {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #b45309;
         }
         .contact-info {
-            font-size: 1.2rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #2c3e66;
-            margin-top: 4px;
+            margin-top: 6px;
         }
         .doc-title {
             font-size: 2.4rem !important;
             font-weight: 900 !important;
             color: #0f3b5c;
-            margin: 10px 0 8px 0;
-            letter-spacing: 1px;
+            margin: 16px 0 12px 0;
+            letter-spacing: 2px;
             border-bottom: 2px dashed #ccc;
             display: inline-block;
-            padding-bottom: 4px;
+            padding-bottom: 6px;
         }
 
-        /* Thông tin khách + ngày - KÍCH THƯỚC NHỎ HƠN */
+        /* Thông tin khách + ngày - font to rõ */
         .customer-and-date-details {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             background: #f1f5f9;
-            padding: 12px 18px;
-            border-radius: 20px;
-            margin: 12px 0 6px 0;
-            font-size: 1.2rem;
+            padding: 8px 22px;
+            border-radius: 16px;
+            margin: 8px 0 4px 0;
+            font-size: 1.05rem;
             font-weight: 600;
-            flex-wrap: wrap;
-            gap: 10px;
+            gap: 2px;
         }
         .customer-and-date-details div {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         #summaryCustomerName, #summarySaleDate {
             font-weight: 800;
             color: #0f172a;
             background: #eef2ff;
-            padding: 2px 12px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 30px;
             display: inline-block;
         }
 
-        /* ========== DANH SÁCH SẢN PHẨM DẠNG BLOCK ========== */
-        .summary-products {
+        /* BẢNG SẢN PHẨM - ĐƯỜNG KẺ MẢNH */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
             margin: 16px 0;
+            font-size: 1.05rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
-        .product-block {
-            border-bottom: 2px solid #1e293b;
-            padding: 14px 0;
-            margin-bottom: 0;
+        .summary-table th, .summary-table td {
+            border: 0.5px solid #94a3b8;
+            padding: 4px 8px;
+            vertical-align: middle;
         }
-
-        .product-block:last-child {
-            border-bottom: none;
+        .summary-table th {
+            background-color: #e9f0f9;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #0c4a6e;
+            text-align: center;
         }
-
-        .product-block .product-name {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #0b2b44;
-            padding-bottom: 6px;
-            margin-bottom: 4px;
+        .summary-table td {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #1e293b;
         }
-
-        .product-block .product-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 6px;
-        }
-
-        .product-block .product-details .detail-item {
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-
-        .product-block .product-details .label {
-            font-weight: 400;
-            color: #475569;
-            font-size: 1.0rem;
-        }
-
-        .product-block .product-details .value {
+        /* Căn chỉnh nội dung bảng */
+        .col-stt {
+            text-align: center;
+            width: 4%;
             font-weight: 700;
-            color: #0f172a;
-            font-size: 1.1rem;
         }
-
-        .product-block .product-details .price-col {
+        .col-name {
             text-align: left;
-            flex: 0 0 30%;
+            font-weight: 600;
+            width: 42%;
         }
-
-        .product-block .product-details .price-col .value {
-            font-size: 1.3rem;
-        }
-
-        .product-block .product-details .qty-col {
+        .col-qty {
             text-align: center;
-            flex: 0 0 20%;
+            font-weight: 600;
+            width: 12%;
         }
-
-        .product-block .product-details .qty-col .label {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: #475569;
+        .col-price, .col-subtotal {
+            text-align: right;
+            font-weight: 600;
+            width: 19%;
         }
-
-        .product-block .product-details .qty-col .value {
-            font-size: 1.3rem;
-        }
-
-        /* ===== THÀNH TIỀN - LUÔN CANH PHẢI ===== */
-        .product-block .product-details .subtotal-col {
-            text-align: right !important;
-            flex: 0 0 30%;
-            font-weight: 800;
-            color: #b45309;
-            font-size: 1.4rem;
-            justify-content: flex-end;
-        }
-
-        /* Đảm bảo canh phải cả trên điện thoại */
-        @media (max-width: 750px) {
-            .product-block .product-details .subtotal-col {
-                text-align: right !important;
-                flex: 0 0 35%;
-                font-size: 0.95rem;
-                justify-content: flex-end;
-            }
-        }
-
-        /* Tổng tiền - NHỎ HƠN */
+        /* Tổng tiền lớn và đậm */
         .summary-total {
-            font-size: 1.6rem;
+            font-size: 1.1rem;
             font-weight: 800;
             text-align: center;
-            margin-top: 18px;
-            padding: 14px 20px;
+            margin-top: 20px;
+            padding: 10px 20px;
             background: #fef9e3;
-            border-radius: 20px;
+            border-radius: 28px;
             border: 2px solid #e2b53c;
             color: #b45309;
+            white-space: nowrap;
+            overflow: hidden;
         }
         .summary-total span {
-            font-size: 1.8rem;
+            font-size: 1.15rem;
             background: white;
-            padding: 4px 18px;
-            border-radius: 40px;
-            margin-left: 12px;
+            padding: 3px 12px;
+            border-radius: 50px;
+            margin-left: 8px;
+            white-space: nowrap;
         }
 
-        /* Dòng cảm ơn và giới thiệu - NHỎ HƠN */
+        /* Dòng giới thiệu */
         .summary-closing-remarks {
-            margin: 20px 0 14px;
+            margin: 16px 0 12px;
             text-align: center;
-            background: #fff7e6;
-            padding: 12px;
-            border-radius: 40px;
         }
         .summary-closing-remarks p {
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #c2410c;
             margin: 4px 0;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         /* Nút quay lại & Lưu (chụp màn hình) */
@@ -400,11 +357,11 @@
             display: flex;
             justify-content: flex-end;
             gap: 18px;
-            margin-top: 20px;
+            margin-top: 28px;
         }
         .back-button, .save-screenshot-btn {
-            padding: 10px 22px;
-            font-size: 0.95rem;
+            padding: 12px 28px;
+            font-size: 1rem;
             font-weight: 700;
             border: none;
             border-radius: 44px;
@@ -425,11 +382,6 @@
         .back-button:hover {
             background-color: #1e293b;
             transform: scale(0.97);
-        }
-
-        /* Ẩn nút khi chụp ảnh */
-        .summary-section.capturing .summary-buttons {
-            display: none !important;
         }
 
         /* Message box */
@@ -471,65 +423,22 @@
             cursor: pointer;
         }
 
-        /* Responsive cho điện thoại */
+        /* Responsive co giãn nhưng vẫn giữ bảng rõ */
         @media (max-width: 750px) {
-            body { padding: 10px; }
-            .container, .summary-section { padding: 14px; }
-            .product-list-header, .product-item { gap: 6px; flex-wrap: nowrap; }
-            .name-header, .name-field { flex: 1.6; min-width: 80px; font-size: 0.75rem; }
-            .quantity-header, .quantity-field { flex: 0.7; min-width: 60px; font-size: 0.75rem; }
-            .price-header, .price-field { flex: 1; min-width: 70px; font-size: 0.75rem; }
-            .remove-header { flex: 0.4; min-width: 40px; }
-            .remove-product-button { flex: 0.4; min-width: 40px; font-size: 0.6rem; padding: 6px 0; }
-            .product-field input { padding: 8px 4px; font-size: 0.75rem; }
-
-            /* PHIẾU XUẤT - NHỎ GỌN TRÊN ĐIỆN THOẠI */
-            .summary-header .company-name { font-size: 1.4rem; }
-            .summary-header .branch-info { font-size: 0.8rem; }
-            .contact-info { font-size: 0.85rem; }
-            .doc-title { font-size: 1.5rem !important; }
-
-            .customer-and-date-details { 
-                font-size: 0.85rem; 
-                padding: 8px 12px;
-                flex-direction: column;
-                align-items: center;
-                gap: 4px;
-            }
-            .customer-and-date-details div { font-size: 0.85rem; }
-            #summaryCustomerName, #summarySaleDate { 
-                font-size: 0.85rem;
-                padding: 2px 8px;
-            }
-
-            .product-block .product-name { font-size: 1.0rem; }
-            .product-block .product-details { flex-wrap: wrap; gap: 4px; }
-            .product-block .product-details .price-col { flex: 0 0 35%; }
-            .product-block .product-details .price-col .value { font-size: 0.95rem; }
-            .product-block .product-details .qty-col { flex: 0 0 20%; }
-            .product-block .product-details .qty-col .label { font-size: 0.85rem; }
-            .product-block .product-details .qty-col .value { font-size: 0.95rem; }
-            /* Thành tiền canh phải trên điện thoại */
-            .product-block .product-details .subtotal-col { 
-                flex: 0 0 35%; 
-                font-size: 0.95rem;
-                text-align: right !important;
-            }
-
-            .summary-total { font-size: 1.2rem; padding: 10px 14px; }
-            .summary-total span { font-size: 1.3rem; padding: 2px 12px; margin-left: 8px; }
-
-            .summary-closing-remarks p { font-size: 0.85rem; }
-            .summary-buttons { flex-direction: column; gap: 10px; }
-            .back-button, .save-screenshot-btn { 
-                padding: 10px 16px; 
-                font-size: 0.85rem;
-                width: 100%;
-                text-align: center;
-            }
+            body { padding: 12px; }
+            .container, .summary-section { padding: 18px; }
+            .product-list-header, .product-item { gap: 8px; }
+            .name-header, .name-field { flex: 1.8; min-width: 100px; }
+            .quantity-header, .quantity-field { flex: 0.9; }
+            .price-header, .price-field { flex: 1.2; }
+            .summary-table th, .summary-table td { padding: 10px 6px; font-size: 0.85rem; }
+            .summary-table th { font-size: 0.9rem; }
+            .doc-title { font-size: 1.8rem !important; }
+            .summary-total { font-size: 1.3rem; }
         }
 
         @media print {
+            /* In ấn giữ nguyên kiểu đậm nét */
             body * {
                 visibility: hidden;
             }
@@ -546,7 +455,7 @@
                 box-shadow: none;
             }
             .summary-buttons, .back-button, .save-screenshot-btn {
-                display: none !important;
+                display: none;
             }
         }
     </style>
@@ -555,7 +464,7 @@
 
     <!-- Phần nhập sản phẩm -->
     <div class="container" id="productListSection">
-        <h1>PHIẾU XUẤT KHO</h1>
+        <h1>📦 LẬP PHIẾU XUẤT KHO</h1>
 
         <div class="customer-input-section">
             <div>
@@ -571,8 +480,8 @@
         <!-- Bảng nhập hàng hóa -->
         <div class="product-list-header">
             <div class="name-header">📌 Tên sản phẩm</div>
-            <div class="price-header">💰 Đơn giá</div>
-            <div class="quantity-header">🔢 SL</div>
+            <div class="quantity-header">🔢 Số lượng</div>
+            <div class="price-header">💰 Đơn giá (VNĐ)</div>
             <div class="remove-header"></div>
         </div>
         <div id="dynamicProductList"></div>
@@ -581,33 +490,36 @@
         <button class="calculate-button" onclick="calculateTotal()">💵 THÀNH TIỀN & XEM PHIẾU XUẤT</button>
     </div>
 
-    <!-- PHIẾU XUẤT KHO -->
+    <!-- PHIẾU XUẤT KHO - kiểu dáng bảng đậm, font lớn -->
     <div class="summary-section" id="summarySection">
         <div class="summary-header">
-            <p class="branch-info">🏪 NHÀ PHÂN PHỐI KHẨU TRANG</p>
             <p class="company-name">KHÁNH AN 5D NAM ANH</p>
-            <p class="branch-info">CHUYÊN PHÂN PHỐI KHẨU TRANG SỐ LƯỢNG LỚN</p>
+            <p class="branch-info">KHẨU TRANG SỐ LƯỢNG LỚN</p>
             <p class="contact-info">💳 Vietcombank - 0281000270009</p>
             <p class="contact-info">Luân Văn Phong 📞 Zalo: 0372.427.609</p>
-
             <div class="customer-and-date-details">
-                <div>🧾 Tên khách hàng: <span id="summaryCustomerName"></span></div>
-                <div>📆 Ngày xuất: <span id="summarySaleDate"></span></div>
+                <div>Tên khách hàng: <span id="summaryCustomerName"></span></div>
+                <div>Ngày xuất: <span id="summarySaleDate"></span></div>
             </div>
         </div>
 
-        <!-- Danh sách sản phẩm dạng block -->
-        <div class="summary-products" id="summaryProducts">
-            <!-- JS sẽ chèn các block sản phẩm -->
-        </div>
+        <!-- Bảng chi tiết với viền đen đậm, font chữ to rõ -->
+        <table class="summary-table">
+            <thead>
+                <tr><th class="col-stt">STT</th><th class="col-name">SẢN PHẨM</th><th class="col-qty">SỐ LƯỢNG</th><th class="col-price">ĐƠN GIÁ (VNĐ)</th><th class="col-subtotal">THÀNH TIỀN (VNĐ)</th></tr>
+            </thead>
+            <tbody id="summaryDetails">
+                <!-- JS sẽ chèn dòng -->
+            </tbody>
+        </table>
 
         <div class="summary-total">
-            TỔNG TIỀN: <span id="totalAmount">0</span>
+            💰 TỔNG TIỀN: <span id="totalAmount">0 VNĐ</span>
         </div>
 
         <div class="summary-closing-remarks">
-            <p>Giới thiệu khách đơn 4 thùng sẽ được 50k</p>
-            <p>Cảm ơn quý khách. Hẹn gặp lại !</p>
+            <p>Giới thiệu khách đơn 4 thùng</p>
+            <p>Được tặng 50k</p>
         </div>
         <div class="summary-buttons">
             <button class="back-button" id="backButton" onclick="goBackToProductList()">⬅ Quay lại chỉnh sửa</button>
@@ -633,7 +545,7 @@
             const mm = String(today.getMonth() + 1).padStart(2, '0');
             const dd = String(today.getDate()).padStart(2, '0');
             document.getElementById('saleDateInput').value = `${yyyy}-${mm}-${dd}`;
-            addProductRow();
+            addProductRow(); // khởi tạo 1 dòng
         });
 
         function createProductRow() {
@@ -645,14 +557,15 @@
                 <div class="product-field name-field">
                     <input type="text" class="product-name-input" placeholder="VD: Khẩu trang KF94" id="prodName_${productRowCounter}">
                 </div>
-                <div class="product-field price-field">
-                    <input type="number" class="product-price-input" value="0" min="0" step="1000" id="prodPrice_${productRowCounter}">
-                </div>
                 <div class="product-field quantity-field">
                     <input type="number" class="quantity-input" value="0" min="0" step="1" id="prodQty_${productRowCounter}">
                 </div>
+                <div class="product-field price-field">
+                    <input type="number" class="product-price-input" value="0" min="0" step="1000" id="prodPrice_${productRowCounter}">
+                </div>
                 <button class="remove-product-button" onclick="removeProductRow(this)">🗑 Xóa</button>
             `;
+            // Xử lý focus xóa số 0
             const qtyInput = productDiv.querySelector('.quantity-input');
             const priceInput = productDiv.querySelector('.product-price-input');
             if(qtyInput) qtyInput.addEventListener('focus', function() { if(this.value === '0') this.value = ''; });
@@ -671,12 +584,14 @@
             if(parentList.children.length > 1) {
                 row.remove();
             } else {
+                // reset nội dung dòng cuối cùng
                 const nameInput = row.querySelector('.product-name-input');
                 const qtyInput = row.querySelector('.quantity-input');
                 const priceInput = row.querySelector('.product-price-input');
                 if(nameInput) nameInput.value = '';
                 if(qtyInput) qtyInput.value = '0';
                 if(priceInput) priceInput.value = '0';
+                // hiện thông báo nhẹ (không bắt buộc)
                 showMessageBox("⚠️ Phải có ít nhất một dòng sản phẩm. Đã đặt lại dòng này.");
                 setTimeout(() => hideMessageBox(), 1500);
             }
@@ -692,18 +607,23 @@
             document.getElementById('messageBoxOverlay').style.display = 'none';
         }
 
-        // Format số
-        function formatNumber(amount) {
+        // Format tiền tệ
+        function formatCurrencyWithVND(amount) {
+            return amount.toLocaleString('vi-VN');
+        }
+        function formatCurrencyWithoutVND(amount) {
             return amount.toLocaleString('vi-VN');
         }
 
-        // Hàm tính tổng và tạo phiếu xuất
+        // Hàm tính tổng và tạo phiếu xuất với bảng đậm nét, font lớn
         function calculateTotal() {
             const productRows = document.querySelectorAll('#dynamicProductList .product-item');
-            const summaryContainer = document.getElementById('summaryProducts');
+            const summaryTbody = document.getElementById('summaryDetails');
             let totalAmount = 0;
             let summaryHtml = '';
+            let stt = 1;
 
+            // Lấy tên khách + ngày
             const rawCustomer = document.getElementById('customerNameInput').value.trim();
             const saleDateRaw = document.getElementById('saleDateInput').value;
             const customerDisplay = rawCustomer === "" ? "................................" : rawCustomer;
@@ -716,7 +636,7 @@
                 document.getElementById('summarySaleDate').innerText = "____/____/____";
             }
 
-            let stt = 1;
+            // Lặp qua các dòng sản phẩm, chỉ lấy những dòng có tên và số lượng > 0
             for(let row of productRows) {
                 const productName = row.querySelector('.product-name-input')?.value.trim();
                 let quantity = parseInt(row.querySelector('.quantity-input')?.value) || 0;
@@ -726,30 +646,32 @@
                     const subtotal = quantity * unitPrice;
                     totalAmount += subtotal;
                     summaryHtml += `
-                        <div class="product-block">
-                            <div class="product-name">${stt++}. ${escapeHtml(productName)}</div>
-                            <div class="product-details">
-                                <span class="detail-item price-col"><span class="label"></span> <span class="value">${formatNumber(unitPrice)}</span></span>
-                                <span class="detail-item qty-col"><span class="label">SL: </span><span class="value">${quantity}</span></span>
-                                <span class="detail-item subtotal-col">${formatNumber(subtotal)}</span>
-                            </div>
-                        </div>
+                        <tr>
+                            <td class="col-stt">${stt++}</td>
+                            <td class="col-name"><strong>${escapeHtml(productName)}</strong></td>
+                            <td class="col-qty">${quantity}</td>
+                            <td class="col-price">${formatCurrencyWithoutVND(unitPrice)}</td>
+                            <td class="col-subtotal">${formatCurrencyWithoutVND(subtotal)}</td>
+                        </tr>
                     `;
                 }
             }
 
+            // Nếu không có sản phẩm hợp lệ -> hiển thị thông báo không cho xem phiếu
             if(summaryHtml === "") {
                 showMessageBox("❌ Vui lòng nhập ít nhất một sản phẩm hợp lệ (có tên và số lượng > 0)");
                 return;
             }
 
-            summaryContainer.innerHTML = summaryHtml;
-            document.getElementById('totalAmount').innerHTML = formatNumber(totalAmount);
+            summaryTbody.innerHTML = summaryHtml;
+            document.getElementById('totalAmount').innerHTML = formatCurrencyWithVND(totalAmount);
 
+            // Chuyển giao diện: ẩn form nhập, hiện phiếu xuất kho
             document.getElementById('productListSection').style.display = 'none';
             document.getElementById('summarySection').style.display = 'block';
         }
 
+        // XSS protection đơn giản
         function escapeHtml(str) {
             if(!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -757,45 +679,41 @@
                 if(m === '<') return '&lt;';
                 if(m === '>') return '&gt;';
                 return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
             });
         }
 
+        // Quay lại chỉnh sửa
         function goBackToProductList() {
             document.getElementById('summarySection').style.display = 'none';
             document.getElementById('productListSection').style.display = 'block';
         }
 
-        // HÀM CHỤP MÀN HÌNH
+        // HÀM CHỤP MÀN HÌNH (LƯU LẠI) thay thế nút in cũ
         async function captureAndSaveVoucher() {
             const summaryElement = document.getElementById('summarySection');
             if (!summaryElement) return;
 
             const saveBtn = document.querySelector('.save-screenshot-btn');
+            const backBtn = document.querySelector('.back-button');
             const originalText = saveBtn.innerText;
             saveBtn.innerText = '📸 Đang chụp...';
             saveBtn.disabled = true;
 
+            // Ẩn 2 nút trước khi chụp
+            const summaryButtons = document.querySelector('.summary-buttons');
+            summaryButtons.style.display = 'none';
+
             try {
-                // Thêm class để ẩn nút
-                summaryElement.classList.add('capturing');
-                
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
+                summaryElement.style.transform = 'translateZ(0)';
                 const canvas = await html2canvas(summaryElement, {
-                    scale: 4.5,
+                    scale: 2.5,
                     backgroundColor: '#ffffff',
                     logging: false,
                     useCORS: false,
-                    allowTaint: false,
-                    width: summaryElement.scrollWidth,
-                    height: summaryElement.scrollHeight,
-                    windowWidth: summaryElement.scrollWidth,
-                    windowHeight: summaryElement.scrollHeight
+                    allowTaint: false
                 });
-                
-                // Xóa class để hiện lại nút
-                summaryElement.classList.remove('capturing');
-                
                 const link = document.createElement('a');
                 const timestamp = new Date().toISOString().slice(0,19).replace(/:/g, '-');
                 link.download = `Phieu_Xuat_Kho_${timestamp}.png`;
@@ -805,22 +723,26 @@
                 setTimeout(() => hideMessageBox(), 1800);
             } catch (err) {
                 console.error(err);
-                summaryElement.classList.remove('capturing');
                 showMessageBox("⚠️ Lỗi khi chụp ảnh, vui lòng thử lại.");
                 setTimeout(() => hideMessageBox(), 1800);
             } finally {
+                // Hiện lại 2 nút sau khi chụp xong
+                summaryButtons.style.display = 'flex';
                 saveBtn.innerText = originalText;
                 saveBtn.disabled = false;
             }
         }
 
+        // Gắn sự kiện cho nút lưu (chụp ảnh)
         document.addEventListener('click', function(e) {
             if(e.target && e.target.id === 'saveScreenshotBtn') {
                 captureAndSaveVoucher();
             }
         });
 
+        // Đảm bảo khi bấm nút in cũ không còn, nhưng vẫn giữ tính năng mới
         window.printSummary = function() {
+            // Giữ lại nhưng không dùng nữa, để tránh lỗi legacy
             captureAndSaveVoucher();
         };
     </script>
