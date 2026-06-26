@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Chọn Sản Phẩm & Thanh toán - Phiếu xuất kho</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; background-color: #f0f2f5; }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+        }
+
+        .container {
+            max-width: 950px;
+            width: 100%;
+            margin: 0 auto 24px auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 24px 28px;
+        }
+
+        h1, h2 { text-align: center; color: #1e466e; margin-bottom: 20px; font-weight: 700; }
+
+        .product-list-header, .product-item { display: flex; align-items: center; gap: 16px; width: 100%; }
+        .product-list-header {
+            background-color: #eef2ff; padding: 14px 12px; border-radius: 16px;
+            margin-bottom: 12px; font-weight: 800; color: #0b2b44; border-bottom: 2px solid #cbdff2;
+        }
+        .product-item { background: white; padding: 12px 12px; border-bottom: 1px solid #e2e8f0; transition: background 0.1s; }
+        .product-item:hover { background-color: #fefce8; }
+
+        .name-header, .name-field { flex: 2.2; min-width: 130px; }
+        .price-header, .price-field { flex: 1; min-width: 110px; text-align: center; }
+        .remove-header { flex: 0.5; min-width: 60px; text-align: center; }
+        .remove-product-button { flex: 0.5; min-width: 60px; }
+
+        .product-field input {
+            width: 100%; padding: 12px 8px; border: 1px solid #cbd5e6;
+            border-radius: 14px; font-size: 0.9rem; background: white; text-align: center; font-weight: 500;
+        }
+        .product-field input:focus { border-color: #2c6e9e; outline: none; box-shadow: 0 0 0 2px rgba(44,110,158,0.2); }
+
+        .remove-product-button {
+            background-color: #dc2626; color: white; border: none; padding: 10px 0;
+            border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            font-size: 0.8rem; width: 100%; text-align: center;
+        }
+        .remove-product-button:hover { background-color: #b91c1c; transform: scale(0.97); }
+
+        .add-product-button {
+            background: linear-gradient(95deg, #f59e0b, #f97316);
+            border: none; width: 100%; padding: 14px; border-radius: 60px;
+            font-weight: bold; font-size: 1.1rem; color: white; margin-top: 24px; cursor: pointer; transition: 0.2s;
+        }
+        .add-product-button:hover { background: linear-gradient(95deg, #e67e22, #fd7e14); transform: translateY(-2px); }
+
+        .calculate-button {
+            background: linear-gradient(95deg, #15803d, #16a34a);
+            width: 100%; padding: 16px; border-radius: 60px; font-weight: bold;
+            font-size: 1.3rem; color: white; margin-top: 20px; border: none; cursor: pointer; transition: 0.2s; letter-spacing: 1px;
+        }
+        .calculate-button:hover { background: linear-gradient(95deg, #0f5c38, #15803d); transform: translateY(-2px); }
+
+        /* PHIẾU XUẤT KHO */
+        .summary-section {
+            display: none;
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            padding: 28px 32px;
+        }
+
+        .summary-header { text-align: center; margin-bottom: 28px; }
+        .summary-header .company-name { font-size: 1.4rem; font-weight: 800; color: #b91c1c; letter-spacing: 1px; }
+        .summary-header .branch-info { font-size: 1.2rem; font-weight: 700; color: #b45309; }
+        .contact-info { font-size: 0.85rem; font-weight: 600; color: #2c3e66; margin-top: 6px; }
+        .doc-title {
+            font-size: 2.4rem !important; font-weight: 900 !important; color: #0f3b5c;
+            margin: 16px 0 12px 0; letter-spacing: 2px; border-bottom: 2px dashed #ccc;
+            display: inline-block; padding-bottom: 6px;
+        }
+
+        /* Bảng chỉ 2 cột */
+        .summary-table {
+            width: 100%; border-collapse: collapse; margin: 16px 0;
+            font-size: 1.05rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .summary-table th, .summary-table td {
+            border: 0.5px solid #94a3b8; padding: 8px 12px; vertical-align: middle;
+        }
+        .summary-table th {
+            background-color: #e9f0f9; font-size: 0.9rem; font-weight: 800; color: #0c4a6e; text-align: center;
+        }
+        .summary-table td { font-size: 0.95rem; font-weight: 500; color: #1e293b; }
+
+        .col-name { text-align: left; font-weight: 600; width: 60%; }
+        .col-price { text-align: right; font-weight: 600; width: 40%; }
+
+        .summary-closing-remarks { margin: 20px 0 12px; text-align: center; }
+        .summary-closing-remarks p { font-size: 1.1rem; font-weight: 800; color: #c2410c; margin: 4px 0; }
+
+        .summary-buttons { display: flex; justify-content: flex-end; gap: 18px; margin-top: 28px; }
+        .back-button, .save-screenshot-btn {
+            padding: 12px 28px; font-size: 1rem; font-weight: 700; border: none;
+            border-radius: 44px; cursor: pointer; transition: all 0.2s ease;
+            background-color: #334155; color: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .save-screenshot-btn { background: linear-gradient(105deg, #0f6e3f, #2b8c5e); }
+        .save-screenshot-btn:hover { background: #0a5a34; transform: scale(0.97); }
+        .back-button:hover { background-color: #1e293b; transform: scale(0.97); }
+
+        .message-box-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .message-box {
+            background: white; border-radius: 32px; padding: 28px 32px; text-align: center;
+            max-width: 380px; width: 85%; border-top: 8px solid #dc2626;
+        }
+        .message-box p { font-size: 1.2rem; font-weight: bold; margin-bottom: 24px; color: #b91c1c; }
+        .message-box button {
+            background: #1e293b; color: white; border: none; padding: 10px 28px;
+            border-radius: 60px; font-weight: bold; font-size: 1rem; cursor: pointer;
+        }
+
+        @media (max-width: 750px) {
+            body { padding: 12px; }
+            .container, .summary-section { padding: 18px; }
+            .product-list-header, .product-item { gap: 8px; }
+            .name-header, .name-field { flex: 1.8; min-width: 100px; }
+            .price-header, .price-field { flex: 1.2; }
+            .summary-table th, .summary-table td { padding: 8px 6px; font-size: 0.85rem; }
+            .doc-title { font-size: 1.8rem !important; }
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            .summary-section, .summary-section * { visibility: visible; }
+            .summary-section { position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 0.5cm; box-shadow: none; }
+            .summary-buttons { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="productListSection">
+        <h1>📦 LẬP PHIẾU XUẤT KHO</h1>
+
+        <div class="product-list-header">
+            <div class="name-header">📌 Tên sản phẩm</div>
+            <div class="price-header">💰 Đơn giá (VNĐ)</div>
+            <div class="remove-header"></div>
+        </div>
+        <div id="dynamicProductList"></div>
+
+        <button class="add-product-button" onclick="addProductRow()">+ Thêm dòng sản phẩm</button>
+        <button class="calculate-button" onclick="calculateTotal()">💵 THÀNH TIỀN & XEM PHIẾU XUẤT</button>
+    </div>
+
+    <!-- PHIẾU XUẤT KHO - chỉ 2 cột: Sản phẩm & Đơn giá -->
+    <div class="summary-section" id="summarySection">
+        <div class="summary-header">
+            <p class="company-name">KHÁNH AN 5D NAM ANH</p>
+            <p class="branch-info">KHẨU TRANG SỐ LƯỢNG LỚN</p>
+            <p class="contact-info">💳 Vietcombank - 0281000270009</p>
+            <p class="contact-info">Luân Văn Phong 📞 Zalo: 0372.427.609</p>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th class="col-name">SẢN PHẨM</th>
+                    <th class="col-price">ĐƠN GIÁ (VNĐ)</th>
+                </tr>
+            </thead>
+            <tbody id="summaryDetails"></tbody>
+        </table>
+
+        <div class="summary-closing-remarks">
+            <p>Giới thiệu khách đơn 4 thùng</p>
+            <p>Được tặng 50k</p>
+        </div>
+
+        <div class="summary-buttons">
+            <button class="back-button" id="backButton" onclick="goBackToProductList()">⬅ Quay lại chỉnh sửa</button>
+            <button class="save-screenshot-btn" id="saveScreenshotBtn">📸 LƯU (chụp ảnh phiếu)</button>
+        </div>
+    </div>
+
+    <div class="message-box-overlay" id="messageBoxOverlay">
+        <div class="message-box">
+            <p id="messageText"></p>
+            <button onclick="hideMessageBox()">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        let productRowCounter = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addProductRow();
+        });
+
+        function createProductRow() {
+            productRowCounter++;
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('product-item');
+            productDiv.setAttribute('data-id', productRowCounter);
+            productDiv.innerHTML = `
+                <div class="product-field name-field">
+                    <input type="text" class="product-name-input" placeholder="VD: Khẩu trang KF94" id="prodName_${productRowCounter}">
+                </div>
+                <div class="product-field price-field">
+                    <input type="number" class="product-price-input" value="0" min="0" step="1000" id="prodPrice_${productRowCounter}">
+                </div>
+                <button class="remove-product-button" onclick="removeProductRow(this)">🗑 Xóa</button>
+            `;
+            const priceInput = productDiv.querySelector('.product-price-input');
+            if(priceInput) priceInput.addEventListener('focus', function() { if(this.value === '0') this.value = ''; });
+            return productDiv;
+        }
+
+        function addProductRow() {
+            document.getElementById('dynamicProductList').appendChild(createProductRow());
+        }
+
+        function removeProductRow(btn) {
+            const row = btn.closest('.product-item');
+            const parentList = document.getElementById('dynamicProductList');
+            if(parentList.children.length > 1) {
+                row.remove();
+            } else {
+                row.querySelector('.product-name-input').value = '';
+                row.querySelector('.product-price-input').value = '0';
+                showMessageBox("⚠️ Phải có ít nhất một dòng sản phẩm. Đã đặt lại dòng này.");
+                setTimeout(() => hideMessageBox(), 1500);
+            }
+        }
+
+        function showMessageBox(msg) {
+            document.getElementById('messageText').innerText = msg;
+            document.getElementById('messageBoxOverlay').style.display = 'flex';
+        }
+        function hideMessageBox() {
+            document.getElementById('messageBoxOverlay').style.display = 'none';
+        }
+
+        function formatCurrency(amount) {
+            return amount.toLocaleString('vi-VN');
+        }
+
+        function calculateTotal() {
+            const productRows = document.querySelectorAll('#dynamicProductList .product-item');
+            const summaryTbody = document.getElementById('summaryDetails');
+            let summaryHtml = '';
+
+            for(let row of productRows) {
+                const productName = row.querySelector('.product-name-input')?.value.trim();
+                let unitPrice = parseFloat(row.querySelector('.product-price-input')?.value) || 0;
+
+                if(productName && unitPrice >= 0) {
+                    summaryHtml += `
+                        <tr>
+                            <td class="col-name"><strong>${escapeHtml(productName)}</strong></td>
+                            <td class="col-price">${formatCurrency(unitPrice)}</td>
+                        </tr>
+                    `;
+                }
+            }
+
+            if(summaryHtml === "") {
+                showMessageBox("❌ Vui lòng nhập ít nhất một sản phẩm hợp lệ (có tên sản phẩm)");
+                return;
+            }
+
+            summaryTbody.innerHTML = summaryHtml;
+            document.getElementById('productListSection').style.display = 'none';
+            document.getElementById('summarySection').style.display = 'block';
+        }
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function goBackToProductList() {
+            document.getElementById('summarySection').style.display = 'none';
+            document.getElementById('productListSection').style.display = 'block';
+        }
+
+        async function captureAndSaveVoucher() {
+            const summaryElement = document.getElementById('summarySection');
+            if (!summaryElement) return;
+
+            const saveBtn = document.querySelector('.save-screenshot-btn');
+            const originalText = saveBtn.innerText;
+            saveBtn.innerText = '📸 Đang chụp...';
+            saveBtn.disabled = true;
+
+            const summaryButtons = document.querySelector('.summary-buttons');
+            summaryButtons.style.display = 'none';
+
+            try {
+                summaryElement.style.transform = 'translateZ(0)';
+                const canvas = await html2canvas(summaryElement, {
+                    scale: 2.5, backgroundColor: '#ffffff', logging: false,
+                    useCORS: false, allowTaint: false
+                });
+                const link = document.createElement('a');
+                const timestamp = new Date().toISOString().slice(0,19).replace(/:/g, '-');
+                link.download = `Phieu_Xuat_Kho_${timestamp}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showMessageBox("✅ Đã lưu ảnh phiếu xuất kho thành công!");
+                setTimeout(() => hideMessageBox(), 1800);
+            } catch (err) {
+                console.error(err);
+                showMessageBox("⚠️ Lỗi khi chụp ảnh, vui lòng thử lại.");
+                setTimeout(() => hideMessageBox(), 1800);
+            } finally {
+                summaryButtons.style.display = 'flex';
+                saveBtn.innerText = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            if(e.target && e.target.id === 'saveScreenshotBtn') {
+                captureAndSaveVoucher();
+            }
+        });
+    </script>
+</body>
+</html>
