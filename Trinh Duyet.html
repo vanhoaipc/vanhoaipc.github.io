@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Dashboard Customizer</title>
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --bg-image: none;
+            --grid-col-gap: 20px;
+            --grid-row-gap: 20px;
+            --padding-top-bottom: 40px;
+            --padding-left-right: 40px;
+            --icon-size: 60px;
+            --icon-radius: 15px;
+            --icon-bg-color: rgba(255,255,255,0.1);
+            --icon-bg-opacity: 0.1;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: var(--padding-top-bottom) var(--padding-left-right);
+            background-color: var(--bg-color);
+            background-image: var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+            transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Modal Styles - Không làm mờ màn hình chính */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            pointer-events: none;
+        }
+
+        .modal-content {
+            position: relative;
+            background: #2b2b36;
+            padding: 20px 25px;
+            border-radius: 16px;
+            width: 800px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 1px solid #444;
+            pointer-events: auto;
+            margin: auto;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 6px;
+            font-size: 14px;
+            color: #70a1ff;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 10px; right: 12px;
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-size: 20px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .close-modal-btn:hover { 
+            color: white; 
+            background: rgba(255,255,255,0.1);
+            transform: rotate(90deg);
+        }
+
+        .setting-group { margin-bottom: 12px; }
+
+        .setting-group:last-child { margin-bottom: 0; }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn-action {
+            flex: 1;
+            min-width: 80px;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-action {
+            background: #4e54c8;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-action:hover { 
+            background: #5a62d6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 84, 200, 0.3);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger { background: #ff4757; }
+        .btn-danger:hover { background: #ff6b7a; }
+        .btn-success { background: #2ed573; }
+        .btn-success:hover { background: #3ddc84; }
+        .btn-info { background: #70a1ff; }
+        .btn-info:hover { background: #8ab4ff; }
+        .btn-warning { background: #ffce54; color: #1e1e2e; }
+        .btn-warning:hover { background: #ffdb70; color: #1e1e2e; }
+
+        .btn-sm {
+            font-size: 10px;
+            padding: 3px 8px;
+            min-width: 60px;
+        }
+
+        /* Color rows - nằm trên 1 hàng */
+        .color-row {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 4px;
+            flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        .color-palette::-webkit-scrollbar {
+            height: 2px;
+        }
+
+        .color-palette::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .color-box {
+            width: 40px;
+            height: 30px;
+            min-width: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .color-box:hover { 
+            transform: scale(1.1); 
+            border-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .color-box.active {
+            border-color: #70a1ff;
+            box-shadow: 0 0 0 2px #70a1ff;
+        }
+
+        .color-row .btn-action {
+            flex-shrink: 0;
+            padding: 3px 8px;
+            font-size: 10px;
+            min-width: 60px;
+        }
+
+        .color-row input[type="color"] {
+            width: 30px;
+            height: 30px;
+            padding: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+            border-radius: 4px;
+            border: 2px solid #444;
+            background: transparent;
+        }
+
+        .opacity-control {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .opacity-control label {
+            font-size: 11px;
+            color: #ccc;
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+
+        .opacity-control input[type="range"] {
+            flex: 1;
+            min-width: 60px;
+            height: 3px;
+        }
+
+        .opacity-control span {
+            font-size: 11px;
+            color: #70a1ff;
+            font-weight: bold;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .wallpaper-controls {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .wallpaper-controls select {
+            flex: 1;
+            min-width: 80px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #1e1e2e;
+            color: white;
+            font-size: 11px;
+        }
+
+        .wallpaper-controls .btn-action {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .wallpaper-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 80px);
+            gap: 6px;
+        }
+
+        .wallpaper-item {
+            width: 100%; height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .wallpaper-item:hover { 
+            border-color: #70a1ff; 
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Grid Layout */
+        .screen-container { width: 100%; height: 100%; }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(calc(var(--icon-size) + 20px), 1fr));
+            grid-auto-rows: minmax(calc(var(--icon-size) + 35px), auto);
+            gap: var(--grid-row-gap) var(--grid-col-gap);
+            justify-content: start;
+            align-items: start;
+        }
+
+        /* App Item */
+        .app-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: white;
+            cursor: grab;
+            box-sizing: border-box;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .app-item.dragging { 
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+
+        .app-item.drag-over {
+            transform: scale(1.05);
+        }
+
+        .app-icon-wrapper {
+            position: relative;
+            width: var(--icon-size);
+            height: var(--icon-size);
+            background: var(--icon-bg-color);
+            border-radius: var(--icon-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: calc(var(--icon-size) * 0.4);
+            overflow: hidden;
+        }
+
+        .app-icon-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--icon-radius);
+            object-fit: cover;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .app-item:hover .app-icon-wrapper { 
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        .app-item:hover .app-icon-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .app-name {
+            margin-top: 6px;
+            font-size: calc(11px + (var(--icon-size) - 40px) * 0.05);
+            text-align: center;
+            word-break: break-word;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .app-item:hover .app-name {
+            transform: translateY(-1px);
+        }
+
+        /* Calendar Icons */
+        .cal-icon-day {
+            font-size: calc(var(--icon-size) * 0.38);
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .cal-icon-month {
+            font-size: calc(var(--icon-size) * 0.18);
+            opacity: 0.9;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* Icon Option Grid */
+        .icon-option-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin-top: 6px;
+            margin-bottom: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .icon-option-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .icon-option-grid::-webkit-scrollbar-track {
+            background: #1e1e2e;
+            border-radius: 2px;
+        }
+
+        .icon-option-grid::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .icon-option-card {
+            background: rgba(255,255,255,0.08);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .icon-option-card:hover {
+            border-color: #70a1ff;
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(112, 161, 255, 0.2);
+        }
+
+        .icon-option-card:active {
+            transform: scale(0.95);
+        }
+
+        .icon-option-card img {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .icon-option-card .emoji-text {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: #2b2b36;
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            z-index: 2000;
+            width: 200px;
+            overflow: hidden;
+        }
+
+        .context-menu-item {
+            padding: 8px 14px;
+            font-size: 13px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .context-menu-item:hover { 
+            background: #4e54c8;
+            padding-left: 18px;
+        }
+        .context-menu-item.delete-item:hover { 
+            background: #ff4757;
+            padding-left: 18px;
+        }
+
+        /* Slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 3px;
+            background: #444;
+            border-radius: 2px;
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #70a1ff;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: #5a92ff;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #70a1ff;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Scrollbar Styling */
+        .modal-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #1e1e2e;
+            border-radius: 2px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .inline-label {
+            font-size: 11px;
+            color: #ccc;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+
+        .four-cols-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .four-cols-row label {
+            display: block;
+            font-size: 10px;
+            color: #ccc;
+            margin-bottom: 2px;
+        }
+
+        .four-cols-row input {
+            padding: 4px 6px;
+            font-size: 12px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #1e1e2e;
+            color: white;
+        }
+
+        /* Size & Radius controls */
+        .size-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .size-controls .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .size-controls .control-group label {
+            font-size: 11px;
+            color: #ccc;
+        }
+
+        .size-controls .control-group .value-display {
+            color: #70a1ff;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95vw;
+                padding: 15px 18px;
+            }
+            .four-cols-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .wallpaper-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 80px);
+            }
+            .wallpaper-controls {
+                flex-wrap: wrap;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .icon-option-grid {
+                grid-template-columns: repeat(5, 1fr);
+                max-height: 180px;
+            }
+            .color-row {
+                flex-wrap: wrap;
+            }
+            .color-palette {
+                min-width: 100%;
+            }
+            .size-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .icon-option-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .color-box {
+                width: 32px;
+                height: 26px;
+                min-width: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="screen-container">
+        <div class="app-grid" id="appGrid"></div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" id="menuOpenApp">🚀 Mở ứng dụng</div>
+        <div class="context-menu-item" id="menuEditApp">✏️ Sửa thông tin</div>
+        <div class="context-menu-item" id="menuChangeIco">🖼️ Thay đổi icon</div>
+        <div class="context-menu-item" id="menuAddApp">➕ Thêm ứng dụng mới</div>
+        <div class="context-menu-item delete-item" id="menuDeleteApp">🗑️ Xóa icon</div>
+    </div>
+
+    <!-- Change Icon Modal -->
+    <div class="modal" id="changeIcoModal">
+        <div class="modal-content" style="width: 550px;">
+            <button class="close-modal-btn" onclick="closeModal('changeIcoModal')">✕</button>
+            <h3 style="color: #70a1ff;">🖼️ THAY ĐỔI ICON</h3>
+            
+            <label style="font-size: 11px; color: #aaa;">3 Gợi ý Icon từ Google:</label>
+            <div class="icon-option-grid" id="googleIconContainer" style="grid-template-columns: repeat(3, 1fr); max-height: none;"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                <label style="font-size: 11px; color: #aaa;">Kho Emoji đa dạng:</label>
+                <button class="btn-action" id="refreshEmojiBtn" style="padding: 2px 10px; font-size: 10px; width: auto; background: #2ed573;">🔄 Làm mới</button>
+            </div>
+            <div class="icon-option-grid" id="systemIconContainer"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <button class="close-modal-btn" onclick="closeModal('settingsModal')">✕</button>
+
+            <h3>🧹 QUẢN LÝ DỮ LIỆU</h3>
+            <div class="setting-group">
+                <div class="btn-group">
+                    <button class="btn-action btn-danger" id="clearDataBtn">🧹 Xóa Sạch Dữ Liệu</button>
+                    <button class="btn-action btn-success" id="exportDataBtn">📤 Xuất Backup</button>
+                    <button class="btn-action btn-info" id="importDataBtn">📥 Nhập Backup</button>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                </div>
+            </div>
+
+            <h3>🎨 MẪU NỀN ICON</h3>
+            <div class="setting-group">
+                <div class="color-row">
+                    <div class="color-palette" id="iconColorPalette"></div>
+                    <button class="btn-action btn-success btn-sm" id="customIconColorBtn">🎨 Tùy chỉnh</button>
+                    <input type="color" id="iconColorInput" value="#ffffff">
+                </div>
+                <div class="opacity-control">
+                    <label>Độ trong suốt:</label>
+                    <input type="range" id="opacityInput" min="0" max="100" value="10">
+                    <span id="opacityVal">10%</span>
+                </div>
+            </div>
+
+            <h3>🎨 MẪU NỀN MÀN HÌNH</h3>
+            <div class="setting-group">
+                <div class="color-row">
+                    <div class="color-palette" id="colorPalette"></div>
+                    <button class="btn-action btn-success btn-sm" id="customColorBtn">🎨 Tùy chỉnh</button>
+                    <input type="color" id="bgColorInput" value="#1e1e2e">
+                </div>
+            </div>
+
+            <h3>🖼️ KHO HÌNH NỀN</h3>
+            <div class="setting-group">
+                <div class="wallpaper-controls">
+                    <select id="topicSelect">
+                        <option value="nature">🌿 Thiên Nhiên</option>
+                        <option value="space">🚀 Vũ Trụ</option>
+                        <option value="minimal">🎯 Tối Giản</option>
+                        <option value="city">🌆 Thành Phố</option>
+                        <option value="ocean">🌊 Đại Dương</option>
+                        <option value="mountain">🏔️ Núi Non</option>
+                        <option value="forest">🌲 Rừng Xanh</option>
+                        <option value="sunset">🌅 Hoàng Hôn</option>
+                        <option value="night">🌙 Màn Đêm</option>
+                        <option value="flower">🌸 Hoa Cỏ</option>
+                        <option value="art">🎨 Nghệ Thuật</option>
+                        <option value="abstract">🌀 Trừu Tượng</option>
+                    </select>
+                    <button class="btn-action" id="refreshWallpapersBtn">🔄 Đổi Ảnh</button>
+                    <button class="btn-action" onclick="document.getElementById('bgFileInput').click()" style="background: #eccc68; color: #333;">📁 Chọn Từ Máy</button>
+                    <input type="file" id="bgFileInput" accept="image/*" style="display: none;">
+                </div>
+                <div class="wallpaper-grid" id="wallpaperGrid"></div>
+            </div>
+
+            <h3>📏 KHOẢNG CÁCH LƯỚI & LỀ BIÊN</h3>
+            <div class="setting-group">
+                <div class="four-cols-row">
+                    <div>
+                        <label>Cách Cột:</label>
+                        <input type="number" id="colGapInput" min="0" max="100" value="20">
+                    </div>
+                    <div>
+                        <label>Cách Hàng:</label>
+                        <input type="number" id="rowGapInput" min="0" max="100" value="20">
+                    </div>
+                    <div>
+                        <label>Top/Bottom:</label>
+                        <input type="number" id="topInput" min="0" max="200" value="40">
+                    </div>
+                    <div>
+                        <label>Left/Right:</label>
+                        <input type="number" id="leftInput" min="0" max="200" value="40">
+                    </div>
+                </div>
+            </div>
+
+            <h3>📐 KÍCH THƯỚC ICON</h3>
+            <div class="setting-group">
+                <div class="size-controls">
+                    <div class="control-group">
+                        <label>Kích thước Icon: <span class="value-display" id="sizeVal">60</span>px</label>
+                        <input type="range" id="sizeInput" min="40" max="200" value="60">
+                    </div>
+                    <div class="control-group">
+                        <label>Bo góc Icon: <span class="value-display" id="radiusVal">15</span>px</label>
+                        <input type="range" id="radiusInput" min="0" max="50" value="15">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Icon Modal -->
+    <div class="modal" id="addIconModal">
+        <div class="modal-content" style="width: 360px;">
+            <button class="close-modal-btn" onclick="closeModal('addIconModal')">✕</button>
+            <h3 style="color: #2ed573;">➕ Thêm Icon Mới</h3>
+            <div class="setting-group">
+                <label>Tên ứng dụng:</label>
+                <input type="text" id="appName" placeholder="Ví dụ: Roblox">
+            </div>
+            <div class="setting-group">
+                <label>Đường dẫn Web (URL):</label>
+                <input type="text" id="appUrl" placeholder="Ví dụ: roblox.com">
+            </div>
+            <div class="setting-group">
+                <label>Biểu tượng Emoji dự phòng:</label>
+                <input type="text" id="appEmoji" placeholder="Ví dụ: 🎮">
+            </div>
+            <button class="btn-action btn-success" id="addAppBtn" style="padding: 8px;">Thêm Vào Màn Hình</button>
+        </div>
+    </div>
+
+    <!-- Edit App Modal -->
+    <div class="modal" id="editAppModal">
+        <div class="modal-content" style="width: 360px;">
+            <button class="close-modal-btn" onclick="closeModal('editAppModal')">✕</button>
+            <h3 style="color: #ffce54;">✏️ SỬA THÔNG TIN ỨNG DỤNG</h3>
+            <div class="setting-group">
+                <label>Tên ứng dụng:</label>
+                <input type="text" id="editAppName" placeholder="Tên ứng dụng">
+            </div>
+            <div class="setting-group">
+                <label>Đường dẫn Web (URL):</label>
+                <input type="text" id="editAppUrl" placeholder="Đường dẫn web">
+            </div>
+            <button class="btn-action btn-warning" id="saveEditAppBtn" style="padding: 8px;">💾 Lưu thay đổi</button>
+        </div>
+    </div>
+
+    <!-- Solar Calendar Modal -->
+    <div class="modal" id="solarModal">
+        <div class="modal-content" style="width: 380px; text-align: center;">
+            <button class="close-modal-btn" onclick="closeModal('solarModal')">✕</button>
+            <h3 style="color: #70a1ff;">📅 DƯƠNG LỊCH</h3>
+            <div id="solarDetail" style="font-size: 48px; font-weight: bold; margin: 15px 0; color: #70a1ff;"></div>
+            <div id="solarFullDate" style="font-size: 16px; color: #ccc;"></div>
+        </div>
+    </div>
+
+    <!-- Lunar Calendar Modal -->
+    <div class="modal" id="lunarModal">
+        <div class="modal-content" style="width: 380px; text-align: center;">
+            <button class="close-modal-btn" onclick="closeModal('lunarModal')">✕</button>
+            <h3 style="color: #eccc68;">🏮 ÂM LỊCH VIỆT NAM</h3>
+            <div id="lunarDetail" style="font-size: 42px; font-weight: bold; margin: 15px 0; color: #eccc68;"></div>
+            <div id="lunarFullDate" style="font-size: 15px; color: #ccc; line-height: 1.6;"></div>
+        </div>
+    </div>
+
+    <!-- Weather Modal -->
+    <div class="modal" id="weatherModal">
+        <div class="modal-content" style="width: 480px;">
+            <button class="close-modal-btn" onclick="closeModal('weatherModal')">✕</button>
+            <h3 style="color: #2ed573;">🌤️ THỜI TIẾT HIỆN TẠI & DỰ BÁO</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
+                <div>
+                    <div id="weatherLocation" style="font-size: 18px; font-weight: bold;">Đang tải...</div>
+                    <div id="weatherDesc" style="color: #aaa; font-size: 14px;">Chờ cập nhật...</div>
+                </div>
+                <div id="weatherTempLarge" style="font-size: 40px; font-weight: bold; color: #ffce54;">--°C</div>
+            </div>
+            <h4 style="margin-bottom: 5px; color: #ddd; font-size: 14px;">Dự báo 12 giờ tiếp theo:</h4>
+            <div class="hourly-forecast" id="hourlyContainer" style="display: flex; gap: 12px; overflow-x: auto; padding: 10px 0;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Màu mẫu cho MÀN HÌNH - 14 màu
+        const presetColors = [
+            '#1e1e2e', '#000000', '#18181b', '#0f172a', '#2d3748', '#3f2b96',
+            '#134e4a', '#701a75', '#831843', '#7f1d1d', '#365314', '#1e293b',
+            '#d35400', '#e67e22'
+        ];
+
+        // Màu mẫu cho ICON - 14 màu
+        const presetIconColors = [
+            'rgba(255,255,255,0.05)',
+            'rgba(255,255,255,0.1)',
+            'rgba(255,255,255,0.2)',
+            'rgba(255,255,255,0.3)',
+            'rgba(0,0,0,0.1)',
+            'rgba(0,0,0,0.2)',
+            'rgba(0,0,0,0.4)',
+            'rgba(255,0,0,0.15)',
+            'rgba(0,255,0,0.15)',
+            'rgba(0,0,255,0.15)',
+            'rgba(255,255,0,0.15)',
+            'rgba(255,0,255,0.15)',
+            'rgba(255,165,0,0.15)',
+            'rgba(128,128,128,0.2)'
+        ];
+
+        // Expanded Emoji Pool
+        const EMOJI_CATEGORIES = {
+            'Mặt cười': ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '🥰', '😘', '😗', '😙', '😚', '🥲', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🥴', '😵', '🤯', '🤠', '🥳', '😈', '👿', '👹', '👺', '💀', '☠️', '👻', '👽', '👾', '🤖', '💩'],
+            'Động vật': ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🪱', '🐛', '🦋', '🐌', '🐞', '🐜', '🪰', '🪲', '🪳', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧'],
+            'Thức ăn': ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🫒', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫘', '🧄', '🧅', '🍄', '🥜', '🫘', '🌰', '🍞', '🥐', '🥖', '🫓', '🥨', '🥯', '🥞', '🧇', '🧀', '🍖', '🍗', '🥩', '🥓', '🍔', '🍟', '🍕', '🌭', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚', '🍳', '🥘', '🍲', '🫕', '🥣', '🥗', '🍿', '🧈', '🧂', '🥫', '🍱', '🍘', '🍙', '🍚', '🍛', '🍜', '🍝', '🍠', '🍢', '🍣', '🍤', '🍥', '🥮', '🍡', '🥟', '🥠', '🥡', '🍦', '🍧', '🍨', '🍩', '🍪', '🎂', '🍰', '🧁', '🥧', '🍫', '🍬', '🍭', '🍮', '🍯', '🍼', '🥛', '☕', '🫖', '🍵', '🍶', '🍾', '🍷', '🍸', '🍹', '🍺', '🍻', '🥂', '🥃', '🥤', '🧋'],
+            'Hoạt động': ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛼', '🛷', '⛸️', '🥌', '🎿', '⛷️', '🏂', '🪂', '🏋️', '🤼', '🤸', '⛹️', '🤾', '🏌️', '🏇', '🧘', '🏄', '🏊', '🤽', '🚣', '🧗', '🚵', '🚴', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🤹', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻', '🪈', '🎲', '♟️', '🎯', '🎳', '🎮', '🎰', '🧩'],
+            'Du lịch': ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🏍️', '🛵', '🚲', '🛴', '🛹', '🛼', '🚏', '🛣️', '🛤️', '⛽', '🚨', '🚥', '🚦', '🛑', '🚧', '⚓', '⛵', '🛶', '🚤', '🛳️', '⛴️', '🚢', '✈️', '🛩️', '🛫', '🛬', '🪂', '💺', '🚁', '🚟', '🚠', '🚡', '🛰️', '🚀', '🛸', '🧳', '⌚', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '🕹️', '🗜️', '💽', '💾', '💿', '📀', '🧮', '📷', '📸', '📹', '🎥', '📽️', '🎞️', '📞', '☎️', '📟', '📠', '📺', '📻', '🎙️', '🎚️', '🎛️', '🧭', '⏱️', '⏲️', '⏰', '🕰️', '⌛', '⏳', '📡', '🔋', '🪫', '💡', '🔦', '🕯️', '🧯', '🪔', '🧴', '🧷', '🧹', '🧺', '🧻', '🪣', '🧼', '🪥', '🧽', '🧾', '🪥'],
+            'Đồ vật': ['💎', '🔮', '🧿', '🪬', '🎀', '🎁', '🎊', '🎉', '🪅', '🎏', '🎐', '🧧', '✉️', '📩', '📨', '📧', '💌', '📮', '📪', '📫', '📬', '📭', '📦', '📯', '📜', '📃', '📄', '📑', '🧾', '📊', '📈', '📉', '📋', '📌', '📍', '📎', '🖇️', '📏', '📐', '✂️', '🗃️', '🗄️', '🗑️', '🔒', '🔓', '🔏', '🔐', '🔑', '🗝️', '🔨', '🪓', '⛏️', '⚒️', '🛠️', '🗡️', '⚔️', '🔫', '🪃', '🏹', '🛡️', '🔧', '🔩', '⚙️', '🗜️', '🔗', '⛓️', '🪝', '🧰', '🧲', '🪛', '💉', '🩸', '💊', '🩹', '🩺', '🔬', '🔭', '📡', '🕯️', '💡', '🔦', '🏮', '🪔', '📔', '📕', '📖', '📗', '📘', '📙', '📚', '📓', '📒', '📃', '📜', '📄', '📰', '📑', '🔖', '🏷️', '💰', '🪙', '💴', '💵', '💶', '💷', '💸', '💳', '🧾', '💎', '⚖️', '🧰', '🔧'],
+            'Biểu tượng': ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️', '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '🆔', '⚛️', '🉑', '☢️', '☣️', '📴', '📳', '🈶', '🈚', '🈸', '🈺', '🈷️', '✴️', '🆚', '💮', '🉐', '㊙️', '㊗️', '🈴', '🈵', '🈹', '🈲', '🅰️', '🅱️', '🆎', '🆑', '🅾️', '🆘', '❌', '⭕', '🛑', '⛔', '📛', '🚫', '💯', '💢', '♨️', '🚷', '🚯', '🚳', '🚱', '🔞', '📵', '🚭', '❗', '❕', '❓', '❔', '‼️', '⁉️', '🔅', '🔆', '〽️', '⚠️', '🚸', '🔱', '⚜️', '🔰', '♻️', '✅', '🈯', '💹', '❇️', '✳️', '❎', '🌐', '💠', 'Ⓜ️', '🌀', '💤', '🏧', '🚾', '♿', '🅿️', '🈳', '🈂️', '🛂', '🛃', '🛄', '🛅', '🚹', '🚺', '🚼', '🚻', '🚮', '🎦', '📶', '🈁', '🔣', 'ℹ️', '🔤', '🔡', '🔠', '🆖', '🆗', '🆙', '🆒', '🆕', '🆓', '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🔢', '#️⃣', '*️⃣', '⏏️', '▶️', '⏸️', '⏹️', '⏺️', '⏭️', '⏮️', '⏩', '⏪', '🔀', '🔁', '🔂', '🔼', '🔽', '⏫', '⏬', '➡️', '⬅️', '⬆️', '⬇️', '↗️', '↘️', '↙️', '↖️', '↕️', '↔️', '↪️', '↩️', '⤴️', '⤵️', '🔃', '🔄', '🎵', '🎶', '➕', '➖', '➗', '✖️', '🟰', '💲', '™️', '©️', '®️', '👁️‍🗨️', '🔚', '🔙', '🔛', '🔝', '🔜']
+        };
+
+        const allEmojis = Object.values(EMOJI_CATEGORIES).flat();
+        const SYSTEM_APP_IDS = ['settings', 'solar_calendar', 'lunar_calendar', 'weather_app'];
+
+        let rawApps = JSON.parse(localStorage.getItem('my_apps'));
+        let apps = [];
+
+        const defaultApps = [
+            { id: 'settings', type: 'system', name: 'Cài đặt' },
+            { id: 'solar_calendar', type: 'system', name: 'Dương Lịch' },
+            { id: 'lunar_calendar', type: 'system', name: 'Âm Lịch' },
+            { id: 'weather_app', type: 'system', name: 'Thời Tiết' },
+            { id: 'app1', type: 'user', name: 'Facebook', url: 'https://facebook.com', emoji: '🌐' },
+            { id: 'app2', type: 'user', name: 'YouTube', url: 'https://youtube.com', emoji: '▶️' }
+        ];
+
+        if (Array.isArray(rawApps)) {
+            apps = rawApps.filter(item => item && (item.type === 'system' || (item.type === 'user' && item.url)));
+        }
+        if (apps.length === 0) apps = [...defaultApps];
+
+        function ensureSystemApps() {
+            apps = apps.filter(a => !SYSTEM_APP_IDS.includes(a.id));
+            apps.unshift(
+                { id: 'settings', type: 'system', name: 'Cài đặt' },
+                { id: 'solar_calendar', type: 'system', name: 'Dương Lịch' },
+                { id: 'lunar_calendar', type: 'system', name: 'Âm Lịch' },
+                { id: 'weather_app', type: 'system', name: 'Thời Tiết' }
+            );
+        }
+        ensureSystemApps();
+
+        let setupConfig = JSON.parse(localStorage.getItem('my_dashboard_config')) || {
+            bgColor: '#1e1e2e', 
+            bgImage: 'none', 
+            colGap: 20, 
+            rowGap: 20, 
+            topPadding: 40, 
+            leftPadding: 40, 
+            iconSize: 60, 
+            iconRadius: 15,
+            iconBgColor: 'rgba(255,255,255,0.1)',
+            iconOpacity: 10
+        };
+
+        function saveSetupConfig() { localStorage.setItem('my_dashboard_config', JSON.stringify(setupConfig)); }
+
+        function applySetupConfig() {
+            document.documentElement.style.setProperty('--bg-color', setupConfig.bgColor);
+            document.documentElement.style.setProperty('--bg-image', setupConfig.bgImage);
+            document.documentElement.style.setProperty('--grid-col-gap', setupConfig.colGap + 'px');
+            document.documentElement.style.setProperty('--grid-row-gap', setupConfig.rowGap + 'px');
+            document.documentElement.style.setProperty('--padding-top-bottom', setupConfig.topPadding + 'px');
+            document.documentElement.style.setProperty('--padding-left-right', setupConfig.leftPadding + 'px');
+            document.documentElement.style.setProperty('--icon-size', setupConfig.iconSize + 'px');
+            document.documentElement.style.setProperty('--icon-radius', setupConfig.iconRadius + 'px');
+            document.documentElement.style.setProperty('--icon-bg-color', setupConfig.iconBgColor);
+            document.documentElement.style.setProperty('--icon-bg-opacity', setupConfig.iconOpacity / 100);
+
+            document.getElementById('colGapInput').value = setupConfig.colGap;
+            document.getElementById('rowGapInput').value = setupConfig.rowGap;
+            document.getElementById('topInput').value = setupConfig.topPadding;
+            document.getElementById('leftInput').value = setupConfig.leftPadding;
+            document.getElementById('sizeInput').value = setupConfig.iconSize;
+            document.getElementById('sizeVal').textContent = setupConfig.iconSize;
+            document.getElementById('radiusInput').value = setupConfig.iconRadius;
+            document.getElementById('radiusVal').textContent = setupConfig.iconRadius;
+            document.getElementById('bgColorInput').value = setupConfig.bgColor;
+            document.getElementById('opacityInput').value = setupConfig.iconOpacity;
+            document.getElementById('opacityVal').textContent = setupConfig.iconOpacity + '%';
+            
+            updateIconColorPreview();
+        }
+
+        function updateIconColorPreview() {
+            // Không còn ô xem trước
+        }
+
+        const appGrid = document.getElementById('appGrid');
+        const settingsModal = document.getElementById('settingsModal');
+        const addIconModal = document.getElementById('addIconModal');
+        const changeIcoModal = document.getElementById('changeIcoModal');
+        const editAppModal = document.getElementById('editAppModal');
+        const contextMenu = document.getElementById('contextMenu');
+        
+        let selectedAppIndex = null;
+        let draggedItemIndex = null;
+        let currentWeather = { temp: '--', icon: '🌤️', city: 'TP. Hồ Chí Minh' };
+
+        function closeModal(id) { 
+            const modal = document.getElementById(id);
+            modal.style.display = 'none';
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.style.display = 'flex';
+        }
+
+        function getGoogleFaviconUrl(url, size = 128) {
+            try {
+                let domain = url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+                return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
+            } catch (e) { return ''; }
+        }
+
+        function getVietnameseLunarDate(date) {
+            const d = date.getDate();
+            const m = date.getMonth() + 1;
+            const y = date.getFullYear();
+            let lunarDay = (d + 15) % 30 || 30;
+            let lunarMonth = m - 1 || 12;
+            return { day: lunarDay, month: lunarMonth, year: y };
+        }
+
+        function renderApps() {
+            appGrid.innerHTML = '';
+            const now = new Date();
+
+            apps.forEach((app, index) => {
+                const appEl = document.createElement('div');
+                appEl.className = 'app-item';
+                appEl.draggable = true;
+                appEl.dataset.index = index;
+
+                if (app.id === 'settings') {
+                    appEl.innerHTML = `
+                        <div class="app-icon-wrapper" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">⚙️</div>
+                        <span class="app-name">Cài đặt</span>
+                    `;
+                    appEl.onclick = () => openModal('settingsModal');
+                } 
+                else if (app.id === 'solar_calendar') {
+                    appEl.innerHTML = `
+                        <div class="app-icon-wrapper" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <span class="cal-icon-day">${now.getDate()}</span>
+                            <span class="cal-icon-month">Tháng ${now.getMonth() + 1}</span>
+                        </div>
+                        <span class="app-name">Dương Lịch</span>
+                    `;
+                    appEl.onclick = () => {
+                        document.getElementById('solarDetail').textContent = `${now.getDate()} - Tháng ${now.getMonth() + 1}`;
+                        document.getElementById('solarFullDate').textContent = `Năm ${now.getFullYear()} (Dương Lịch)`;
+                        openModal('solarModal');
+                    };
+                }
+                else if (app.id === 'lunar_calendar') {
+                    const lunar = getVietnameseLunarDate(now);
+                    appEl.innerHTML = `
+                        <div class="app-icon-wrapper" style="background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);">
+                            <span class="cal-icon-day">${lunar.day}</span>
+                            <span class="cal-icon-month">Tháng ${lunar.month}</span>
+                        </div>
+                        <span class="app-name">Âm Lịch</span>
+                    `;
+                    appEl.onclick = () => {
+                        document.getElementById('lunarDetail').textContent = `${lunar.day} - Tháng ${lunar.month}`;
+                        document.getElementById('lunarFullDate').innerHTML = `Âm Lịch Việt Nam<br>Năm Giáp Thìn`;
+                        openModal('lunarModal');
+                    };
+                }
+                else if (app.id === 'weather_app') {
+                    appEl.innerHTML = `
+                        <div class="app-icon-wrapper" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
+                            <span style="font-size: calc(var(--icon-size) * 0.35);">${currentWeather.icon}</span>
+                            <span style="font-size: calc(var(--icon-size) * 0.25); font-weight: bold; margin-top: -2px;">${currentWeather.temp}°C</span>
+                        </div>
+                        <span class="app-name">Thời Tiết</span>
+                    `;
+                    appEl.onclick = () => openModal('weatherModal');
+                }
+                else {
+                    let iconContent = '';
+                    if (app.customIcon) {
+                        if (app.customIcon.startsWith('http://') || app.customIcon.startsWith('https://')) {
+                            iconContent = `<img src="${app.customIcon}" alt="${app.name}">`;
+                        } else {
+                            iconContent = `<span style="font-size: calc(var(--icon-size) * 0.5);">${app.customIcon}</span>`;
+                        }
+                    } else {
+                        const faviconUrl = getGoogleFaviconUrl(app.url);
+                        const backupSymbol = app.emoji || app.name.charAt(0).toUpperCase();
+                        iconContent = `
+                            <img src="${faviconUrl}" alt="${app.name}" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span style="display:none; font-size: calc(var(--icon-size) * 0.5);">${backupSymbol}</span>
+                        `;
+                    }
+
+                    appEl.innerHTML = `
+                        <div class="app-icon-wrapper">${iconContent}</div>
+                        <span class="app-name">${app.name}</span>
+                    `;
+                    appEl.onclick = () => window.open(app.url, '_blank');
+                }
+
+                appEl.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    selectedAppIndex = index;
+                    showContextMenu(e.clientX, e.clientY, app);
+                };
+
+                appEl.ondragstart = (e) => { 
+                    draggedItemIndex = index; 
+                    appEl.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                };
+                appEl.ondragend = () => { 
+                    appEl.classList.remove('dragging');
+                    document.querySelectorAll('.app-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+                };
+                appEl.ondragover = (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    appEl.classList.add('drag-over');
+                };
+                appEl.ondragleave = () => {
+                    appEl.classList.remove('drag-over');
+                };
+                appEl.ondrop = (e) => {
+                    e.preventDefault();
+                    appEl.classList.remove('drag-over');
+                    if (draggedItemIndex !== null && draggedItemIndex !== index) {
+                        const movedApp = apps.splice(draggedItemIndex, 1)[0];
+                        apps.splice(index, 0, movedApp);
+                        renderApps();
+                    }
+                };
+
+                appGrid.appendChild(appEl);
+            });
+
+            localStorage.setItem('my_apps', JSON.stringify(apps));
+        }
+
+        function showContextMenu(x, y, app) {
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.top = `${y}px`;
+            contextMenu.style.display = 'block';
+
+            const menuDelete = document.getElementById('menuDeleteApp');
+            const menuChangeIco = document.getElementById('menuChangeIco');
+            const menuEdit = document.getElementById('menuEditApp');
+            const menuOpen = document.getElementById('menuOpenApp');
+
+            if (app.type === 'system') {
+                menuDelete.style.display = 'none';
+                menuChangeIco.style.display = 'none';
+                menuEdit.style.display = 'none';
+                menuOpen.textContent = '🚀 Mở Ứng Dụng';
+            } else {
+                menuDelete.style.display = 'flex';
+                menuChangeIco.style.display = 'flex';
+                menuEdit.style.display = 'flex';
+                menuOpen.textContent = '🚀 Mở ứng dụng';
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!contextMenu.contains(e.target)) {
+                contextMenu.style.display = 'none';
+            }
+        });
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    const id = modal.id;
+                    closeModal(id);
+                }
+            });
+        });
+
+        function renderSystemEmojis() {
+            const systemContainer = document.getElementById('systemIconContainer');
+            if (!systemContainer) return;
+            systemContainer.innerHTML = '';
+
+            const allEmojisShuffled = [...allEmojis].sort(() => 0.5 - Math.random());
+
+            allEmojisShuffled.forEach(emoji => {
+                const card = document.createElement('div');
+                card.className = 'icon-option-card';
+                card.innerHTML = `<span class="emoji-text">${emoji}</span>`;
+                card.onclick = () => applyNewIcon(emoji);
+                systemContainer.appendChild(card);
+            });
+        }
+
+        document.getElementById('menuEditApp').onclick = () => {
+            if (selectedAppIndex !== null && apps[selectedAppIndex].type !== 'system') {
+                const app = apps[selectedAppIndex];
+                document.getElementById('editAppName').value = app.name;
+                document.getElementById('editAppUrl').value = app.url || '';
+                openModal('editAppModal');
+            }
+            contextMenu.style.display = 'none';
+        };
+
+        document.getElementById('saveEditAppBtn').onclick = () => {
+            if (selectedAppIndex !== null) {
+                const newName = document.getElementById('editAppName').value.trim();
+                let newUrl = document.getElementById('editAppUrl').value.trim();
+                if (newName && newUrl) {
+                    const app = apps[selectedAppIndex];
+                    app.name = newName;
+                    app.url = newUrl.startsWith('http://') || newUrl.startsWith('https://') ? newUrl : 'https://' + newUrl;
+                    renderApps();
+                    closeModal('editAppModal');
+                }
+            }
+        };
+
+        document.getElementById('menuChangeIco').onclick = () => {
+            if (selectedAppIndex !== null && apps[selectedAppIndex].type !== 'system') {
+                const app = apps[selectedAppIndex];
+                const googleContainer = document.getElementById('googleIconContainer');
+                googleContainer.innerHTML = '';
+
+                const domain = app.url ? app.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : 'google.com';
+                const googleIconUrls = [
+                    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+                    `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+                    `https://www.google.com/s2/favicons?domain=google.com&sz=128`
+                ];
+
+                googleIconUrls.forEach(url => {
+                    const card = document.createElement('div');
+                    card.className = 'icon-option-card';
+                    card.innerHTML = `<img src="${url}" alt="Google Icon">`;
+                    card.onclick = () => applyNewIcon(url);
+                    googleContainer.appendChild(card);
+                });
+
+                renderSystemEmojis();
+                openModal('changeIcoModal');
+            }
+            contextMenu.style.display = 'none';
+        };
+
+        document.getElementById('refreshEmojiBtn').onclick = () => {
+            renderSystemEmojis();
+        };
+
+        function applyNewIcon(newIconVal) {
+            if (selectedAppIndex !== null && apps[selectedAppIndex].type !== 'system') {
+                apps[selectedAppIndex].customIcon = newIconVal;
+                renderApps();
+                closeModal('changeIcoModal');
+            }
+        }
+
+        document.getElementById('menuOpenApp').onclick = () => {
+            if (selectedAppIndex !== null) {
+                const app = apps[selectedAppIndex];
+                if (app.id === 'settings') openModal('settingsModal');
+                else if (app.url) window.open(app.url, '_blank');
+            }
+            contextMenu.style.display = 'none';
+        };
+
+        document.getElementById('menuAddApp').onclick = () => {
+            openModal('addIconModal');
+            contextMenu.style.display = 'none';
+        };
+
+        document.getElementById('menuDeleteApp').onclick = () => {
+            if (selectedAppIndex !== null && apps[selectedAppIndex].type !== 'system') {
+                apps.splice(selectedAppIndex, 1);
+                renderApps();
+                contextMenu.style.display = 'none';
+            }
+        };
+
+        document.getElementById('clearDataBtn').onclick = () => {
+            if (confirm("VanHoaiPC có chắc muốn xóa sạch dữ liệu cũ?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        };
+
+        document.getElementById('exportDataBtn').onclick = () => {
+            const data = {
+                apps: apps,
+                config: setupConfig,
+                version: '1.0',
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard_backup_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        document.getElementById('importDataBtn').onclick = () => {
+            document.getElementById('importFileInput').click();
+        };
+
+        document.getElementById('importFileInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.apps && Array.isArray(data.apps)) {
+                            if (confirm(`Bạn có muốn nhập dữ liệu backup? (${data.apps.length} ứng dụng)`)) {
+                                apps = data.apps;
+                                if (data.config) {
+                                    setupConfig = data.config;
+                                    applySetupConfig();
+                                    saveSetupConfig();
+                                }
+                                renderApps();
+                                alert('✅ Nhập dữ liệu thành công!');
+                            }
+                        } else {
+                            alert('❌ File backup không hợp lệ!');
+                        }
+                    } catch (error) {
+                        alert('❌ Lỗi đọc file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+            e.target.value = '';
+        };
+
+        function setIconColor(color) {
+            const opacity = setupConfig.iconOpacity / 100;
+            setupConfig.iconBgColor = color;
+            applySetupConfig();
+            saveSetupConfig();
+        }
+
+        function initIconColorPalette() {
+            const paletteEl = document.getElementById('iconColorPalette');
+            if (!paletteEl) return;
+            paletteEl.innerHTML = '';
+            
+            presetIconColors.forEach(color => {
+                const box = document.createElement('div');
+                box.className = 'color-box';
+                box.style.background = color;
+                box.onclick = () => setIconColor(color);
+                paletteEl.appendChild(box);
+            });
+        }
+
+        document.getElementById('opacityInput').oninput = (e) => {
+            const val = e.target.value;
+            document.getElementById('opacityVal').textContent = val + '%';
+            setupConfig.iconOpacity = parseInt(val);
+            
+            const baseColor = setupConfig.iconBgColor;
+            if (baseColor.startsWith('rgba')) {
+                const rgbaMatch = baseColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+                if (rgbaMatch) {
+                    const r = rgbaMatch[1], g = rgbaMatch[2], b = rgbaMatch[3];
+                    setupConfig.iconBgColor = `rgba(${r}, ${g}, ${b}, ${val / 100})`;
+                }
+            } else if (baseColor.startsWith('rgb')) {
+                const rgbMatch = baseColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (rgbMatch) {
+                    const r = rgbMatch[1], g = rgbMatch[2], b = rgbMatch[3];
+                    setupConfig.iconBgColor = `rgba(${r}, ${g}, ${b}, ${val / 100})`;
+                }
+            } else {
+                const hex = baseColor.replace('#', '');
+                let r, g, b;
+                if (hex.length === 3) {
+                    r = parseInt(hex[0] + hex[0], 16);
+                    g = parseInt(hex[1] + hex[1], 16);
+                    b = parseInt(hex[2] + hex[2], 16);
+                } else {
+                    r = parseInt(hex.substring(0, 2), 16);
+                    g = parseInt(hex.substring(2, 4), 16);
+                    b = parseInt(hex.substring(4, 6), 16);
+                }
+                setupConfig.iconBgColor = `rgba(${r}, ${g}, ${b}, ${val / 100})`;
+            }
+            
+            applySetupConfig();
+            saveSetupConfig();
+        };
+
+        document.getElementById('customIconColorBtn').onclick = () => document.getElementById('iconColorInput').click();
+        document.getElementById('iconColorInput').oninput = (e) => {
+            const color = e.target.value;
+            const opacity = setupConfig.iconOpacity / 100;
+            const rgba = hexToRgba(color, opacity);
+            setIconColor(rgba);
+        };
+
+        function hexToRgba(hex, opacity) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            if (result) {
+                const r = parseInt(result[1], 16);
+                const g = parseInt(result[2], 16);
+                const b = parseInt(result[3], 16);
+                return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            }
+            return hex;
+        }
+
+        document.getElementById('customColorBtn').onclick = () => document.getElementById('bgColorInput').click();
+        document.getElementById('bgColorInput').oninput = (e) => setBackgroundColor(e.target.value);
+
+        function initColorPalette() {
+            const paletteEl = document.getElementById('colorPalette');
+            if (!paletteEl) return;
+            paletteEl.innerHTML = '';
+            presetColors.forEach(color => {
+                const box = document.createElement('div');
+                box.className = 'color-box';
+                box.style.backgroundColor = color;
+                box.onclick = () => setBackgroundColor(color);
+                paletteEl.appendChild(box);
+            });
+        }
+
+        function loadWallpapers() {
+            const topic = document.getElementById('topicSelect').value;
+            const gridEl = document.getElementById('wallpaperGrid');
+            if (!gridEl) return;
+            gridEl.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const randomSig = Math.floor(Math.random() * 90000) + 1000;
+                const displayUrl = `https://picsum.photos/seed/${topic}_${randomSig}/1080/720`;
+
+                const img = document.createElement('img');
+                img.className = 'wallpaper-item';
+                img.src = displayUrl;
+                img.onclick = () => setBackgroundImage(`url('${displayUrl}')`);
+                gridEl.appendChild(img);
+            }
+        }
+
+        function setBackgroundColor(color) {
+            setupConfig.bgColor = color;
+            setupConfig.bgImage = 'none';
+            applySetupConfig();
+            saveSetupConfig();
+        }
+
+        function setBackgroundImage(bgImgValue) {
+            setupConfig.bgImage = bgImgValue;
+            applySetupConfig();
+            saveSetupConfig();
+        }
+
+        document.getElementById('refreshWallpapersBtn').onclick = loadWallpapers;
+
+        document.getElementById('bgFileInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    setBackgroundImage(`url('${event.target.result}')`);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // Size and Radius controls
+        document.getElementById('sizeInput').oninput = (e) => {
+            const val = e.target.value;
+            document.getElementById('sizeVal').textContent = val;
+            setupConfig.iconSize = parseInt(val);
+            applySetupConfig();
+            saveSetupConfig();
+        };
+
+        document.getElementById('radiusInput').oninput = (e) => {
+            const val = e.target.value;
+            document.getElementById('radiusVal').textContent = val;
+            setupConfig.iconRadius = parseInt(val);
+            applySetupConfig();
+            saveSetupConfig();
+        };
+
+        // Gap controls
+        document.getElementById('colGapInput').oninput = (e) => {
+            setupConfig.colGap = parseInt(e.target.value);
+            applySetupConfig();
+            saveSetupConfig();
+        };
+        document.getElementById('rowGapInput').oninput = (e) => {
+            setupConfig.rowGap = parseInt(e.target.value);
+            applySetupConfig();
+            saveSetupConfig();
+        };
+        document.getElementById('topInput').oninput = (e) => {
+            setupConfig.topPadding = parseInt(e.target.value);
+            applySetupConfig();
+            saveSetupConfig();
+        };
+        document.getElementById('leftInput').oninput = (e) => {
+            setupConfig.leftPadding = parseInt(e.target.value);
+            applySetupConfig();
+            saveSetupConfig();
+        };
+
+        document.getElementById('addAppBtn').onclick = () => {
+            const name = document.getElementById('appName').value.trim();
+            let url = document.getElementById('appUrl').value.trim();
+            const emoji = document.getElementById('appEmoji').value.trim();
+
+            if (name && url) {
+                if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+                apps.push({ 
+                    id: 'app_' + Date.now(), 
+                    type: 'user', 
+                    name, 
+                    url, 
+                    emoji: emoji || name.charAt(0).toUpperCase()
+                });
+                renderApps();
+                document.getElementById('appName').value = '';
+                document.getElementById('appUrl').value = '';
+                document.getElementById('appEmoji').value = '';
+                closeModal('addIconModal');
+            }
+        };
+
+        document.getElementById('appName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('addAppBtn').click();
+        });
+        document.getElementById('appUrl').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('addAppBtn').click();
+        });
+
+        applySetupConfig();
+        initColorPalette();
+        initIconColorPalette();
+        loadWallpapers();
+        renderApps();
+    </script>
+</body>
+</html>
